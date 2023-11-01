@@ -70,20 +70,50 @@ public class Drivetrain {
         double backLeftPower;
         double backRightPower;
 
-        frontLeftPower = pid.calculate(frontRight.getVelocity(), frontLeft.getVelocity(), false, false);
-        if (frontLeftPower > 1.0) {
+        // Two front motors
+        if (frontLeft.getVelocity() > frontRight.getVelocity()) {
+
             frontRightPower = pid.calculate(frontLeft.getVelocity(), frontRight.getVelocity(), false, false);
-            frontRight.setPower(frontRightPower);
-        }else {
-            frontLeft.setPower(frontLeftPower);
+            if (frontRightPower > 1.0) {
+                frontLeftPower = pid.calculate(frontRight.getVelocity(), frontLeft.getVelocity(), false, false);
+                frontLeft.setPower(frontLeftPower);
+            }else {
+                frontRight.setPower(frontRightPower);
+            }
+
+        }else if (frontLeft.getVelocity() < frontRight.getVelocity()) {
+
+            frontLeftPower = pid.calculate(frontRight.getVelocity(), frontLeft.getVelocity(), false, false);
+            if (frontLeftPower > 1.0) {
+                frontRightPower = pid.calculate(frontLeft.getVelocity(), frontRight.getVelocity(), false, false);
+                frontRight.setPower(frontRightPower);
+            }else {
+                frontLeft.setPower(frontLeftPower);
+            }
+
         }
 
-        backLeftPower = pid.calculate(backRight.getVelocity(), backLeft.getVelocity(), false, false);
-        if (backLeftPower > 1.0) {
+        // Two back motors
+        if (backLeft.getVelocity() > backRight.getVelocity()) {
+
             backRightPower = pid.calculate(backLeft.getVelocity(), backRight.getVelocity(), false, false);
-            backRight.setPower(backRightPower);
-        }else {
-            backLeft.setPower(backLeftPower);
+            if (backRightPower > 1.0) {
+                backLeftPower = pid.calculate(backRight.getVelocity(), backLeft.getVelocity(), false, false);
+                backLeft.setPower(backLeftPower);
+            }else {
+                backRight.setPower(backRightPower);
+            }
+
+        }else if (backLeft.getVelocity() < backRight.getVelocity()) {
+
+            backLeftPower = pid.calculate(backRight.getVelocity(), backLeft.getVelocity(), false, false);
+            if (backLeftPower > 1.0) {
+                backRightPower = pid.calculate(backLeft.getVelocity(), backRight.getVelocity(), false, false);
+                backRight.setPower(backRightPower);
+            }else {
+                backLeft.setPower(backLeftPower);
+            }
+
         }
 
     }
