@@ -1,16 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
- * 
- * @author Alan Qu
- * @date 10.11.2023
- * 
  * Axial - Driving forward and backwards - left joystick forward/backward
  * Lateral - Strafing right and left - left joystick right and left
  * Yaw - Rotating CW and CCW - right joystick right and left
