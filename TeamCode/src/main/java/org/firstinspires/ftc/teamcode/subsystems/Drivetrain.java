@@ -4,8 +4,13 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.PIDControl;
 
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -20,8 +25,13 @@ public class Drivetrain {
     private BNO055IMU imu; // Inertial measurement unit, built into expansion hub (has a gyro inside of it)
     private PIDControl pid;
 
+    private Orientation lastAngles = new Orientation();
+
+    double initYaw;
+    double adjustedYaw;
+
     /**
-     * Initializes motors for drivetrain
+     * Initializes motors and gyro (IMU) for drivetrain
      **/
     public Drivetrain(HardwareMap hwMap, PIDControl pid) {
 
@@ -50,8 +60,11 @@ public class Drivetrain {
         imu = hwMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
+
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
     }
 
@@ -146,6 +159,53 @@ public class Drivetrain {
         frontRightPower /= max;
         backLeftPower /= max;
         backRightPower /= max;
+
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+
+        telemetry.addData("Front Left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back Left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+        telemetry.update();
+
+    }
+
+    /**
+     * Makes robot move based on a Field Oriented Drive
+     * Parameters are the exact same as goXYR();
+     * @param x
+     * @param y
+     * @param turn
+     * @param telemetry
+     */
+    public void goXYRIMU(double x, double y, double turn, Telemetry telemetry) {
+
+        adjustedYaw = -lastAngles.firstAngle - initYaw;
+
+        double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
+
+        double theta = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
+        double realTheta = (360 - zerodYaw) + theta; // Real theta of robot in degrees
+        double power = Math.hypot(x, y); // Power (magnitude)
+
+        double piOverFour = Math.PI / 4.0;
+        double sin = Math.sin( (realTheta * Math.PI / 180) - piOverFour);
+        double cos = Math.cos( (realTheta * Math.PI / 180) - piOverFour);
+        double max = Math.max(Math.abs(sin), Math.abs(cos));
+
+        double frontLeftPower = (power * cos / max + turn);
+        double frontRightPower = (power * sin / max - turn);
+        double backLeftPower = (power * sin / max + turn);
+        double backRightPower = (power * cos / max - turn);
+
+        // Say you drive forward at full power and turn. If the value is greater than 1, remove power from all motors to make it consistent
+        if ( (power + Math.abs(turn)) > 1) {
+            frontLeftPower /= power + turn;
+            frontRightPower /= power - turn;
+            backLeftPower /= power + turn;
+            backRightPower /= power - turn;
+        }
 
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);

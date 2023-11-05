@@ -29,7 +29,9 @@ public class OneDriver extends LinearOpMode{
         PIDControl pid = new PIDControl(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap, pid);
 
+        // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
 
         waitForStart();
@@ -52,8 +54,17 @@ public class OneDriver extends LinearOpMode{
                 double lateral = gamepad1.left_stick_x * reversed;
                 double yaw = gamepad1.right_stick_x * reversed;
 
+                // Prem said this is good cuz you can easily see what is wrong if robot strafes off
+                double axial2 = -1 * gamepad1.left_stick_y;
+                double lateral2 = gamepad1.right_stick_x * reversed;
+                double yaw2 = (gamepad1.right_trigger - gamepad1.left_trigger) * reversed;
+
                 // Moves drivetrain based on joystick values and updates telemetry with wheel powers
-                drivetrain.goXYR(axial, lateral, yaw, telemetry);
+                // drivetrain.goXYR(axial, lateral, yaw, telemetry);
+
+                // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
+                drivetrain.goXYRIMU(axial, lateral, yaw, telemetry);
+                // drivetrain.goXYRIMU(axial2, lateral2, yaw2, telemetry);
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
