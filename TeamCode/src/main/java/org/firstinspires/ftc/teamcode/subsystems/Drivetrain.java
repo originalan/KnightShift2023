@@ -35,6 +35,13 @@ public class Drivetrain {
      **/
     public Drivetrain(HardwareMap hwMap, PIDControl pid) {
 
+        this(hwMap);
+        this.pid = pid;
+
+    }
+
+    public Drivetrain(HardwareMap hwMap) {
+
         this.hwMap = hwMap;
         this.pid = pid;
 
