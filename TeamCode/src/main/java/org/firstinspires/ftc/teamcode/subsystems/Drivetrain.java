@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.PIDControl;
 
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -43,17 +45,16 @@ public class Drivetrain {
     public Drivetrain(HardwareMap hwMap) {
 
         this.hwMap = hwMap;
-        this.pid = pid;
 
         backLeft = hwMap.get(DcMotorEx.class, "backLeft");
         backRight = hwMap.get(DcMotorEx.class, "backRight");
         frontLeft = hwMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hwMap.get(DcMotorEx.class, "frontRight");
 
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
 
         // This DOES NOT disable the tick counts
         // What it DOES do is disable the built in feedback loop
@@ -62,6 +63,11 @@ public class Drivetrain {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Initializes IMU for angle control
         imu = hwMap.get(BNO055IMU.class, "imu");
@@ -73,6 +79,17 @@ public class Drivetrain {
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+        initYaw = lastAngles.firstAngle;
+    }
+
+    /**
+     * As a last measure, if switching between auto and teleop the robot is not perfectly straight
+     * You can rotate the robot in teleop, and then set the initial yaw as itself
+     */
+    public void resetInitYaw() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        initYaw = lastAngles.firstAngle;
     }
 
     /**
@@ -172,9 +189,8 @@ public class Drivetrain {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
 
-        telemetry.addData("Front Left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-        telemetry.update();
+        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
 
     }
 
@@ -188,7 +204,9 @@ public class Drivetrain {
      */
     public void goXYRIMU(double x, double y, double turn, Telemetry telemetry) {
 
-        adjustedYaw = -lastAngles.firstAngle - initYaw;
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        adjustedYaw = lastAngles.firstAngle - initYaw;
 
         double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
 
@@ -219,9 +237,8 @@ public class Drivetrain {
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
 
-        telemetry.addData("Front Left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-        telemetry.update();
+        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
 
     }
 
@@ -248,6 +265,32 @@ public class Drivetrain {
     }
     public double getSpeedMod() {
         return speedMod;
+    }
+
+    /**
+     * PID calibrations for motors given any position that the robot wants to move forward to
+     * @param reference is the projected position in inches
+     * @return
+     */
+    public double powerFromPIDPosition(double reference, Telemetry telemetry) {
+
+        double BLcal = pid.calculate(reference, backLeft.getCurrentPosition(), false, false);
+        double BRcal = pid.calculate(reference, backRight.getCurrentPosition(), false, false);
+        double FLcal = pid.calculate(reference, frontLeft.getCurrentPosition(), false, false);
+        double FRcal = pid.calculate(reference, frontRight.getCurrentPosition(), false, false);
+
+        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
+        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
+
+        backLeft.setPower(BLcal);
+        backRight.setPower(BRcal);
+        frontLeft.setPower(FLcal);
+        frontRight.setPower(FRcal);
+
+        telemetry.addData("Front Left/Right Adjusted Powers", "%4.2f, %4.2f", FLcal, FRcal);
+        telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
+
+        return 0;
     }
 
 }

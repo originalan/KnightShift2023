@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.PIDControl;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
 @TeleOp(name = "OneDriver", group = "Testing")
 
@@ -16,7 +18,12 @@ public class OneDriver extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
     private Drivetrain drivetrain;
+    private Rigging rig;
     private PIDControl pid;
+    private Intake intake;
+
+    private boolean intakeOn = false;
+    private boolean servoMove = false;
 
 
     @Override
@@ -26,8 +33,10 @@ public class OneDriver extends LinearOpMode{
         Gamepad previousGamepad1 = new Gamepad();
         double reversed = 1.0;
 
-        PIDControl pid = new PIDControl(hardwareMap);
+        PIDControl pid = new PIDControl(hardwareMap, telemetry);
         drivetrain = new Drivetrain(hardwareMap, pid);
+        rig = new Rigging(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry);
 
         // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
         telemetry.addData("Status", "Initialized");
@@ -54,29 +63,59 @@ public class OneDriver extends LinearOpMode{
                 double lateral = gamepad1.left_stick_x * reversed;
                 double yaw = gamepad1.right_stick_x * reversed;
 
+                // You have to take values as if the robot is 90 degrees rotated because the expansion hub is placed 90 degrees rotated
+                // I rotated (x,y) 90 degrees CCW to (y, -x)
+                double axialIMU = -1 * gamepad1.left_stick_x * reversed;
+                double lateralIMU = -1 * gamepad1.left_stick_y * reversed;
+                double yawIMU = gamepad1.right_stick_x * reversed;
+
                 // Prem said this is good cuz you can easily see what is wrong if robot strafes off
-                double axial2 = -1 * gamepad1.left_stick_y;
-                double lateral2 = gamepad1.right_stick_x * reversed;
-                double yaw2 = (gamepad1.right_trigger - gamepad1.left_trigger) * reversed;
+                double axialIMU2 = gamepad1.left_stick_x * reversed;
+                double lateralIMU2 = -1 * gamepad1.right_stick_y * reversed;
+                double yawIMU2 = (gamepad1.right_trigger - gamepad1.left_trigger) * reversed;
 
                 // Moves drivetrain based on joystick values and updates telemetry with wheel powers
                 // drivetrain.goXYR(axial, lateral, yaw, telemetry);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
-                drivetrain.goXYRIMU(axial, lateral, yaw, telemetry);
-                // drivetrain.goXYRIMU(axial2, lateral2, yaw2, telemetry);
+                // drivetrain.goXYRIMU(axial, lateral, yaw, telemetry);
+                drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2, telemetry);
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
 
                 // Show elapsed game time and wheel power
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
-                telemetry.update();
+                rig.rigTelemetry();
+                intake.intakeTelemetry();
 
                 if (currentGamepad1.a && !previousGamepad1.a) {
                     // changes back of robot to front (controls are based on front of robot)
                     reversed = (reversed == -1.0 ? 1.0 : -1.0);
                 }
+                if (currentGamepad1.b && !previousGamepad1.b) {
+                    drivetrain.resetInitYaw();
+                }
+
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    servoMove = !servoMove;
+                }
+
+                if (currentGamepad1.y && !previousGamepad1.y) {
+                    intakeOn = !intakeOn;
+                }
+
+                if (servoMove) {
+                    rig.hang();
+                }
+
+                if (intakeOn) {
+                    intake.moveBackwards();
+                }else {
+                    intake.turnOff();
+                }
+
+                telemetry.update();
             }
 
         }

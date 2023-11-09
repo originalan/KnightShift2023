@@ -4,11 +4,14 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * An instance is made for every class that uses a PID loop
  */
 public class PIDControl {
 
+    private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
     private double Kp = 0;
@@ -25,8 +28,11 @@ public class PIDControl {
     public PIDControl() {
 
     }
-    public PIDControl(HardwareMap hwMap) {
+    public PIDControl(HardwareMap hwMap, Telemetry telemetry) {
+
         this.hwMap = hwMap;
+        this.telemetry = telemetry;
+
     }
 
     /**

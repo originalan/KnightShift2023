@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Yaw - Rotating CW and CCW - right joystick right and left
  **/
 
-@TeleOp(name = "Basic Mecanum Drive 2023", group = "Testing")
+@TeleOp(name = "Basic Mecanum Drive 2023 (adb)", group = "Testing")
 
 public class BasicMecanumDrive2023 extends LinearOpMode {
 
@@ -28,10 +28,10 @@ public class BasicMecanumDrive2023 extends LinearOpMode {
         /**
          * Assumes names of motors are BackLeft, BackRight, FrontLeft, FrontRight;
          **/
-        backLeft = hardwareMap.get(DcMotor.class, "BackLeft");
-        backRight = hardwareMap.get(DcMotor.class, "BackRight");
-        frontLeft = hardwareMap.get(DcMotor.class, "FrontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "FrontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         
         // May have to switch reverse and forward terms until all motors move in the forward direction irl
         backLeft.setDirection(DcMotor.Direction.FORWARD);
