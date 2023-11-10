@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Rigging {
 
     private HardwareMap hwMap;
-    private Servo leftRig;
-    private Servo rightRig;
+    private Servo leftRigServo;
+    private Servo rightRigServo;
     private Telemetry telemetry;
 
     private double leftRigInitialPos;
@@ -20,31 +20,33 @@ public class Rigging {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
 
-        leftRig = hwMap.servo.get("LeftRiggingServo");
-        rightRig = hwMap.servo.get("RightRiggingServo");
+        leftRigServo = hwMap.servo.get("LeftRiggingServo");
+        rightRigServo = hwMap.servo.get("RightRiggingServo");
 
-        leftRigInitialPos = leftRig.getPosition();
-        rightRigInitialPos = rightRig.getPosition();
+//        leftRigInitialPos = leftRigServo.getPosition();
+//        rightRigInitialPos = rightRigServo.getPosition();
+        leftRigInitialPos = 0;
+        rightRigInitialPos = 0;
 
     }
 
-    public void rigTelemetry() {
+    public void addTelemetry() {
 
-        telemetry.addData("Left/Right Rig Servo Position", "%4.2f, %4.2f", leftRig.getPosition(), rightRig.getPosition());
+        telemetry.addData("Left/Right Rig Servo Position", "%4.2f, %4.2f", leftRigServo.getPosition(), rightRigServo.getPosition());
 
     }
 
     public void hang() {
 
-        leftRig.setPosition(leftRigInitialPos + 0.25);
-        rightRig.setPosition(rightRigInitialPos + 0.25);
+        leftRigServo.setPosition(leftRigInitialPos + 0.25);
+        rightRigServo.setPosition(rightRigInitialPos + 0.25);
 
     }
 
     public void undoHang() {
 
-        leftRig.setPosition(leftRigInitialPos);
-        rightRig.setPosition(rightRigInitialPos);
+        leftRigServo.setPosition(leftRigInitialPos);
+        rightRigServo.setPosition(rightRigInitialPos);
 
     }
 

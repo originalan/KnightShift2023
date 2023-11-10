@@ -21,7 +21,7 @@ public class Intake {
 
     }
 
-    public void intakeTelemetry() {
+    public void addTelemetry() {
 
         telemetry.addData("Intake Power", motor.getPower());
 

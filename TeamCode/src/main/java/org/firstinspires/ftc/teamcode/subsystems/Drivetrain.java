@@ -23,6 +23,7 @@ public class Drivetrain {
     private DcMotorEx backRight, backLeft, frontRight, frontLeft;
 
     private HardwareMap hwMap;
+    private Telemetry telemetry;
 
     private BNO055IMU imu; // Inertial measurement unit, built into expansion hub (has a gyro inside of it)
     private PIDControl pid;
@@ -35,16 +36,17 @@ public class Drivetrain {
     /**
      * Initializes motors and gyro (IMU) for drivetrain
      **/
-    public Drivetrain(HardwareMap hwMap, PIDControl pid) {
+    public Drivetrain(HardwareMap hwMap, PIDControl pid, Telemetry telemetry) {
 
-        this(hwMap);
+        this(hwMap, telemetry);
         this.pid = pid;
 
     }
 
-    public Drivetrain(HardwareMap hwMap) {
+    public Drivetrain(HardwareMap hwMap, Telemetry telemetry) {
 
         this.hwMap = hwMap;
+        this.telemetry = telemetry;
 
         backLeft = hwMap.get(DcMotorEx.class, "backLeft");
         backRight = hwMap.get(DcMotorEx.class, "backRight");
@@ -84,7 +86,7 @@ public class Drivetrain {
 
     /**
      * As a last measure, if switching between auto and teleop the robot is not perfectly straight
-     * You can rotate the robot in teleop, and then set the initial yaw as itself
+     * You can rotate the robot in teleop, and then set the initial yaw as its current angle
      */
     public void resetInitYaw() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -156,13 +158,13 @@ public class Drivetrain {
     }
 
     /**
-     * Makes robot move based on x, y, r values (axial, pitch, yaw) along with telemetry
+     * Makes robot move based on x, y, r values (axial, pitch, yaw)
      *
      * Axial - Driving forward and backwards - left joystick forward/backward
      * Lateral - Strafing right and left - left joystick right and left
      * Yaw - Rotating CW and CCW - right joystick right and left
      **/
-    public void goXYR(double axial, double lateral, double yaw, Telemetry telemetry) {
+    public void goXYR(double axial, double lateral, double yaw) {
 
         double frontLeftPower = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
@@ -196,13 +198,12 @@ public class Drivetrain {
 
     /**
      * Makes robot move based on a Field Oriented Drive
-     * Parameters are the exact same as goXYR();
+     * Parameters are the exact same as goXYR()
      * @param x
      * @param y
      * @param turn
-     * @param telemetry
      */
-    public void goXYRIMU(double x, double y, double turn, Telemetry telemetry) {
+    public void goXYRIMU(double x, double y, double turn) {
 
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -272,7 +273,7 @@ public class Drivetrain {
      * @param reference is the projected position in inches
      * @return
      */
-    public double powerFromPIDPosition(double reference, Telemetry telemetry) {
+    public double powerFromPIDPosition(double reference) {
 
         double BLcal = pid.calculate(reference, backLeft.getCurrentPosition(), false, false);
         double BRcal = pid.calculate(reference, backRight.getCurrentPosition(), false, false);
@@ -291,6 +292,10 @@ public class Drivetrain {
         telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
 
         return 0;
+    }
+
+    public void addTelemetry() {
+
     }
 
 }

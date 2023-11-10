@@ -34,7 +34,7 @@ public class OneDriver extends LinearOpMode{
         double reversed = 1.0;
 
         PIDControl pid = new PIDControl(hardwareMap, telemetry);
-        drivetrain = new Drivetrain(hardwareMap, pid);
+        drivetrain = new Drivetrain(hardwareMap, pid, telemetry);
         rig = new Rigging(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
 
@@ -59,12 +59,12 @@ public class OneDriver extends LinearOpMode{
                 currentGamepad1.copy(gamepad1);
 
                 // Records joystick values
-                double axial = -1 * gamepad1.left_stick_y * reversed; // pushing stick forward gives negative value
-                double lateral = gamepad1.left_stick_x * reversed;
-                double yaw = gamepad1.right_stick_x * reversed;
+//                double axial = -1 * gamepad1.left_stick_y * reversed; // pushing stick forward gives negative value
+//                double lateral = gamepad1.left_stick_x * reversed;
+//                double yaw = gamepad1.right_stick_x * reversed;
 
                 // You have to take values as if the robot is 90 degrees rotated because the expansion hub is placed 90 degrees rotated
-                // I rotated (x,y) 90 degrees CCW to (y, -x)
+                // I rotated (x,y) 90 degrees CW to (y, -x)
                 double axialIMU = -1 * gamepad1.left_stick_x * reversed;
                 double lateralIMU = -1 * gamepad1.left_stick_y * reversed;
                 double yawIMU = gamepad1.right_stick_x * reversed;
@@ -78,35 +78,35 @@ public class OneDriver extends LinearOpMode{
                 // drivetrain.goXYR(axial, lateral, yaw, telemetry);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
-                // drivetrain.goXYRIMU(axial, lateral, yaw, telemetry);
-                drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2, telemetry);
+                drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
 
                 // Show elapsed game time and wheel power
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
-                rig.rigTelemetry();
-                intake.intakeTelemetry();
+                rig.addTelemetry();
+                intake.addTelemetry();
+                drivetrain.addTelemetry();
 
-                if (currentGamepad1.a && !previousGamepad1.a) {
-                    // changes back of robot to front (controls are based on front of robot)
-                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
-                }
+//                if (currentGamepad1.a && !previousGamepad1.a) {
+//                    // changes back of robot to front (controls are based on front of robot)
+//                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
+//                }
                 if (currentGamepad1.b && !previousGamepad1.b) {
                     drivetrain.resetInitYaw();
                 }
-
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     servoMove = !servoMove;
                 }
-
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     intakeOn = !intakeOn;
                 }
 
                 if (servoMove) {
                     rig.hang();
+                }else {
+                    rig.undoHang();
                 }
 
                 if (intakeOn) {

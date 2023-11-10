@@ -49,7 +49,7 @@ public class AutoRed1 extends LinearOpMode {
     public void runOpMode() {
 
         pid = new PIDControl();
-        drivetrain = new Drivetrain(hardwareMap, pid);
+        drivetrain = new Drivetrain(hardwareMap, pid, telemetry);
 
         // initOpenCV();
 
@@ -68,7 +68,7 @@ public class AutoRed1 extends LinearOpMode {
                 // Second,
 
                 // Calibrate PID loop
-                drivetrain.powerFromPIDPosition(100, telemetry);
+                drivetrain.powerFromPIDPosition(100);
 
                 telemetry.update();
             }
