@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Rigging {
+public class Rigging extends Subsystem {
 
     private HardwareMap hwMap;
     private Servo leftRigServo;

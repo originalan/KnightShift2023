@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class Drivetrain {
+public class Drivetrain extends Subsystem {
 
     private double speedMod = 1.0;
 
@@ -36,20 +36,11 @@ public class Drivetrain {
     private double previousHeading = 0;
     private double integratedHeading = 0;
 
-    /**
-     * Initializes motors and gyro (IMU) for drivetrain
-     **/
-    public Drivetrain(HardwareMap hwMap, PIDControl pid, Telemetry telemetry) {
-
-        this(hwMap, telemetry);
-        this.pid = pid;
-
-    }
-
     public Drivetrain(HardwareMap hwMap, Telemetry telemetry) {
 
         this.hwMap = hwMap;
         this.telemetry = telemetry;
+        pid = new PIDControl();
 
         backLeft = hwMap.get(DcMotorEx.class, "backLeft");
         backRight = hwMap.get(DcMotorEx.class, "backRight");
@@ -288,9 +279,6 @@ public class Drivetrain {
         double FLcal = pid.calculate(reference, frontLeft.getCurrentPosition(), false, false);
         double FRcal = pid.calculate(reference, frontRight.getCurrentPosition(), false, false);
 
-        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
-        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
-
         backLeft.setPower(BLcal);
         backRight.setPower(BRcal);
         frontLeft.setPower(FLcal);
@@ -305,6 +293,10 @@ public class Drivetrain {
     public void addTelemetry() {
 
         telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
+
+        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
+        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
+
 
     }
 

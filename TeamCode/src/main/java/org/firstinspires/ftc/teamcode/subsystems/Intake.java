@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Intake {
+public class Intake extends Subsystem {
 
     private HardwareMap hwMap;
     private DcMotorEx motor;

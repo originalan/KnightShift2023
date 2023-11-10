@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.PIDControl;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
@@ -20,15 +21,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 public class OneDriver extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
-    private Drivetrain drivetrain;
-    private Rigging rig;
-    private PIDControl pid;
-    private Intake intake;
-    private LinearSlide slide;
-    private AirplaneLauncher launcher;
+    private JVBoysSoccerRobot robot;
 
     private boolean intakeOn = false;
-    private boolean servoMove = false;
+    private boolean moveRigServo = false;
 
 
     @Override
@@ -39,11 +35,7 @@ public class OneDriver extends LinearOpMode{
         double reversed = 1.0;
 
         PIDControl pid = new PIDControl(hardwareMap, telemetry);
-        drivetrain = new Drivetrain(hardwareMap, pid, telemetry);
-        rig = new Rigging(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry);
-        slide = new LinearSlide(hardwareMap, telemetry);
-        launcher = new AirplaneLauncher(hardwareMap, telemetry);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
         // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
         telemetry.addData("Status", "Initialized");
@@ -85,47 +77,53 @@ public class OneDriver extends LinearOpMode{
                 // drivetrain.goXYR(axial, lateral, yaw, telemetry);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
-                drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
+                robot.drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
 
                 // Show elapsed game time and wheel power
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
-                rig.addTelemetry();
-                intake.addTelemetry();
-                drivetrain.addTelemetry();
-                slide.addTelemetry();
-                launcher.addTelemetry();
+                robot.addTelemetry();
 
 //                if (currentGamepad1.a && !previousGamepad1.a) {
 //                    // changes back of robot to front (controls are based on front of robot)
 //                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
 //                }
                 if (currentGamepad1.b && !previousGamepad1.b) {
-                    drivetrain.resetInitYaw();
+                    robot.drivetrain.resetInitYaw();
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
-                    servoMove = !servoMove;
+                    moveRigServo = !moveRigServo;
+
+                    // Call motor string method here (and undo)
+                    if (moveRigServo) {
+                        // string method for motors
+                    }else {
+                        // undo string method for motors
+                    }
                 }
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     intakeOn = !intakeOn;
                 }
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    launcher.ZONE_ONE_OR_BUST();
+                    robot.launcher.ZONE_ONE_OR_BUST();
                 }
 
-                if (servoMove) {
-                    rig.hang();
+                if (moveRigServo) {
+                    robot.rig.hang();
                 }else {
-                    rig.undoHang();
+                    robot.rig.undoHang();
                 }
 
                 if (intakeOn) {
-                    intake.moveBackwards();
+                    robot.intake.moveBackwards();
                 }else {
-                    intake.turnOff();
+                    robot.intake.turnOff();
                 }
+
+                // Update all subsystems (if applicable since drivetrain needs no update)
+                robot.slide.update();
 
                 telemetry.update();
             }
