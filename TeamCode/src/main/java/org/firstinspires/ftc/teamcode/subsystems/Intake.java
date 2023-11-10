@@ -12,6 +12,14 @@ public class Intake extends Subsystem {
     private DcMotorEx motor;
     private Telemetry telemetry;
 
+    public enum IntakeState {
+        OFF,
+        FORWARDS,
+        BACKWARDS
+    }
+
+    public IntakeState intakeState = IntakeState.OFF;
+
     public Intake(HardwareMap hwMap, Telemetry telemetry) {
 
         this.hwMap = hwMap;
@@ -21,9 +29,31 @@ public class Intake extends Subsystem {
 
     }
 
+    @Override
     public void addTelemetry() {
 
         telemetry.addData("Intake Power", motor.getPower());
+
+    }
+
+    @Override
+    public void update() {
+
+        switch (intakeState) {
+
+            case OFF:
+                turnOff();
+                break;
+
+            case FORWARDS:
+                moveForwards();
+                break;
+
+            case BACKWARDS:
+                moveBackwards();
+                break;
+
+        }
 
     }
 

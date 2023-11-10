@@ -82,7 +82,7 @@ public class OneDriver extends LinearOpMode{
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
 
-                // Show elapsed game time and wheel power
+                // Show elapsed game time
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 robot.addTelemetry();
 
@@ -95,35 +95,28 @@ public class OneDriver extends LinearOpMode{
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     moveRigServo = !moveRigServo;
-
-                    // Call motor string method here (and undo)
-                    if (moveRigServo) {
-                        // string method for motors
-                    }else {
-                        // undo string method for motors
-                    }
                 }
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     intakeOn = !intakeOn;
                 }
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    robot.launcher.ZONE_ONE_OR_BUST();
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }
 
                 if (moveRigServo) {
-                    robot.rig.hang();
+                    robot.rig.riggingState = Rigging.RiggingState.RIG;
                 }else {
-                    robot.rig.undoHang();
+                    robot.rig.riggingState = Rigging.RiggingState.NO_RIG;
                 }
 
                 if (intakeOn) {
-                    robot.intake.moveBackwards();
+                    robot.intake.intakeState = Intake.IntakeState.BACKWARDS;
                 }else {
-                    robot.intake.turnOff();
+                    robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
                 // Update all subsystems (if applicable since drivetrain needs no update)
-                robot.slide.update();
+                robot.update();
 
                 telemetry.update();
             }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.transition.Slide;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -31,21 +33,27 @@ public class LinearSlide extends Subsystem {
 
     }
 
-    public void update() {
-
-        if (slideState == SlideState.FULLY_EXTENDED) {
-            // Do stuff... (can also check previous slide state for code
-        }else if (slideState == SlideState.HALF_EXTENDED) {
-
-        }else if (slideState == SlideState.OFF) {
-
-        }
-
-    }
-
+    @Override
     public void addTelemetry() {
 
         telemetry.addData("Linear Slide Position Encoder Value", motor.getCurrentPosition());
+
+    }
+
+    @Override
+    public void update() {
+
+        switch (slideState) {
+
+            case OFF:
+                // Do stuff
+                break;
+            case HALF_EXTENDED:
+                break;
+            case FULLY_EXTENDED:
+                break;
+
+        }
 
     }
 

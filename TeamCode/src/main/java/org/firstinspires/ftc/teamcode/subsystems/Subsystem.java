@@ -9,4 +9,6 @@ public abstract class Subsystem {
 
     public abstract void addTelemetry();
 
+    public abstract void update();
+
 }

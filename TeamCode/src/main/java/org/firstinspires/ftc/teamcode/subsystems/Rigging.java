@@ -21,6 +21,13 @@ public class Rigging extends Subsystem {
     private double leftRigInitialPos;
     private double rightRigInitialPos;
 
+    public enum RiggingState {
+        NO_RIG,
+        RIG
+    }
+
+    public RiggingState riggingState = RiggingState.NO_RIG;
+
     public Rigging(HardwareMap hwMap, Telemetry telemetry) {
 
         this.hwMap = hwMap;
@@ -39,9 +46,26 @@ public class Rigging extends Subsystem {
 
     }
 
+    @Override
     public void addTelemetry() {
 
         telemetry.addData("Left/Right Rig Servo Position", "%4.2f, %4.2f", leftRigServo.getPosition(), rightRigServo.getPosition());
+
+    }
+
+    @Override
+    public void update() {
+
+        switch (riggingState) {
+
+            case NO_RIG:
+                noHang();
+                break;
+            case RIG:
+                hang();
+                break;
+
+        }
 
     }
 
@@ -54,7 +78,7 @@ public class Rigging extends Subsystem {
 
     }
 
-    public void undoHang() {
+    public void noHang() {
 
         leftRigServo.setPosition(leftRigInitialPos);
         rightRigServo.setPosition(rightRigInitialPos);

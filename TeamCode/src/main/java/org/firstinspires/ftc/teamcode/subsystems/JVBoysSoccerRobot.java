@@ -48,4 +48,12 @@ public class JVBoysSoccerRobot {
 
     }
 
+    public void update() {
+
+        for (Subsystem s : subsystems) {
+            s.update();
+        }
+
+    }
+
 }

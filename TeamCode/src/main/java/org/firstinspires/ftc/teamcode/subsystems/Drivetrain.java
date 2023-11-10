@@ -78,6 +78,21 @@ public class Drivetrain extends Subsystem {
         initYaw = lastAngles.firstAngle;
     }
 
+    @Override
+    public void addTelemetry() {
+
+        telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
+
+        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
+        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
     /**
      * As a last measure, if switching between auto and teleop the robot is not perfectly straight
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle
@@ -288,16 +303,6 @@ public class Drivetrain extends Subsystem {
         telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
 
         return 0;
-    }
-
-    public void addTelemetry() {
-
-        telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
-
-        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
-        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
-
-
     }
 
     /**
