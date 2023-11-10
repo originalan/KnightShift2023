@@ -33,6 +33,9 @@ public class Drivetrain {
     double initYaw;
     double adjustedYaw;
 
+    private double previousHeading = 0;
+    private double integratedHeading = 0;
+
     /**
      * Initializes motors and gyro (IMU) for drivetrain
      **/
@@ -89,9 +92,14 @@ public class Drivetrain {
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle
      */
     public void resetInitYaw() {
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = lastAngles.firstAngle;
+
+        // For resetting absolute angle of imu
+        integratedHeading = 0;
+        previousHeading = 0;
+
     }
 
     /**
@@ -296,6 +304,27 @@ public class Drivetrain {
 
     public void addTelemetry() {
 
+        telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
+
+    }
+
+    /**
+     * Records the absolute angle of the imu compared to when it first started
+     * @return
+     */
+    private double getIntegratedHeading() {
+        double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+        double deltaHeading = currentHeading - previousHeading;
+
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if (deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+        integratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return integratedHeading;
     }
 
 }
