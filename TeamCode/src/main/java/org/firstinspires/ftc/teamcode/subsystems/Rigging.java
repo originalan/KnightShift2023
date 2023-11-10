@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,6 +12,10 @@ public class Rigging {
     private HardwareMap hwMap;
     private Servo leftRigServo;
     private Servo rightRigServo;
+
+    private DcMotorEx leftRigMotor;
+    private DcMotorEx rightRigMotor;
+
     private Telemetry telemetry;
 
     private double leftRigInitialPos;
@@ -22,6 +28,9 @@ public class Rigging {
 
         leftRigServo = hwMap.servo.get("LeftRiggingServo");
         rightRigServo = hwMap.servo.get("RightRiggingServo");
+
+        leftRigMotor = hwMap.get(DcMotorEx.class, "LeftRigging");
+        rightRigMotor = hwMap.get(DcMotorEx.class, "RightRigging");
 
 //        leftRigInitialPos = leftRigServo.getPosition();
 //        rightRigInitialPos = rightRigServo.getPosition();
@@ -40,6 +49,8 @@ public class Rigging {
 
         leftRigServo.setPosition(leftRigInitialPos + 0.25);
         rightRigServo.setPosition(rightRigInitialPos + 0.25);
+
+        // Some code with the motors that pull the strings at the same time
 
     }
 

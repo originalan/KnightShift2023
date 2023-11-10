@@ -7,9 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
 @TeleOp(name = "OneDriver", group = "Testing")
@@ -21,6 +24,8 @@ public class OneDriver extends LinearOpMode{
     private Rigging rig;
     private PIDControl pid;
     private Intake intake;
+    private LinearSlide slide;
+    private AirplaneLauncher launcher;
 
     private boolean intakeOn = false;
     private boolean servoMove = false;
@@ -37,6 +42,8 @@ public class OneDriver extends LinearOpMode{
         drivetrain = new Drivetrain(hardwareMap, pid, telemetry);
         rig = new Rigging(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
+        slide = new LinearSlide(hardwareMap, telemetry);
+        launcher = new AirplaneLauncher(hardwareMap, telemetry);
 
         // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
         telemetry.addData("Status", "Initialized");
@@ -88,6 +95,8 @@ public class OneDriver extends LinearOpMode{
                 rig.addTelemetry();
                 intake.addTelemetry();
                 drivetrain.addTelemetry();
+                slide.addTelemetry();
+                launcher.addTelemetry();
 
 //                if (currentGamepad1.a && !previousGamepad1.a) {
 //                    // changes back of robot to front (controls are based on front of robot)
@@ -101,6 +110,9 @@ public class OneDriver extends LinearOpMode{
                 }
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     intakeOn = !intakeOn;
+                }
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    launcher.ZONE_ONE_OR_BUST();
                 }
 
                 if (servoMove) {
