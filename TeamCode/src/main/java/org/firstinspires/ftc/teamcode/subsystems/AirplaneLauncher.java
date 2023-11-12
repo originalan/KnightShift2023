@@ -54,6 +54,13 @@ public class AirplaneLauncher extends Subsystem {
 
     }
 
+    @Override
+    public void stop() {
+
+        notYet();
+
+    }
+
     public void ZONE_ONE_OR_BUST() {
 
         servo.setPosition(1.0);

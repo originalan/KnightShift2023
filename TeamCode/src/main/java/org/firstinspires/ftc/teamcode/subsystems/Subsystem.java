@@ -11,4 +11,6 @@ public abstract class Subsystem {
 
     public abstract void update();
 
+    public abstract void stop();
+
 }

@@ -56,4 +56,12 @@ public class JVBoysSoccerRobot {
 
     }
 
+    public void stop() {
+
+        for (Subsystem s : subsystems) {
+            s.stop();
+        }
+
+    }
+
 }

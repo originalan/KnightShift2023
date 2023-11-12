@@ -18,8 +18,8 @@ public class Rigging extends Subsystem {
 
     private Telemetry telemetry;
 
-    private double leftRigInitialPos;
-    private double rightRigInitialPos;
+    private final double leftRigInitialPos;
+    private final double rightRigInitialPos;
 
     public enum RiggingState {
         NO_RIG,
@@ -67,6 +67,11 @@ public class Rigging extends Subsystem {
 
         }
 
+    }
+
+    @Override
+    public void stop() {
+        noHang();
     }
 
     public void hang() {

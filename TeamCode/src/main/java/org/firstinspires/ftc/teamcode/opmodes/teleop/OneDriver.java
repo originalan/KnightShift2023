@@ -123,6 +123,8 @@ public class OneDriver extends LinearOpMode{
 
         }
 
+        robot.stop();
+
     }
 
 }

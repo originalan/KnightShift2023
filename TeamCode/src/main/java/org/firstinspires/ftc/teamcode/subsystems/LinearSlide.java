@@ -57,4 +57,11 @@ public class LinearSlide extends Subsystem {
 
     }
 
+    @Override
+    public void stop() {
+
+        // Unextend the slide
+
+    }
+
 }

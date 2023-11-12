@@ -93,6 +93,16 @@ public class Drivetrain extends Subsystem {
 
     }
 
+    @Override
+    public void stop() {
+
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+
+    }
+
     /**
      * As a last measure, if switching between auto and teleop the robot is not perfectly straight
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle

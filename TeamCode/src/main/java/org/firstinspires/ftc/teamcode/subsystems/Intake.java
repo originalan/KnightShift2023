@@ -57,6 +57,13 @@ public class Intake extends Subsystem {
 
     }
 
+    @Override
+    public void stop() {
+
+        turnOff();
+
+    }
+
     public void moveForwards() {
 
         motor.setPower(1);
