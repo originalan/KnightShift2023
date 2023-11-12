@@ -18,74 +18,34 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Drivetrain extends Subsystem {
 
-    private double speedMod = 1.0;
-
-    private DcMotorEx backRight, backLeft, frontRight, frontLeft;
-
     private HardwareMap hwMap;
     private Telemetry telemetry;
-
-    private BNO055IMU imu; // Inertial measurement unit, built into expansion hub (has a gyro inside of it)
-    private PIDControl pid;
+    private JVBoysSoccerRobot robot;
 
     private Orientation lastAngles = new Orientation();
 
-    double initYaw;
-    double adjustedYaw;
+    private double initYaw;
+    private double adjustedYaw;
 
     private double previousHeading = 0;
     private double integratedHeading = 0;
 
-    public Drivetrain(HardwareMap hwMap, Telemetry telemetry) {
-
+    public Drivetrain(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-        pid = new PIDControl();
+        this.robot = robot;
 
-        backLeft = hwMap.get(DcMotorEx.class, "backLeft");
-        backRight = hwMap.get(DcMotorEx.class, "backRight");
-        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hwMap.get(DcMotorEx.class, "frontRight");
-
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-
-        // This DOES NOT disable the tick counts
-        // What it DOES do is disable the built in feedback loop
-        // because external feedback such as our PID controller is generally preferred (and way faster)
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Initializes IMU for angle control
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);
-
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         initYaw = lastAngles.firstAngle;
     }
 
     @Override
     public void addTelemetry() {
-
         telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
 
-        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition());
-        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", backLeft.getCurrentPosition(), backRight.getCurrentPosition());
-
+        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
     }
 
     @Override
@@ -95,12 +55,10 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void stop() {
-
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
     }
 
     /**
@@ -108,21 +66,18 @@ public class Drivetrain extends Subsystem {
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle
      */
     public void resetInitYaw() {
-
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = lastAngles.firstAngle;
 
         // For resetting absolute angle of imu
         integratedHeading = 0;
         previousHeading = 0;
-
     }
 
     /**
      * During driver phase, if one motor lags behind, this uses PID loop to adjust
      */
     public void checkAndAdjustMotors() {
-
         // Say all 4 motors are running at max power (1.0)
         // Motors 3 is running at 100 rpm but motor 4 is running at 60 rpm
         // You cannot increase the power of motor 4 because it is already at max (1.0)
@@ -134,51 +89,50 @@ public class Drivetrain extends Subsystem {
         double backRightPower;
 
         // Two front motors
-        if (frontLeft.getVelocity() > frontRight.getVelocity()) {
+        if (robot.frontLeft.getVelocity() > robot.frontRight.getVelocity()) {
 
-            frontRightPower = pid.calculate(frontLeft.getVelocity(), frontRight.getVelocity(), false, false);
+            frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false, false);
             if (frontRightPower > 1.0) {
-                frontLeftPower = pid.calculate(frontRight.getVelocity(), frontLeft.getVelocity(), false, false);
-                frontLeft.setPower(frontLeftPower);
+                frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false, false);
+                robot.frontLeft.setPower(frontLeftPower);
             }else {
-                frontRight.setPower(frontRightPower);
+                robot.frontRight.setPower(frontRightPower);
             }
 
-        }else if (frontLeft.getVelocity() < frontRight.getVelocity()) {
+        }else if (robot.frontLeft.getVelocity() < robot.frontRight.getVelocity()) {
 
-            frontLeftPower = pid.calculate(frontRight.getVelocity(), frontLeft.getVelocity(), false, false);
+            frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false, false);
             if (frontLeftPower > 1.0) {
-                frontRightPower = pid.calculate(frontLeft.getVelocity(), frontRight.getVelocity(), false, false);
-                frontRight.setPower(frontRightPower);
+                frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false, false);
+                robot.frontRight.setPower(frontRightPower);
             }else {
-                frontLeft.setPower(frontLeftPower);
+                robot.frontLeft.setPower(frontLeftPower);
             }
 
         }
 
         // Two back motors
-        if (backLeft.getVelocity() > backRight.getVelocity()) {
+        if (robot.backLeft.getVelocity() > robot.backRight.getVelocity()) {
 
-            backRightPower = pid.calculate(backLeft.getVelocity(), backRight.getVelocity(), false, false);
+            backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false, false);
             if (backRightPower > 1.0) {
-                backLeftPower = pid.calculate(backRight.getVelocity(), backLeft.getVelocity(), false, false);
-                backLeft.setPower(backLeftPower);
+                backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false, false);
+                robot.backLeft.setPower(backLeftPower);
             }else {
-                backRight.setPower(backRightPower);
+                robot.backRight.setPower(backRightPower);
             }
 
-        }else if (backLeft.getVelocity() < backRight.getVelocity()) {
+        }else if (robot.backLeft.getVelocity() < robot.backRight.getVelocity()) {
 
-            backLeftPower = pid.calculate(backRight.getVelocity(), backLeft.getVelocity(), false, false);
+            backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false, false);
             if (backLeftPower > 1.0) {
-                backRightPower = pid.calculate(backLeft.getVelocity(), backRight.getVelocity(), false, false);
-                backRight.setPower(backRightPower);
+                backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false, false);
+                robot.backRight.setPower(backRightPower);
             }else {
-                backLeft.setPower(backLeftPower);
+                robot.backLeft.setPower(backLeftPower);
             }
 
         }
-
     }
 
     /**
@@ -189,7 +143,6 @@ public class Drivetrain extends Subsystem {
      * Yaw - Rotating CW and CCW - right joystick right and left
      **/
     public void goXYR(double axial, double lateral, double yaw) {
-
         double frontLeftPower = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
         double backLeftPower = axial - lateral + yaw;
@@ -210,14 +163,13 @@ public class Drivetrain extends Subsystem {
         backLeftPower /= max;
         backRightPower /= max;
 
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
 
         telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
         telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-
     }
 
     /**
@@ -228,8 +180,7 @@ public class Drivetrain extends Subsystem {
      * @param turn
      */
     public void goXYRIMU(double x, double y, double turn) {
-
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         adjustedYaw = lastAngles.firstAngle - initYaw;
 
@@ -257,14 +208,13 @@ public class Drivetrain extends Subsystem {
             backRightPower /= power - turn;
         }
 
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
 
         telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
         telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-
     }
 
     /**
@@ -276,21 +226,15 @@ public class Drivetrain extends Subsystem {
         double blue = Math.sin(angle + piOverFour) * Range.clip(magnitude, -1, 1);
 
         // Search up "seamonster mecanum drive" to see how math works
-        frontRight.setPower(red);
-        backLeft.setPower(red);
-        frontLeft.setPower(blue);
-        backRight.setPower(blue);
+        robot.frontRight.setPower(red);
+        robot.backLeft.setPower(red);
+        robot.frontLeft.setPower(blue);
+        robot.backRight.setPower(blue);
     }
     public void goStrafeDegrees(double angle, double magnitude) {
         goStrafeRadians(Math.toRadians(angle), magnitude);
     }
 
-    public void setSpeedMod(double speedMod) {
-        this.speedMod = speedMod;
-    }
-    public double getSpeedMod() {
-        return speedMod;
-    }
 
     /**
      * PID calibrations for motors given any position that the robot wants to move forward to
@@ -299,15 +243,15 @@ public class Drivetrain extends Subsystem {
      */
     public double powerFromPIDPosition(double reference) {
 
-        double BLcal = pid.calculate(reference, backLeft.getCurrentPosition(), false, false);
-        double BRcal = pid.calculate(reference, backRight.getCurrentPosition(), false, false);
-        double FLcal = pid.calculate(reference, frontLeft.getCurrentPosition(), false, false);
-        double FRcal = pid.calculate(reference, frontRight.getCurrentPosition(), false, false);
+        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false, false);
+        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false, false);
+        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false, false);
+        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false, false);
 
-        backLeft.setPower(BLcal);
-        backRight.setPower(BRcal);
-        frontLeft.setPower(FLcal);
-        frontRight.setPower(FRcal);
+        robot.backLeft.setPower(BLcal);
+        robot.backRight.setPower(BRcal);
+        robot.frontLeft.setPower(FLcal);
+        robot.frontRight.setPower(FRcal);
 
         telemetry.addData("Front Left/Right Adjusted Powers", "%4.2f, %4.2f", FLcal, FRcal);
         telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
@@ -316,11 +260,11 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Records the absolute angle of the imu compared to when it first started
+     * Records the absolute angle of the imu compared to when it first started (-infinity, infinity)
      * @return
      */
     private double getIntegratedHeading() {
-        double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+        double currentHeading = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
         double deltaHeading = currentHeading - previousHeading;
 
         if (deltaHeading < -180) {
@@ -332,6 +276,17 @@ public class Drivetrain extends Subsystem {
         previousHeading = currentHeading;
 
         return integratedHeading;
+    }
+
+    /**
+     * Uses IMU to return angle of robot
+     * @return
+     */
+    public double getAngle() {
+        Orientation angles =
+                robot.imu.getAngularOrientation(
+                        AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // ZYX is Original
+        return angles.firstAngle;
     }
 
 }

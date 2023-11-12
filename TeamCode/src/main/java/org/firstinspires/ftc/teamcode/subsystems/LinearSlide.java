@@ -12,39 +12,31 @@ public class LinearSlide extends Subsystem {
 
     private HardwareMap hwMap;
     private Telemetry telemetry;
-    private PIDControl pid;
-
-    private DcMotorEx motor;
+    private JVBoysSoccerRobot robot;
 
     public enum SlideState {
         OFF,
         HALF_EXTENDED,
-        FULLY_EXTENDED
+        FULLY_EXTENDED,
+        VARIABLE_EXTENSION
     }
 
     public SlideState slideState = SlideState.OFF;
 
-    public LinearSlide(HardwareMap hwMap, Telemetry telemetry) {
-
+    public LinearSlide(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-
-        motor = hwMap.get(DcMotorEx.class, "LinearSlide");
-
+        this.robot = robot;
     }
 
     @Override
     public void addTelemetry() {
-
-        telemetry.addData("Linear Slide Position Encoder Value", motor.getCurrentPosition());
-
+        telemetry.addData("Linear Slide Position Encoder Value", robot.linearSlideMotor.getCurrentPosition());
     }
 
     @Override
     public void update() {
-
         switch (slideState) {
-
             case OFF:
                 // Do stuff
                 break;
@@ -52,16 +44,14 @@ public class LinearSlide extends Subsystem {
                 break;
             case FULLY_EXTENDED:
                 break;
-
+            case VARIABLE_EXTENSION:
+                break;
         }
-
     }
 
     @Override
     public void stop() {
-
         // Unextend the slide
-
     }
 
 }

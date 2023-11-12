@@ -11,9 +11,7 @@ public class AirplaneLauncher extends Subsystem {
 
     private HardwareMap hwMap;
     private Telemetry telemetry;
-    private PIDControl pid;
-
-    private Servo servo;
+    private JVBoysSoccerRobot robot;
 
     public enum LauncherState {
         OFF,
@@ -21,56 +19,40 @@ public class AirplaneLauncher extends Subsystem {
     }
     public LauncherState launcherState = LauncherState.OFF;
 
-    public AirplaneLauncher(HardwareMap hwMap, Telemetry telemetry) {
-
+    public AirplaneLauncher(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-
-        servo = hwMap.servo.get("AirplaneLauncher");
-        servo.setPosition(0);
-
+        this.robot = robot;
     }
 
     @Override
     public void addTelemetry() {
-
-        telemetry.addData("Airplane Launcher Servo Current Position", servo.getPosition());
-
+        telemetry.addData("Airplane Launcher Servo Current Position", robot.airplaneLauncherServo.getPosition());
     }
 
     @Override
     public void update() {
-
         switch (launcherState) {
-
             case OFF:
                 notYet();
                 break;
             case ZONE_ONE_OR_BUST:
                 ZONE_ONE_OR_BUST();
                 break;
-
         }
-
     }
 
     @Override
     public void stop() {
-
         notYet();
-
     }
 
     public void ZONE_ONE_OR_BUST() {
-
-        servo.setPosition(1.0);
-
+        robot.airplaneLauncherServo.setPosition(1.0);
     }
 
     public void notYet() {
-
-        servo.setPosition(0);
-
+        robot.airplaneLauncherServo.setPosition(0);
     }
 
 }

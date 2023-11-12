@@ -29,10 +29,8 @@ public class PIDControl {
 
     }
     public PIDControl(HardwareMap hwMap, Telemetry telemetry) {
-
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-
     }
 
     /**
@@ -45,7 +43,6 @@ public class PIDControl {
      * @return power of desired motor to adjust
      */
     public double calculate(double reference, double state, boolean isAngle, boolean isFeedForward) {
-
         double error = isAngle ? angleWrap(reference - state) : (reference - state);
         integralSum += error * timer.seconds();
         double derivative = (error - lastError) / timer.seconds();

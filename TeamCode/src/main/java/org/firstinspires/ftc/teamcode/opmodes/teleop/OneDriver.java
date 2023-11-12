@@ -29,7 +29,6 @@ public class OneDriver extends LinearOpMode{
 
     @Override
     public void runOpMode() { // Remember that 'hardwareMap' is only visible in this method, not class
-
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         double reversed = 1.0;
@@ -47,9 +46,6 @@ public class OneDriver extends LinearOpMode{
         runtime.reset();
 
         if (opModeIsActive()) {
-            // Put run blocks here.
-
-            // Run until end of match (driver presses STOP)
             while (opModeIsActive()) {
                 // Put loop blocks here.
 
@@ -120,11 +116,8 @@ public class OneDriver extends LinearOpMode{
 
                 telemetry.update();
             }
-
         }
-
         robot.stop();
-
     }
 
 }

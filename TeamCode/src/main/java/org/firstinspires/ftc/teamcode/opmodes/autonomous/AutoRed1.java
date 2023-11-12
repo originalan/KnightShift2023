@@ -48,8 +48,6 @@ public class AutoRed1 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        pid = new PIDControl();
-        drivetrain = new Drivetrain(hardwareMap, pid, telemetry);
 
         // initOpenCV();
 

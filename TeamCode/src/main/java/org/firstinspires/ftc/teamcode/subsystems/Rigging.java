@@ -10,16 +10,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Rigging extends Subsystem {
 
     private HardwareMap hwMap;
-    private Servo leftRigServo;
-    private Servo rightRigServo;
-
-    private DcMotorEx leftRigMotor;
-    private DcMotorEx rightRigMotor;
-
     private Telemetry telemetry;
+    private JVBoysSoccerRobot robot;
 
-    private final double leftRigInitialPos;
-    private final double rightRigInitialPos;
+    private final double leftRigInitialPos = 0;
+    private final double rightRigInitialPos = 0;
 
     public enum RiggingState {
         NO_RIG,
@@ -28,45 +23,27 @@ public class Rigging extends Subsystem {
 
     public RiggingState riggingState = RiggingState.NO_RIG;
 
-    public Rigging(HardwareMap hwMap, Telemetry telemetry) {
-
+    public Rigging(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-
-        leftRigServo = hwMap.servo.get("LeftRiggingServo");
-        rightRigServo = hwMap.servo.get("RightRiggingServo");
-
-        leftRigMotor = hwMap.get(DcMotorEx.class, "LeftRigging");
-        rightRigMotor = hwMap.get(DcMotorEx.class, "RightRigging");
-
-//        leftRigInitialPos = leftRigServo.getPosition();
-//        rightRigInitialPos = rightRigServo.getPosition();
-        leftRigInitialPos = 0;
-        rightRigInitialPos = 0;
-
+        this.robot = robot;
     }
 
     @Override
     public void addTelemetry() {
-
-        telemetry.addData("Left/Right Rig Servo Position", "%4.2f, %4.2f", leftRigServo.getPosition(), rightRigServo.getPosition());
-
+        telemetry.addData("Left/Right Rig Servo Position", "%4.2f, %4.2f", robot.leftRigServo.getPosition(), robot.rightRigServo.getPosition());
     }
 
     @Override
     public void update() {
-
         switch (riggingState) {
-
             case NO_RIG:
                 noHang();
                 break;
             case RIG:
                 hang();
                 break;
-
         }
-
     }
 
     @Override
@@ -75,19 +52,14 @@ public class Rigging extends Subsystem {
     }
 
     public void hang() {
-
-        leftRigServo.setPosition(leftRigInitialPos + 0.25);
-        rightRigServo.setPosition(rightRigInitialPos + 0.25);
-
-        // Some code with the motors that pull the strings at the same time
-
+        robot.leftRigServo.setPosition(leftRigInitialPos + 0.25);
+        robot.rightRigServo.setPosition(rightRigInitialPos + 0.25);
+        // Motor string code is handled elsewhere
     }
 
     public void noHang() {
-
-        leftRigServo.setPosition(leftRigInitialPos);
-        rightRigServo.setPosition(rightRigInitialPos);
-
+        robot.leftRigServo.setPosition(leftRigInitialPos);
+        robot.rightRigServo.setPosition(rightRigInitialPos);
     }
 
 }

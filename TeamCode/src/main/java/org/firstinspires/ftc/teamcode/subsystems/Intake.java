@@ -5,12 +5,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Intake extends Subsystem {
 
     private HardwareMap hwMap;
-    private DcMotorEx motor;
     private Telemetry telemetry;
+    private JVBoysSoccerRobot robot;
+
+    // NEED TO CHANGE THIS VALUE BASED ON EXPERIMENTS
+    private final double currentThreshold = 10000;
 
     public enum IntakeState {
         OFF,
@@ -20,66 +24,52 @@ public class Intake extends Subsystem {
 
     public IntakeState intakeState = IntakeState.OFF;
 
-    public Intake(HardwareMap hwMap, Telemetry telemetry) {
-
+    public Intake(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-
-        motor = hwMap.get(DcMotorEx.class, "Intake");
-
+        this.robot = robot;
     }
 
     @Override
     public void addTelemetry() {
-
-        telemetry.addData("Intake Power", motor.getPower());
-
+        telemetry.addData("Intake Power", robot.intakeMotor.getPower());
     }
 
     @Override
     public void update() {
-
         switch (intakeState) {
-
             case OFF:
                 turnOff();
                 break;
-
             case FORWARDS:
                 moveForwards();
                 break;
-
             case BACKWARDS:
                 moveBackwards();
+
+                // If intake is blocked, then current will spike and we will reverse motor to undo the blockage
+                if(robot.intakeMotor.getCurrent(CurrentUnit.AMPS) > currentThreshold){
+                    moveForwards();
+                }
                 break;
-
         }
-
     }
 
     @Override
     public void stop() {
-
         turnOff();
-
     }
 
     public void moveForwards() {
-
-        motor.setPower(1);
-
+        robot.intakeMotor.setPower(1);
     }
 
     public void moveBackwards() {
-
-        motor.setPower(-1);
-
+        robot.intakeMotor.setPower(-1);
     }
 
     public void turnOff() {
-
-        motor.setPower(0);
-
+        robot.intakeMotor.setPower(0);
     }
 
 }
