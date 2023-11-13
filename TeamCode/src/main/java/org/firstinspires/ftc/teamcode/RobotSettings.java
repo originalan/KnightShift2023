@@ -50,4 +50,9 @@ public class RobotSettings {
     public static final double LAUNCHER_POSITION_IN = 0;
     public static final double LAUNCHER_POSITION_OUT = 0.25;
 
+    /*
+    =================SENSOR SETTINGS==============
+    */
+    public static final String CAMERA_NAME = "Webcam 1";
+
 }
