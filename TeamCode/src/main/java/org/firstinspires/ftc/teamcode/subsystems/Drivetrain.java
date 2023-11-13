@@ -27,9 +27,6 @@ public class Drivetrain extends Subsystem {
     private double initYaw;
     private double adjustedYaw;
 
-    private double previousHeading = 0;
-    private double integratedHeading = 0;
-
     public Drivetrain(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
@@ -42,10 +39,10 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addData("IMU Absolute Angle Rotation", getIntegratedHeading());
+        telemetry.addLine("Drivetrain");
 
-        telemetry.addData("Front Left/Right Actual Positions", "%4.2f, %4.2f", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
-        telemetry.addData("Back Left/Right Actual Positions", "%4.2f, %4.2f", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+        telemetry.addData("   Front Left/Right Actual Positions", "%4.2f, %4.2f", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+        telemetry.addData("   Back Left/Right Actual Positions", "%4.2f, %4.2f", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
     }
 
     @Override
@@ -70,8 +67,7 @@ public class Drivetrain extends Subsystem {
         initYaw = lastAngles.firstAngle;
 
         // For resetting absolute angle of imu
-        integratedHeading = 0;
-        previousHeading = 0;
+        robot.resetIMUAngle();
     }
 
     /**
@@ -257,25 +253,6 @@ public class Drivetrain extends Subsystem {
         telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
 
         return 0;
-    }
-
-    /**
-     * Records the absolute angle of the imu compared to when it first started (-infinity, infinity)
-     * @return
-     */
-    private double getIntegratedHeading() {
-        double currentHeading = robot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-        double deltaHeading = currentHeading - previousHeading;
-
-        if (deltaHeading < -180) {
-            deltaHeading += 360;
-        } else if (deltaHeading >= 180) {
-            deltaHeading -= 360;
-        }
-        integratedHeading += deltaHeading;
-        previousHeading = currentHeading;
-
-        return integratedHeading;
     }
 
     /**

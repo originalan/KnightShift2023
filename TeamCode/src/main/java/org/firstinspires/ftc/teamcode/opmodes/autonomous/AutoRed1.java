@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.PIDControl;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -31,7 +32,6 @@ public class AutoRed1 extends LinearOpMode {
     double cY = 0;
     double width = 0;
 
-    private Drivetrain drivetrain;
     private OpenCvCamera controlHubCam;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
     private GreenBlobDetectionPipeline greenBlobDetectionPipeline;
@@ -39,16 +39,16 @@ public class AutoRed1 extends LinearOpMode {
     private static final int CAMERA_WIDTH = 640; // Width of wanted camera resolution
     public static final int CAMERA_HEIGHT = 360; // Height of wanted camera resolution
 
-    // Calculate the distance using the formula
+    // Calculate the distance using the formula (from video)
     public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
     public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
-    private PIDControl pid;
+    private JVBoysSoccerRobot robot;
 
     @Override
     public void runOpMode() {
 
-
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         // initOpenCV();
 
         waitForStart();
@@ -57,21 +57,24 @@ public class AutoRed1 extends LinearOpMode {
             while (opModeIsActive()) {
 
                 // Finds coordinates of yellow blob (ik it says green blob I will change it)
-//                telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
-//                telemetry.addData("Distance in Inch", (getDistance(width)));
-//                telemetry.update();
+                telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
+                telemetry.addData("Distance in Inch", (getDistance(width)));
+                telemetry.update();
 
                 // First, Find the team prop and place the purple pixel...
 
-                // Second,
+                // Second, orient to board and drive there to place the yellow pixel
+
+                // Third, if we get this far go back and pick up two pixels to place at the board again
 
                 // Calibrate PID loop
-                drivetrain.powerFromPIDPosition(100);
+                // robot.drivetrain.powerFromPIDPosition(100);
 
                 telemetry.update();
             }
 
         }
+        robot.stop();
 
         controlHubCam.stopStreaming();
 

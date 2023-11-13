@@ -25,6 +25,7 @@ public class OneDriver extends LinearOpMode{
 
     private boolean intakeOn = false;
     private boolean moveRigServo = false;
+    private boolean switchDriveControls = false;
 
 
     @Override
@@ -73,7 +74,11 @@ public class OneDriver extends LinearOpMode{
                 // drivetrain.goXYR(axial, lateral, yaw, telemetry);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
-                robot.drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
+                if (switchDriveControls) {
+                    robot.drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
+                }else {
+                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
+                }
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
@@ -86,6 +91,12 @@ public class OneDriver extends LinearOpMode{
 //                    // changes back of robot to front (controls are based on front of robot)
 //                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
 //                }
+
+                // For debugging
+                if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
+                    switchDriveControls = !switchDriveControls;
+                }
+
                 if (currentGamepad1.b && !previousGamepad1.b) {
                     robot.drivetrain.resetInitYaw();
                 }
@@ -106,7 +117,7 @@ public class OneDriver extends LinearOpMode{
                 }
 
                 if (intakeOn) {
-                    robot.intake.intakeState = Intake.IntakeState.BACKWARDS;
+                    robot.intake.intakeState = Intake.IntakeState.ON;
                 }else {
                     robot.intake.intakeState = Intake.IntakeState.OFF;
                 }

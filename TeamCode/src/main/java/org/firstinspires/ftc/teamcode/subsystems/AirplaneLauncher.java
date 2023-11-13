@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.RobotSettings;
 
 public class AirplaneLauncher extends Subsystem {
 
@@ -27,7 +28,8 @@ public class AirplaneLauncher extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addData("Airplane Launcher Servo Current Position", robot.airplaneLauncherServo.getPosition());
+        telemetry.addLine("Airplane Launcher");
+        telemetry.addData("   Servo Current Position", robot.airplaneLauncherServo.getPosition());
     }
 
     @Override
@@ -48,11 +50,11 @@ public class AirplaneLauncher extends Subsystem {
     }
 
     public void ZONE_ONE_OR_BUST() {
-        robot.airplaneLauncherServo.setPosition(1.0);
+        robot.airplaneLauncherServo.setPosition(RobotSettings.LAUNCHER_POSITION_OUT);
     }
 
     public void notYet() {
-        robot.airplaneLauncherServo.setPosition(0);
+        robot.airplaneLauncherServo.setPosition(RobotSettings.LAUNCHER_POSITION_IN);
     }
 
 }

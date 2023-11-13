@@ -4,12 +4,16 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.RobotSettings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +47,19 @@ public class JVBoysSoccerRobot {
     public DcMotorEx leftRigMotor;
     public DcMotorEx rightRigMotor;
 
+    // Integrated Heading for IMU
+    private double previousHeading = 0;
+    private double integratedHeading = 0;
+
+    // Alliance Type
+    public enum AllianceType {
+        BLUE_CLOSE_STAGE,
+        BLUE_FAR_STAGE,
+        RED_CLOSE_STAGE,
+        RED_FAR_STAGE
+    }
+    public AllianceType allianceType;
+
     private List<Subsystem> subsystems;
 
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry) {
@@ -67,10 +84,17 @@ public class JVBoysSoccerRobot {
         subsystems = Arrays.asList(drivetrain, intake, slide, rig, launcher);
     }
 
+    public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry, AllianceType allianceType) {
+        this(hwMap, telemetry);
+        this.allianceType = allianceType;
+    }
+
     public void addTelemetry() {
         for (Subsystem s : subsystems) {
             s.addTelemetry();
         }
+        telemetry.addLine("Misc.");
+        telemetry.addData("   IMU Absolute Angle Rotation", getIntegratedHeading());
     }
 
     public void update() {
@@ -96,14 +120,15 @@ public class JVBoysSoccerRobot {
 
     public void initHardware() {
         // Airplane Launcher Subsystem
-        airplaneLauncherServo = hwMap.servo.get("AirplaneLauncher");
+        airplaneLauncherServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME);
+        airplaneLauncherServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
         airplaneLauncherServo.setPosition(0);
 
         // Drivetrain Subsystem
-        backLeft = hwMap.get(DcMotorEx.class, "backLeft");
-        backRight = hwMap.get(DcMotorEx.class, "backRight");
-        frontLeft = hwMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hwMap.get(DcMotorEx.class, "frontRight");
+        backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);
+        backRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKRIGHT_MOTOR_NAME);
+        frontLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTLEFT_MOTOR_NAME);
+        frontRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTRIGHT_MOTOR_NAME);
 
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
@@ -124,21 +149,47 @@ public class JVBoysSoccerRobot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Intake Subsystem
-        intakeMotor = hwMap.get(DcMotorEx.class, "Intake");
+        intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
+        intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
 
         // Linear Slide Subsystem
-        linearSlideMotor = hwMap.get(DcMotorEx.class, "LinearSlide");
+        linearSlideMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
+        linearSlideMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Rigging Subsystem
-        leftRigServo = hwMap.servo.get("LeftRiggingServo");
-        rightRigServo = hwMap.servo.get("RightRiggingServo");
-        leftRigMotor = hwMap.get(DcMotorEx.class, "LeftRigging");
-        rightRigMotor = hwMap.get(DcMotorEx.class, "RightRigging");
+        leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);
+        rightRigServo = hwMap.servo.get(RobotSettings.RIGGING_RIGHT_SERVO_NAME);
+        leftRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_LEFT_MOTOR_NAME);
+        rightRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_RIGHT_MOTOR_NAME);
+        leftRigMotor.setDirection(RobotSettings.RIGGING_LEFT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        rightRigMotor.setDirection(RobotSettings.RIGGING_RIGHT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
         leftRigMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRigMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//      leftRigInitialPos = leftRigServo.getPosition();
-//      rightRigInitialPos = rightRigServo.getPosition();
+    }
+
+    /**
+     * Records the absolute angle of the imu compared to when it first started (-infinity, infinity)
+     * @return
+     */
+    private double getIntegratedHeading() {
+        double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+        double deltaHeading = currentHeading - previousHeading;
+
+        if (deltaHeading < -180) {
+            deltaHeading += 360;
+        } else if (deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+        integratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return integratedHeading;
+    }
+
+    public void resetIMUAngle() {
+        integratedHeading = 0;
+        previousHeading = 0;
     }
 
     public String formatDegrees(double degrees) {

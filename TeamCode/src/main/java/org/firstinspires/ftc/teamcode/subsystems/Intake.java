@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.RobotSettings;
 
 public class Intake extends Subsystem {
 
@@ -13,13 +14,9 @@ public class Intake extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    // NEED TO CHANGE THIS VALUE BASED ON EXPERIMENTS
-    private final double currentThreshold = 10000;
-
     public enum IntakeState {
         OFF,
-        FORWARDS,
-        BACKWARDS
+        ON,
     }
 
     public IntakeState intakeState = IntakeState.OFF;
@@ -32,7 +29,8 @@ public class Intake extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addData("Intake Power", robot.intakeMotor.getPower());
+        telemetry.addLine("Intake");
+        telemetry.addData("   Motor Power", robot.intakeMotor.getPower());
     }
 
     @Override
@@ -41,15 +39,11 @@ public class Intake extends Subsystem {
             case OFF:
                 turnOff();
                 break;
-            case FORWARDS:
+            case ON:
                 moveForwards();
-                break;
-            case BACKWARDS:
-                moveBackwards();
-
                 // If intake is blocked, then current will spike and we will reverse motor to undo the blockage
-                if(robot.intakeMotor.getCurrent(CurrentUnit.AMPS) > currentThreshold){
-                    moveForwards();
+                if(robot.intakeMotor.getCurrent(CurrentUnit.AMPS) > RobotSettings.INTAKE_CURRENT_THRESHOLD){
+                    moveBackwards();
                 }
                 break;
         }
@@ -61,11 +55,11 @@ public class Intake extends Subsystem {
     }
 
     public void moveForwards() {
-        robot.intakeMotor.setPower(1);
+        robot.intakeMotor.setPower(RobotSettings.INTAKE_DEFAULT_MOTOR_SPEED);
     }
 
     public void moveBackwards() {
-        robot.intakeMotor.setPower(-1);
+        robot.intakeMotor.setPower(-1 * RobotSettings.INTAKE_DEFAULT_MOTOR_SPEED);
     }
 
     public void turnOff() {
