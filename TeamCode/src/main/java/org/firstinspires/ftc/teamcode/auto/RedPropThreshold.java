@@ -19,7 +19,7 @@ public class RedPropThreshold implements VisionProcessor {
     private Mat finalMat = new Mat();
     private double redThreshold = 0.5;
 
-    private String outStr = "left"; // Set a default value in case vision does not work
+    private String outStr = "not found"; // Set a default value in case vision does not work
 
     private static final Rect LEFT_RECTANGLE = new Rect(
             new Point(0, 0),

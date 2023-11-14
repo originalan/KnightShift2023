@@ -22,6 +22,7 @@ public class CameraSensor {
         this.telemetry = telemetry;
 
         // aasdfasd
+        initCamera();
     }
 
     public void initCamera() {

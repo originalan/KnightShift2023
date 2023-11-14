@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
-@TeleOp(name = "OneDriver")
+@TeleOp(name = "OneDriver", group = "teleopmode")
 
 public class OneDriver extends LinearOpMode{
 
@@ -34,7 +34,7 @@ public class OneDriver extends LinearOpMode{
         Gamepad previousGamepad1 = new Gamepad();
         double reversed = 1.0;
 
-        PIDControl pid = new PIDControl(hardwareMap, telemetry);
+//        PIDControl pid = new PIDControl(hardwareMap, telemetry);
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
         // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized

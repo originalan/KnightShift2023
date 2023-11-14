@@ -159,6 +159,8 @@ public class JVBoysSoccerRobot {
         // Rigging Subsystem
         leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);
         rightRigServo = hwMap.servo.get(RobotSettings.RIGGING_RIGHT_SERVO_NAME);
+        leftRigServo.setDirection(RobotSettings.RIGGING_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        rightRigServo.setDirection(RobotSettings.RIGGING_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
         leftRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_LEFT_MOTOR_NAME);
         rightRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_RIGHT_MOTOR_NAME);
         leftRigMotor.setDirection(RobotSettings.RIGGING_LEFT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
