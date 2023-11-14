@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.auto.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

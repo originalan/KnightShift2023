@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PIDControl;
-import org.firstinspires.ftc.teamcode.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 public class AirplaneLauncher extends Subsystem {
 

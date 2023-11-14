@@ -7,13 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
-import org.firstinspires.ftc.teamcode.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.auto.CameraSensor;
 import org.firstinspires.ftc.teamcode.auto.RedPropThreshold;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 
 @Autonomous (name = "Red1 (if you are closer to the stage)")
 public class Red1 extends LinearOpMode {

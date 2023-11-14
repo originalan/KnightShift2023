@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
-@TeleOp(name = "OneDriver", group = "Testing")
+@TeleOp(name = "OneDriver")
 
 public class OneDriver extends LinearOpMode{
 

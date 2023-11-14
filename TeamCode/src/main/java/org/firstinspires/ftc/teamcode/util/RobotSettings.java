@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 public class RobotSettings {
 
@@ -41,6 +41,8 @@ public class RobotSettings {
     public static final String RIGGING_RIGHT_SERVO_NAME = "RightRiggingServo";
     public static final boolean RIGGING_LEFT_MOTOR_REVERSED = false;
     public static final boolean RIGGING_RIGHT_MOTOR_REVERSED = false;
+    public static final boolean RIGGING_LEFT_SERVO_REVERSED = false;
+    public static final boolean RIGGING_RIGHT_SERVO_REVERSED = false;
 
     /*
     =================AIRPLANE LAUNCHER SETTINGS==============
