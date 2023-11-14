@@ -31,8 +31,8 @@ public class LinearSlide extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Linear Slide");
-        telemetry.addData("   Motor Position Encoder Value", robot.linearSlideMotor.getCurrentPosition());
+//        telemetry.addLine("Linear Slide");
+        telemetry.addData("   Motor Position Encoder Value", "%d", robot.linearSlideMotor.getCurrentPosition());
     }
 
     @Override

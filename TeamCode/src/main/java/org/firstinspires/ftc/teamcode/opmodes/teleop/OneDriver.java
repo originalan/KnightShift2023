@@ -128,7 +128,7 @@ public class OneDriver extends LinearOpMode{
                 telemetry.update();
             }
         }
-        robot.stop();
+//        robot.stop();
     }
 
 }

@@ -193,8 +193,8 @@ public class JVBoysSoccerRobot {
         previousHeading = 0;
     }
 
-    public String formatDegrees(double degrees) {
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
+//    public String formatDegrees(double degrees) {
+//        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+//    }
 
 }

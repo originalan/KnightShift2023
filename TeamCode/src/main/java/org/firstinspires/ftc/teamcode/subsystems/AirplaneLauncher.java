@@ -26,7 +26,7 @@ public class AirplaneLauncher extends Subsystem {
     @Override
     public void addTelemetry() {
         telemetry.addLine("Airplane Launcher");
-        telemetry.addData("   Servo Current Position", robot.airplaneLauncherServo.getPosition());
+        telemetry.addData("   Servo Current Position", "%4.2f", robot.airplaneLauncherServo.getPosition());
     }
 
     @Override

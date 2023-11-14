@@ -41,8 +41,12 @@ public class Drivetrain extends Subsystem {
     public void addTelemetry() {
         telemetry.addLine("Drivetrain");
 
-        telemetry.addData("   Front Left/Right Actual Positions", "%4.2f, %4.2f", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
-        telemetry.addData("   Back Left/Right Actual Positions", "%4.2f, %4.2f", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+
+        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+
     }
 
     @Override

@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.auto.CameraSensor;
@@ -26,7 +29,7 @@ public class Red1 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private String navigation;
-    private TrajectorySequence scoreSpikeMark, park;
+    private SampleMecanumDrive drive;
     private boolean atBackdrop, runningTrajectory;
 
     // all spike mark locations since I'm lazy
@@ -71,6 +74,10 @@ public class Red1 extends LinearOpMode {
         SCORE_WAIT_TIME = 500,
         INTAKING_TIME = 2000;
 
+    // TODO: adjust this for each auto
+    private Pose2d startPose = new Pose2d(12,-72+9, Math.toRadians(90));
+    private TrajectorySequence scoreSpikeMark, getStackPixels, adjustStack, getStackPixels2, scoreFirstStackPixels, park;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -89,8 +96,10 @@ public class Red1 extends LinearOpMode {
         telemetry.update();
 
         navigation = redPropThreshold.getPropPosition();
+//        drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -113,14 +122,28 @@ public class Red1 extends LinearOpMode {
             case "center":
                 break;
             case "not found":
-                // Should never be in this code but otherwise if it is this case, we screwed
+                // Should never be in this code but otherwise if it is this case, we screwed or i'll change the default to "left"
                 break;
         }
     }
 
     public void buildTrajectories() {
 
-
+        // this does the scoring on the spike mark at the start of auto
+        scoreSpikeMark = drive.trajectorySequenceBuilder(startPose)
+                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
+                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(40))
+                .splineTo(new Vector2d(12,-48), Math.toRadians(90))
+                .splineToSplineHeading(spikeMarkGoalPose, spikeMarkGoalPose.getHeading())
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(15,-48), Math.toRadians(90))
+//                .UNSTABLE_addTemporalMarkerOffset(0,()-> twoPersonDrive.startPreset(0, false))
+                .splineToSplineHeading(new Pose2d(30, -56, Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(35, initialBackdropGoalPose.getY(), Math.toRadians(180.00001)), Math.toRadians(90))
+                .setReversed(false)
+                .lineToLinearHeading(initialBackdropGoalPose)
+                .resetConstraints()
+                .build();
 
     }
 

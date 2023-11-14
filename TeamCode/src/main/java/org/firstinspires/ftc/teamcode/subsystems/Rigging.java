@@ -33,7 +33,7 @@ public class Rigging extends Subsystem {
     public void addTelemetry() {
         telemetry.addLine("Rigging");
         telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.leftRigServo.getPosition(), robot.rightRigServo.getPosition());
-        telemetry.addData("   Left/Right Motor Position", "%4.2f, %4.2f", robot.leftRigMotor.getCurrentPosition(), robot.rightRigMotor.getCurrentPosition());
+        telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.leftRigMotor.getCurrentPosition(), robot.rightRigMotor.getCurrentPosition());
     }
 
     @Override

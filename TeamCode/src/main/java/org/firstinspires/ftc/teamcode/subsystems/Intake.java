@@ -27,8 +27,8 @@ public class Intake extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Intake");
-        telemetry.addData("   Motor Power", robot.intakeMotor.getPower());
+//        telemetry.addLine("Intake");
+        telemetry.addData("   Motor Power", "%4.2f", robot.intakeMotor.getPower());
     }
 
     @Override
