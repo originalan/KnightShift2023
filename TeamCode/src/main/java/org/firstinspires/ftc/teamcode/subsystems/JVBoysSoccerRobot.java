@@ -53,10 +53,8 @@ public class JVBoysSoccerRobot {
 
     // Alliance Type
     public enum AllianceType {
-        BLUE_CLOSE_STAGE,
-        BLUE_FAR_STAGE,
-        RED_CLOSE_STAGE,
-        RED_FAR_STAGE
+        RED,
+        BLUE
     }
     public AllianceType allianceType;
 
@@ -72,7 +70,6 @@ public class JVBoysSoccerRobot {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
         }
-
 
         initIMU();
         initHardware();

@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.auto.PropDetectionProcessor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -20,8 +23,10 @@ import org.firstinspires.ftc.teamcode.auto.CameraSensor;
 import org.firstinspires.ftc.teamcode.auto.RedPropThreshold;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@Autonomous (name = "Red1 (if you are closer to the stage)", group = "autonomous opmode")
+@Autonomous (name = "Red1 (if you are closer to the stage)", group = "Autonomous Opmode")
 public class Red1 extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
@@ -83,8 +88,12 @@ public class Red1 extends LinearOpMode {
         INTAKING_TIME = 2000;
 
     // TODO: adjust this for each auto
-    private Pose2d startPose = new Pose2d(12,-72+9, Math.toRadians(90));
+    private Pose2d startPose = new Pose2d(11.75,-70.5 + (RobotSettings.ROBOT_SIDE_LENGTH / 2), Math.toRadians(90));
     private TrajectorySequence scoreSpikeMark, getStackPixels, adjustStack, getStackPixels2, scoreFirstStackPixels, park;
+
+    private AprilTagProcessor aprilTagProcessor;
+    private PropDetectionProcessor propDetectionProcessor;
+    private PropDetectionProcessor.Detection detectionResult;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -92,30 +101,49 @@ public class Red1 extends LinearOpMode {
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 
-        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
-//        camera = new CameraSensor(hardwareMap, telemetry); // openCV stuff
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.RED);
 
-        redPropThreshold = new RedPropThreshold();
+        propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.RED);
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
+                .setDrawAxes(true)
+                .setDrawTagOutline(true)
+                .setDrawCubeProjection(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .build();
+
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, RobotSettings.CAMERA_NAME))
-                        .setCameraResolution(new Size(640, 480))
-                                .setCamera(BuiltinCameraDirection.BACK)
-                                        .build();
+                .setCameraResolution(new Size(640, 480))
+//                .setCamera(BuiltinCameraDirection.BACK)
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .enableLiveView(true)
+                .setAutoStopLiveView(true)
+                .build();
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
 
-        navigation = redPropThreshold.getPropPosition();
+        portal.setProcessorEnabled(aprilTagProcessor, false);
+        portal.setProcessorEnabled(propDetectionProcessor, true);
+
+        while (opModeInInit()) {
+            detectionResult = propDetectionProcessor.getDetectedSide();
+            telemetry.addData("Detected", detectionResult);
+            telemetry.update();
+            sleep(10);
+        }
+
 //        drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();
 
-        navigation = "left";
 //        setBackdropGoalPose();
 //        buildTrajectories();
 
-//        Pose2d startPose = new Pose2d(-35.25, -35.25, Math.toRadians(90));
 //        drive.setPoseEstimate(startPose);
 //
 //        Trajectory traj1 = drive.trajectoryBuilder(startPose)
