@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 
-@TeleOp(name = "OneDriver", group = "teleopmode")
+@TeleOp(name = "OneDriver", group = "TeleOpmode")
 
 public class OneDriver extends LinearOpMode{
 
@@ -24,6 +24,8 @@ public class OneDriver extends LinearOpMode{
     private JVBoysSoccerRobot robot;
 
     private boolean intakeOn = false;
+    private boolean intakeReverse = false;
+
     private boolean moveRigServo = false;
     private boolean undoRig = true;
     private boolean a = true;
@@ -45,6 +47,9 @@ public class OneDriver extends LinearOpMode{
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
+
+        robot.rig.noHang();
+        robot.purplePixelServo.setPosition(1);
 
         waitForStart();
 
@@ -84,20 +89,24 @@ public class OneDriver extends LinearOpMode{
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 robot.addTelemetry();
 
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    // changes back of robot to front (controls are based on front of robot)
-                    // use for rig test
-                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
-                }
-
                 // For debugging
-                if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
-                    switchDriveControls = !switchDriveControls;
+//                if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
+//                    switchDriveControls = !switchDriveControls;
+//                }
+
+                if (Math.abs(currentGamepad1.left_trigger) > 0.1) {
+                    robot.intake.intakeState = Intake.IntakeState.ON;
+                }
+                else if (Math.abs(currentGamepad1.right_trigger) > 0.1) {
+                    robot.intake.intakeState = Intake.IntakeState.REVERSE;
+                }
+                else {
+                    robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
-                if (currentGamepad1.right_bumper) {
-                    robot.rightRigMotor.setPower(0.2 * reversed);
-                    robot.leftRigMotor.setPower(-0.2 * reversed);
+                if (currentGamepad1.right_bumper || currentGamepad1.left_bumper) {
+                    robot.rightRigMotor.setPower(0.4 * reversed);
+                    robot.leftRigMotor.setPower(-0.4 * reversed);
                 }else {
                     robot.rightRigMotor.setPower(0);
                     robot.leftRigMotor.setPower(0);
@@ -107,23 +116,28 @@ public class OneDriver extends LinearOpMode{
                     deliverPurplePixel = !deliverPurplePixel;
                 }
 
-                if (currentGamepad1.b && !previousGamepad1.b) {
-                    robot.drivetrain.resetInitYaw();
-                }
+//                if (currentGamepad1.b && !previousGamepad1.b) {
+//                    robot.drivetrain.resetInitYaw();
+//                }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     moveRigServo = true;
                     timeElapsedRigging = getRuntime();
                     undoRig = !undoRig;
                     i = 1;
                 }
+
                 if (currentGamepad1.y && !previousGamepad1.y) {
-                    intakeOn = !intakeOn;
+
                 }
+                if (currentGamepad1.b && !previousGamepad1.b) {
+
+                }
+
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }
 
-                telemetry.addData("I value: ", i);
+//                telemetry.addData("I value: ", i);
 
                 if (moveRigServo) {
                     double currentTime = getRuntime();
@@ -154,16 +168,18 @@ public class OneDriver extends LinearOpMode{
                 }
 
                 if (deliverPurplePixel) {
-                    robot.purplePixelServo.setPosition(1.0 - (20.0 / 180.0));
+                    robot.purplePixelServo.setPosition(1.0 - (22.0 / 180.0));
                 }else {
                     robot.purplePixelServo.setPosition(1.0);
                 }
 
-                if (intakeOn) {
-                    robot.intake.intakeState = Intake.IntakeState.ON;
-                }else {
-                    robot.intake.intakeState = Intake.IntakeState.OFF;
-                }
+//                if (intakeOn && !intakeReverse) {
+//                    robot.intake.intakeState = Intake.IntakeState.ON;
+//                }else if (intakeReverse && !intakeOn) {
+//                    robot.intake.intakeState = Intake.IntakeState.REVERSE;
+//                }else {
+//                    robot.intake.intakeState = Intake.IntakeState.OFF;
+//                }
 
                 // Update all subsystems (if applicable since drivetrain needs no update)
                 robot.update();

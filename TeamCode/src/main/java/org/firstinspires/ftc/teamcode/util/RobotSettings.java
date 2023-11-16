@@ -21,7 +21,7 @@ public class RobotSettings {
     */
     public static final String INTAKE_MOTOR_NAME = "Intake";
     public static final boolean INTAKE_MOTOR_REVERSED = true;
-    public static final double INTAKE_DEFAULT_MOTOR_SPEED = 1.0;
+    public static final double INTAKE_DEFAULT_MOTOR_SPEED = 0.4;
     public static final double INTAKE_CURRENT_THRESHOLD = 10000;
 
     /*
@@ -46,7 +46,9 @@ public class RobotSettings {
     public static final double ROBOT_FRONT_LENGTH = 16.75;
     public static final double ROBOT_SIDE_LENGTH = 18.00,
                                 ROBOT_LOCATION_1 = 9.875, // Location of the purple pixel servo box from the LEFT side of the robot
-                                ROBOT_LOCATION_2 = 10.75; // Location of yellow pixel arm relative to the LEFT side of the robot
+                                ROBOT_LOCATION_2 = 10.75, // Location of yellow pixel arm relative to the LEFT side of the robot
+                                ROBOT_LOCATOIN_3 = 0.75, // length of little edges of tiles
+                                ROBOT_LOCATION_4 = 23.5; // length of tile without one of the little edges
     /*
     =================AIRPLANE LAUNCHER SETTINGS==============
     */

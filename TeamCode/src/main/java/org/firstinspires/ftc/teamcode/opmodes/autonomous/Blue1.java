@@ -26,8 +26,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@Autonomous (name = "Red1 (if you are closer to the stage)", group = "Autonomous Opmode")
-public class Red1 extends LinearOpMode {
+@Autonomous (name = "Blue1 (if you are closer to the stage)", group = "Autonomous Opmode")
+public class Blue1 extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
     private CameraSensor camera;
@@ -53,10 +53,10 @@ public class Red1 extends LinearOpMode {
             firstCycleBackdropGoalPose;
 
     private final long // in milliseconds
-        BACKDROP_WAIT_TIME = 0,
-        SCANNING_TIME = 1000,
-        SCORE_WAIT_TIME = 500,
-        INTAKING_TIME = 2000;
+            BACKDROP_WAIT_TIME = 0,
+            SCANNING_TIME = 1000,
+            SCORE_WAIT_TIME = 500,
+            INTAKING_TIME = 2000;
 
     // TODO: adjust this for each auto
     private Pose2d startPose = new Pose2d(11.75,-70.5 + (RobotSettings.ROBOT_SIDE_LENGTH / 2), Math.toRadians(90));
@@ -72,9 +72,9 @@ public class Red1 extends LinearOpMode {
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 
-        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.RED);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.BLUE);
 
-        propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.RED);
+        propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.BLUE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
                 .setDrawAxes(true)

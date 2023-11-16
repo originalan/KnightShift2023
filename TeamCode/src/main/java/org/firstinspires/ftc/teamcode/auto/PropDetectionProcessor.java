@@ -30,14 +30,14 @@ public class PropDetectionProcessor implements VisionProcessor {
     private final Rect RIGHT_RECTANGLE;
 
     // Red constants
-    private final double RED_THRESHOLD = 0.3;
+    public double RED_THRESHOLD = 0.3;
     private final Scalar LOW_HSV_RED_LOWER = new Scalar(0, 100, 20);
     private final Scalar LOW_HSV_RED_UPPER = new Scalar(10, 255, 255);
     private final Scalar HIGH_HSV_RED_LOWER = new Scalar(160, 100, 20);
     private final Scalar HIGH_HSV_RED_UPPER = new Scalar(180, 255, 255);
 
     // Blue constants
-    private final double BLUE_THRESHOLD = 0.3;
+    public double BLUE_THRESHOLD = 0.3;
     private final Scalar LOW_HSV_BLUE_LOWER = new Scalar(100, 100, 20);
     private final Scalar LOW_HSV_BLUE_UPPER = new Scalar(130, 255, 255);
     private final Scalar HIGH_HSV_BLUE_LOWER = new Scalar(220, 100, 20);
@@ -52,7 +52,7 @@ public class PropDetectionProcessor implements VisionProcessor {
     public PropDetectionProcessor(JVBoysSoccerRobot.AllianceType type) {
         ALLIANCE_TYPE = type;
 
-        // Init rectangles (area you are searching in)
+        // Init rectangles
         // Red
         LEFT_RECTANGLE = type == JVBoysSoccerRobot.AllianceType.RED ? new Rect(
                 // left top corner
