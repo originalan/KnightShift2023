@@ -37,20 +37,23 @@ public class RobotSettings {
     */
     public static final String RIGGING_LEFT_MOTOR_NAME = "LeftRigging";
     public static final String RIGGING_RIGHT_MOTOR_NAME = "RightRigging";
-    public static final String RIGGING_LEFT_SERVO_NAME = "LeftRiggingServo";
-    public static final String RIGGING_RIGHT_SERVO_NAME = "RightRiggingServo";
+    public static final String RIGGING_LEFT_SERVO_NAME = "RightRiggingServo";
+    public static final String RIGGING_RIGHT_SERVO_NAME = "LeftRiggingServo";
     public static final boolean RIGGING_LEFT_MOTOR_REVERSED = false;
     public static final boolean RIGGING_RIGHT_MOTOR_REVERSED = false;
     public static final boolean RIGGING_LEFT_SERVO_REVERSED = false;
     public static final boolean RIGGING_RIGHT_SERVO_REVERSED = false;
-
+    public static final double ROBOT_FRONT_LENGTH = 16.75;
+    public static final double ROBOT_SIDE_LENGTH = 18.00,
+                                ROBOT_LOCATION_1 = 9.875, // Location of the purple pixel servo box from the LEFT side of the robot
+                                ROBOT_LOCATION_2 = 10.75; // Location of yellow pixel arm relative to the LEFT side of the robot
     /*
     =================AIRPLANE LAUNCHER SETTINGS==============
     */
     public static final String LAUNCHER_SERVO_NAME = "AirplaneLauncher";
     public static final boolean LAUNCHER_SERVO_REVERSED = false;
     public static final double LAUNCHER_POSITION_IN = 0;
-    public static final double LAUNCHER_POSITION_OUT = 0.25;
+    public static final double LAUNCHER_POSITION_OUT = 1;
 
     /*
     =================SENSOR SETTINGS==============

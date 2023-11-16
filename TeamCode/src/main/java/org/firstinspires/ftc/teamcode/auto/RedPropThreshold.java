@@ -17,7 +17,7 @@ public class RedPropThreshold implements VisionProcessor {
     private Mat highMat = new Mat();
     private Mat lowMat = new Mat();
     private Mat finalMat = new Mat();
-    private double redThreshold = 0.5;
+    public double redThreshold = 0.5;
 
     private String outStr = "not found"; // Set a default value in case vision does not work
 

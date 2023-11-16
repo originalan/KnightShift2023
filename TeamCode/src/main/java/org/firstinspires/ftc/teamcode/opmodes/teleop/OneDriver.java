@@ -25,16 +25,20 @@ public class OneDriver extends LinearOpMode{
 
     private boolean intakeOn = false;
     private boolean moveRigServo = false;
+    private boolean undoRig = true;
+    private boolean a = true;
+    private boolean deliverPurplePixel = false;
     private boolean switchDriveControls = false;
+    private double timeElapsedRigging = 0;
+    private int i = 1;
 
 
     @Override
-    public void runOpMode() { // Remember that 'hardwareMap' is only visible in this method, not class
+    public void runOpMode() {
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         double reversed = 1.0;
 
-//        PIDControl pid = new PIDControl(hardwareMap, telemetry);
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
         // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
@@ -48,8 +52,6 @@ public class OneDriver extends LinearOpMode{
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                // Put loop blocks here.
-
                 // Keep at top of loop, is used to check if buttons are pressed
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
@@ -59,19 +61,14 @@ public class OneDriver extends LinearOpMode{
 //                double lateral = gamepad1.left_stick_x * reversed;
 //                double yaw = gamepad1.right_stick_x * reversed;
 
-                // You have to take values as if the robot is 90 degrees rotated because the expansion hub is placed 90 degrees rotated
-                // I rotated (x,y) 90 degrees CW to (y, -x)
-                double axialIMU = -1 * gamepad1.left_stick_x * reversed;
-                double lateralIMU = -1 * gamepad1.left_stick_y * reversed;
-                double yawIMU = gamepad1.right_stick_x * reversed;
+                double axialIMU = gamepad1.left_stick_x;
+                double lateralIMU = -1 * gamepad1.left_stick_y;
+                double yawIMU = gamepad1.right_stick_x;
 
                 // Prem said this is good cuz you can easily see what is wrong if robot strafes off
-                double axialIMU2 = gamepad1.left_stick_x * reversed;
-                double lateralIMU2 = -1 * gamepad1.right_stick_y * reversed;
-                double yawIMU2 = (gamepad1.right_trigger - gamepad1.left_trigger) * reversed;
-
-                // Moves drivetrain based on joystick values and updates telemetry with wheel powers
-                // drivetrain.goXYR(axial, lateral, yaw, telemetry);
+                double axialIMU2 = gamepad1.left_stick_x;
+                double lateralIMU2 = -1 * gamepad1.right_stick_y;
+                double yawIMU2 = (gamepad1.right_trigger - gamepad1.left_trigger);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
                 if (switchDriveControls) {
@@ -87,21 +84,37 @@ public class OneDriver extends LinearOpMode{
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 robot.addTelemetry();
 
-//                if (currentGamepad1.a && !previousGamepad1.a) {
-//                    // changes back of robot to front (controls are based on front of robot)
-//                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
-//                }
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                    // changes back of robot to front (controls are based on front of robot)
+                    // use for rig test
+                    reversed = (reversed == -1.0 ? 1.0 : -1.0);
+                }
 
                 // For debugging
                 if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
                     switchDriveControls = !switchDriveControls;
                 }
 
+                if (currentGamepad1.right_bumper) {
+                    robot.rightRigMotor.setPower(0.2 * reversed);
+                    robot.leftRigMotor.setPower(-0.2 * reversed);
+                }else {
+                    robot.rightRigMotor.setPower(0);
+                    robot.leftRigMotor.setPower(0);
+                }
+
+                if (currentGamepad1.a && !previousGamepad1.a) {
+                    deliverPurplePixel = !deliverPurplePixel;
+                }
+
                 if (currentGamepad1.b && !previousGamepad1.b) {
                     robot.drivetrain.resetInitYaw();
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
-                    moveRigServo = !moveRigServo;
+                    moveRigServo = true;
+                    timeElapsedRigging = getRuntime();
+                    undoRig = !undoRig;
+                    i = 1;
                 }
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     intakeOn = !intakeOn;
@@ -110,10 +123,40 @@ public class OneDriver extends LinearOpMode{
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }
 
+                telemetry.addData("I value: ", i);
+
                 if (moveRigServo) {
-                    robot.rig.riggingState = Rigging.RiggingState.RIG;
+                    double currentTime = getRuntime();
+                    double delta = currentTime - timeElapsedRigging;
+                    double incrementTime = 0.1; // in seconds
+                    double incrementServo = 0.025;
+
+                    if (undoRig) {
+                        if (delta < incrementTime * i && delta >= incrementTime * (i-1) && i < (0.5 / incrementServo)) {
+                            robot.rig.hang(0.5 - (incrementServo * i));
+                            i++;
+                        }
+                        if (i >= (0.5 / incrementServo)) {
+                            robot.rig.hang(0);
+                            moveRigServo = false;
+                        }
+                    }else {
+                        if (delta < incrementTime * i && delta >= incrementTime * (i-1) && i < (0.5 / incrementServo)) {
+                            robot.rig.hang(incrementServo * i);
+                            i++;
+                        }
+                        if (i >= (0.5 / incrementServo)) {
+                            robot.rig.hang(0.5);
+                        }
+                    }
                 }else {
-                    robot.rig.riggingState = Rigging.RiggingState.NO_RIG;
+                    robot.rig.noHang();
+                }
+
+                if (deliverPurplePixel) {
+                    robot.purplePixelServo.setPosition(1.0 - (20.0 / 180.0));
+                }else {
+                    robot.purplePixelServo.setPosition(1.0);
                 }
 
                 if (intakeOn) {

@@ -45,6 +45,7 @@ public class JVBoysSoccerRobot {
     public Servo rightRigServo;
     public DcMotorEx leftRigMotor;
     public DcMotorEx rightRigMotor;
+    public Servo purplePixelServo;
 
     // Integrated Heading for IMU
     private double previousHeading = 0;
@@ -69,8 +70,9 @@ public class JVBoysSoccerRobot {
         // Configuring Hubs to auto mode for bulk reads
         allHubs = hwMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
         }
+
 
         initIMU();
         initHardware();
@@ -150,6 +152,10 @@ public class JVBoysSoccerRobot {
         // Intake Subsystem
         intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
         intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+
+        // Purple Pixel
+        purplePixelServo = hwMap.servo.get(RobotSettings.PURPLE_PIXEL_SERVO_NAME);
+        purplePixelServo.setDirection(RobotSettings.PURPLE_PIXEL_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
 
         // Linear Slide Subsystem
         linearSlideMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);

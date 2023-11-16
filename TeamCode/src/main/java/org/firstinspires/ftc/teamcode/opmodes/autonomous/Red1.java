@@ -4,8 +4,10 @@ import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -29,6 +31,12 @@ public class Red1 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private String navigation;
+
+    private enum EXAMPLE {
+        case1,
+        case2
+    };
+    private EXAMPLE ex = EXAMPLE.case1;
     private SampleMecanumDrive drive;
     private boolean atBackdrop, runningTrajectory;
 
@@ -81,6 +89,9 @@ public class Red1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad previousGamepad1 = new Gamepad();
+
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 //        camera = new CameraSensor(hardwareMap, telemetry); // openCV stuff
 
@@ -100,32 +111,55 @@ public class Red1 extends LinearOpMode {
 
         waitForStart();
 
+        navigation = "left";
+//        setBackdropGoalPose();
+//        buildTrajectories();
+
+//        Pose2d startPose = new Pose2d(-35.25, -35.25, Math.toRadians(90));
+//        drive.setPoseEstimate(startPose);
+//
+//        Trajectory traj1 = drive.trajectoryBuilder(startPose)
+//                .splineTo(new Vector2d(-35.25, -11.75), Math.toRadians(0))
+//                .build();
+//
+//        drive.followTrajectory(traj1);
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                previousGamepad1.copy(currentGamepad1);
+                currentGamepad1.copy(gamepad1);
 
 
 
                 telemetry.addData("Prop Position", redPropThreshold.getPropPosition());
+                telemetry.addData("Redthreshold", "%4.3f", redPropThreshold.redThreshold);
                 telemetry.update();
 
             }
         }
 //        robot.stop();
     }
-
-    public void setBackdropGoalPose() {
-        switch (navigation) {
-            case "left":
-                break;
-            case "right":
-                break;
-            case "center":
-                break;
-            case "not found":
-                // Should never be in this code but otherwise if it is this case, we screwed or i'll change the default to "left"
-                break;
-        }
-    }
+//
+//    public void setBackdropGoalPose() {
+//        switch (navigation) {
+//            case "left":
+//
+//                spikeMarkGoalPose = new Pose2d(redRightSideLeftSpikeMark.getX()+(ROBOT_FRONT_LENGTH/Math.sqrt(2)), redRightSideLeftSpikeMark.getY()-(ROBOT_FRONT_LENGTH/Math.sqrt(2)), Math.toRadians(135));
+//                initialBackdropGoalPose = new Pose2d(redLeftBackdrop.getX()-ROBOT_BACK_LENGTH -0.5, 2.5-2.5+redLeftBackdrop.getY() -0.5, Math.toRadians(180));
+//                firstCycleBackdropGoalPose = new Pose2d(redMiddleBackdrop.getX()-ROBOT_BACK_LENGTH+0.5 -0.5, -1.5-2.5+redMiddleBackdrop.getY(), Math.toRadians(180));
+//                firstStackPose = new Pose2d(redInnerStack.getX()+ROBOT_FRONT_LENGTH+ROBOT_INTAKE_LENGTH-0.5, redInnerStack.getY()-3);
+//
+//                break;
+//            case "right":
+//                break;
+//            case "center":
+//                break;
+//            case "not found":
+//                // Should never be in this code but otherwise if it is this case, we screwed or i'll change the default to "left"
+//                break;
+//        }
+//    }
 
     public void buildTrajectories() {
 
@@ -144,6 +178,8 @@ public class Red1 extends LinearOpMode {
                 .lineToLinearHeading(initialBackdropGoalPose)
                 .resetConstraints()
                 .build();
+
+
 
     }
 

@@ -14,7 +14,7 @@ public class Rigging extends Subsystem {
     private JVBoysSoccerRobot robot;
 
     private final double leftRigInitialPos = 0;
-    private final double rightRigInitialPos = 0;
+    private final double rightRigInitialPos = 1;
 
     public enum RiggingState {
         NO_RIG,
@@ -38,14 +38,14 @@ public class Rigging extends Subsystem {
 
     @Override
     public void update() {
-        switch (riggingState) {
-            case NO_RIG:
-                noHang();
-                break;
-            case RIG:
-                hang();
-                break;
-        }
+//        switch (riggingState) {
+//            case NO_RIG:
+//                noHang();
+//                break;
+//            case RIG:
+//                hang();
+//                break;
+//        }
     }
 
     @Override
@@ -54,9 +54,14 @@ public class Rigging extends Subsystem {
     }
 
     public void hang() {
-        robot.leftRigServo.setPosition(leftRigInitialPos + 0.25);
-        robot.rightRigServo.setPosition(rightRigInitialPos + 0.25);
+        robot.leftRigServo.setPosition(leftRigInitialPos + 0.5);
+        robot.rightRigServo.setPosition(rightRigInitialPos - 0.5);
         // Motor string code is handled elsewhere
+    }
+
+    public void hang(double increment) {
+        robot.leftRigServo.setPosition(leftRigInitialPos + increment);
+        robot.rightRigServo.setPosition(rightRigInitialPos - increment);
     }
 
     public void noHang() {
