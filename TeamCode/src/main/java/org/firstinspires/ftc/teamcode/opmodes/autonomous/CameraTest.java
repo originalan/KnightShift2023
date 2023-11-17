@@ -26,8 +26,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@Autonomous (name = "Red1 (if you are closer to the stage)", group = "Autonomous Opmode")
-public class Red1 extends LinearOpMode {
+@Autonomous (name = "CameraTest (testing rectangles)", group = "testing")
+public class CameraTest extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
     private VisionPortal portal;
@@ -43,10 +43,10 @@ public class Red1 extends LinearOpMode {
             firstCycleBackdropGoalPose;
 
     private final long // in milliseconds
-        BACKDROP_WAIT_TIME = 0,
-        SCANNING_TIME = 1000,
-        SCORE_WAIT_TIME = 500,
-        INTAKING_TIME = 2000;
+            BACKDROP_WAIT_TIME = 0,
+            SCANNING_TIME = 1000,
+            SCORE_WAIT_TIME = 500,
+            INTAKING_TIME = 2000;
 
     // TODO: adjust this for each auto
     private Pose2d startPose = new Pose2d(11.75,-70.5 + (RobotSettings.ROBOT_SIDE_LENGTH / 2), Math.toRadians(90));
@@ -66,7 +66,7 @@ public class Red1 extends LinearOpMode {
 
         propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.RED);
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
+                .setLensIntrinsics(821.0, 821.0, 330.0, 248.0) // HAVE TO SET THESE LATER
                 .setDrawAxes(true)
                 .setDrawTagOutline(true)
                 .setDrawCubeProjection(true)
@@ -93,6 +93,7 @@ public class Red1 extends LinearOpMode {
         portal.setProcessorEnabled(propDetectionProcessor, true);
 
         while (opModeInInit()) {
+            propDetectionProcessor.initRectangles(JVBoysSoccerRobot.AllianceType.RED);
             detectionResult = propDetectionProcessor.getDetectedSide();
             telemetry.addData("Detected", detectionResult);
             telemetry.update();
@@ -102,17 +103,6 @@ public class Red1 extends LinearOpMode {
 //        drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();
-
-//        setBackdropGoalPose();
-//        buildTrajectories();
-
-//        drive.setPoseEstimate(startPose);
-//
-//        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-//                .splineTo(new Vector2d(-35.25, -11.75), Math.toRadians(0))
-//                .build();
-//
-//        drive.followTrajectory(traj1);
 
         boolean changeValue = false;
         double elapsedTimeSinceButton = -1;
@@ -145,49 +135,5 @@ public class Red1 extends LinearOpMode {
 
             }
         }
-//        robot.stop();
     }
-//
-//    public void setBackdropGoalPose() {
-//        switch (navigation) {
-//            case "left":
-//
-//                spikeMarkGoalPose = new Pose2d(redRightSideLeftSpikeMark.getX()+(ROBOT_FRONT_LENGTH/Math.sqrt(2)), redRightSideLeftSpikeMark.getY()-(ROBOT_FRONT_LENGTH/Math.sqrt(2)), Math.toRadians(135));
-//                initialBackdropGoalPose = new Pose2d(redLeftBackdrop.getX()-ROBOT_BACK_LENGTH -0.5, 2.5-2.5+redLeftBackdrop.getY() -0.5, Math.toRadians(180));
-//                firstCycleBackdropGoalPose = new Pose2d(redMiddleBackdrop.getX()-ROBOT_BACK_LENGTH+0.5 -0.5, -1.5-2.5+redMiddleBackdrop.getY(), Math.toRadians(180));
-//                firstStackPose = new Pose2d(redInnerStack.getX()+ROBOT_FRONT_LENGTH+ROBOT_INTAKE_LENGTH-0.5, redInnerStack.getY()-3);
-//
-//                break;
-//            case "right":
-//                break;
-//            case "center":
-//                break;
-//            case "not found":
-//                // Should never be in this code but otherwise if it is this case, we screwed or i'll change the default to "left"
-//                break;
-//        }
-//    }
-
-    public void buildTrajectories() {
-
-        // this does the scoring on the spike mark at the start of auto
-//        scoreSpikeMark = drive.trajectorySequenceBuilder(startPose)
-//                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
-//                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(40))
-//                .splineTo(new Vector2d(12,-48), Math.toRadians(90))
-//                .splineToSplineHeading(spikeMarkGoalPose, spikeMarkGoalPose.getHeading())
-//                .setReversed(true)
-//                .splineToConstantHeading(new Vector2d(15,-48), Math.toRadians(90))
-//                .UNSTABLE_addTemporalMarkerOffset(0,()-> twoPersonDrive.startPreset(0, false))
-//                .splineToSplineHeading(new Pose2d(30, -56, Math.toRadians(180)), Math.toRadians(0))
-//                .splineToLinearHeading(new Pose2d(35, initialBackdropGoalPose.getY(), Math.toRadians(180.00001)), Math.toRadians(90))
-//                .setReversed(false)
-//                .lineToLinearHeading(initialBackdropGoalPose)
-//                .resetConstraints()
-//                .build();
-
-
-
-    }
-
 }

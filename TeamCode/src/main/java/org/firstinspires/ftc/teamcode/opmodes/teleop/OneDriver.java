@@ -69,11 +69,11 @@ public class OneDriver extends LinearOpMode{
                 // Add all robot telemetry
                 robot.addTelemetry();
 
-
-                if (Math.abs(currentGamepad1.left_trigger) > 0.1) {
+//
+                if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.ON;
                 }
-                else if (Math.abs(currentGamepad1.right_trigger) > 0.1) {
+                else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;
                 }
                 else {

@@ -30,18 +30,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 public class Blue1 extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
-    private CameraSensor camera;
     private VisionPortal portal;
-    private RedPropThreshold redPropThreshold;
     private ElapsedTime runtime = new ElapsedTime();
-
-    private String navigation;
-
-    private enum EXAMPLE {
-        case1,
-        case2
-    };
-    private EXAMPLE ex = EXAMPLE.case1;
     private SampleMecanumDrive drive;
     private boolean atBackdrop, runningTrajectory;
 

@@ -5,8 +5,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -15,6 +18,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+@Config
 public class PropDetectionProcessor implements VisionProcessor {
 
     private final JVBoysSoccerRobot.AllianceType ALLIANCE_TYPE;
@@ -26,8 +30,27 @@ public class PropDetectionProcessor implements VisionProcessor {
     private final Mat finalMat = new Mat();
 
     // Rectangles
-    private final Rect LEFT_RECTANGLE;
-    private final Rect RIGHT_RECTANGLE;
+    public Rect LEFT_RECTANGLE;
+    public Rect RIGHT_RECTANGLE;
+
+    public static Rect leftRectRed = new Rect(
+            // top left corner
+            new Point(17, 276),
+            // bottom right corner
+            new Point(155, 480)
+    );
+    public static Rect leftRectBlue = new Rect(
+            new Point(10, 270),
+            new Point(175, 405)
+    );
+    public static Rect rightRectRed = new Rect(
+                new Point(376, 278),
+                new Point(490, 380)
+    );
+    public static Rect rightRectBlue = new Rect(
+            new Point(380, 270),
+            new Point(500, 375)
+    );
 
     // Red constants
     public double RED_THRESHOLD = 0.3;
@@ -54,28 +77,16 @@ public class PropDetectionProcessor implements VisionProcessor {
 
         // Init rectangles
         // Red
-        LEFT_RECTANGLE = type == JVBoysSoccerRobot.AllianceType.RED ? new Rect(
-                // left top corner
-                new Point(17, 276),
-                // right bottom corner
-                new Point(155, 400)
+        initRectangles(type);
+    }
 
-                // Blue
-        ) : new Rect(
-                new Point(10, 270),
-                new Point(175, 405)
-        );
+    public void initRectangles(JVBoysSoccerRobot.AllianceType type) {
 
-        // Red
-        RIGHT_RECTANGLE = type == JVBoysSoccerRobot.AllianceType.RED ? new Rect(
-                new Point(376, 278),
-                new Point(490, 380)
+        // left rectangle bounding boxes
+        LEFT_RECTANGLE = (type == JVBoysSoccerRobot.AllianceType.RED) ? leftRectRed : leftRectBlue;
 
-                // Blue
-        ) : new Rect(
-                new Point(380, 270),
-                new Point(500, 375)
-        );
+        // right rectangle bounding boxes
+        RIGHT_RECTANGLE = (type == JVBoysSoccerRobot.AllianceType.RED) ? rightRectRed : rightRectBlue;
     }
 
     private Detection detectedSide = Detection.LEFT;

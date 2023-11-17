@@ -27,7 +27,8 @@ public class PurplePixel extends Subsystem {
 
     @Override
     public void addTelemetry() {
-
+        telemetry.addLine("Purple Pixel");
+        telemetry.addData("    Servo Position", "%4.2f", robot.purplePixelServo.getPosition());
     }
 
     @Override
@@ -44,7 +45,7 @@ public class PurplePixel extends Subsystem {
 
     @Override
     public void stop() {
-
+        hold();
     }
 
     public void hold() {
