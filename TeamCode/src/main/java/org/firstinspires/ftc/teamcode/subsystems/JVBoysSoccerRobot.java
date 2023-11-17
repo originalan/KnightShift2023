@@ -34,6 +34,7 @@ public class JVBoysSoccerRobot {
     public LinearSlide slide;
     public Rigging rig;
     public AirplaneLauncher launcher;
+    public PurplePixel purplePixel;
 
     // Hardware
     public BNO055IMU imu;
@@ -41,6 +42,7 @@ public class JVBoysSoccerRobot {
     public DcMotorEx intakeMotor;
     public Servo airplaneLauncherServo;
     public DcMotorEx linearSlideMotor;
+    public Servo linearSlideServo;
     public Servo leftRigServo;
     public Servo rightRigServo;
     public DcMotorEx leftRigMotor;
@@ -78,6 +80,7 @@ public class JVBoysSoccerRobot {
         slide = new LinearSlide(hwMap, telemetry, this);
         rig = new Rigging(hwMap, telemetry, this);
         launcher = new AirplaneLauncher(hwMap, telemetry, this);
+        purplePixel = new PurplePixel(hwMap, telemetry, this);
 
         subsystems = Arrays.asList(drivetrain, intake, slide, rig, launcher);
     }
@@ -150,14 +153,16 @@ public class JVBoysSoccerRobot {
         intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
         intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
 
-        // Purple Pixel
+        // Purple Pixel Subsystem
         purplePixelServo = hwMap.servo.get(RobotSettings.PURPLE_PIXEL_SERVO_NAME);
         purplePixelServo.setDirection(RobotSettings.PURPLE_PIXEL_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
 
         // Linear Slide Subsystem
         linearSlideMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
         linearSlideMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        linearSlideServo = hwMap.servo.get(RobotSettings.OUTTAKE_SERVO_CLAW_NAME);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlideServo.setDirection(RobotSettings.OUTTAKE_SERVO_CLAW_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
 
         // Rigging Subsystem
         leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);

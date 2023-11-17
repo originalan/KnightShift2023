@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
-@TeleOp (name = "Airplane Launcher Test", group = "testing")
+@TeleOp (name = "Airplane Launcher Test", group = "Testing")
 public class AirplaneLauncherTest extends LinearOpMode {
 
     private boolean launchPlane = false;

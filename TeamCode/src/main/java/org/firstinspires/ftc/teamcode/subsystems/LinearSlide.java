@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import android.transition.Slide;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 public class LinearSlide extends Subsystem {
 
@@ -16,9 +18,10 @@ public class LinearSlide extends Subsystem {
 
     public enum SlideState {
         OFF,
-        HALF_EXTENDED,
-        FULLY_EXTENDED,
-        VARIABLE_EXTENSION
+        HOLDING_PIXEL,
+        BRING_ARM_IN_PLACE,
+        BRING_ARM_BACK,
+        RELEASE_PIXEL
     }
 
     public SlideState slideState = SlideState.OFF;
@@ -27,25 +30,38 @@ public class LinearSlide extends Subsystem {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
+
+        robot.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
     public void addTelemetry() {
-//        telemetry.addLine("Linear Slide");
+        telemetry.addLine("Linear Slide");
         telemetry.addData("   Motor Position Encoder Value", "%d", robot.linearSlideMotor.getCurrentPosition());
+        telemetry.addData("   Servo Position Value" , "%4.2f", robot.linearSlideServo.getPosition());
     }
 
     @Override
     public void update() {
         switch (slideState) {
             case OFF:
-                // Do stuff
+                robot.linearSlideMotor.setPower(0);
+                robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_STARTING_POSITION);
                 break;
-            case HALF_EXTENDED:
+            case HOLDING_PIXEL:
+                robot.linearSlideMotor.setPower(0);
+                robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_HOLDING_POSITION);
                 break;
-            case FULLY_EXTENDED:
+            case BRING_ARM_IN_PLACE:
+                robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_HOLDING_POSITION);
+                robot.linearSlideMotor.setPower(RobotSettings.OUTTAKE_MOTOR_POWER);
                 break;
-            case VARIABLE_EXTENSION:
+            case RELEASE_PIXEL:
+                robot.linearSlideMotor.setPower(0);
+                robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION);
+                break;
+            case BRING_ARM_BACK:
+                robot.linearSlideMotor.setPower(RobotSettings.OUTTAKE_MOTOR_POWER);
                 break;
         }
     }
