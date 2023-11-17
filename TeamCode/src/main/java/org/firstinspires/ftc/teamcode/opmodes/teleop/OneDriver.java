@@ -23,14 +23,10 @@ public class OneDriver extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
-
-    private boolean intakeOn = false;
-    private boolean intakeReverse = false;
-
+    private boolean launcherFired = false;
+    private boolean hooksInPlace = false;
     private boolean moveRigServo = false;
     private boolean undoRig = true;
-    private boolean a = true;
-    private boolean switchDriveControls = false;
     private double timeElapsedRigging = 0;
     private int i = 1;
 
@@ -84,7 +80,7 @@ public class OneDriver extends LinearOpMode{
                     robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
-                if (currentGamepad1.right_bumper || currentGamepad1.left_bumper) {
+                if (hooksInPlace && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
                     robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                     robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
@@ -104,7 +100,13 @@ public class OneDriver extends LinearOpMode{
                 }
 
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    launcherFired = !launcherFired;
+                }
+
+                if (launcherFired) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                }else {
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
                 }
 
                 if (moveRigServo) {
@@ -121,6 +123,7 @@ public class OneDriver extends LinearOpMode{
                         if (i >= (0.5 / incrementServo)) {
                             robot.rig.hang(0);
                             moveRigServo = false;
+                            hooksInPlace = false;
                         }
                     }else {
                         if (delta < incrementTime * i && delta >= incrementTime * (i-1) && i < (0.5 / incrementServo)) {
@@ -129,6 +132,7 @@ public class OneDriver extends LinearOpMode{
                         }
                         if (i >= (0.5 / incrementServo)) {
                             robot.rig.hang(0.5);
+                            hooksInPlace = true;
                         }
                     }
                 }else {

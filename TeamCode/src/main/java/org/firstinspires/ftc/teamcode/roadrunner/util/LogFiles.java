@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,8 +91,8 @@ public final class LogFiles {
         public double trackingLateralDistance = StandardTrackingWheelLocalizer.LATERAL_DISTANCE;
         public double trackingForwardOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSET;
 
-        public RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = DriveConstants.LOGO_FACING_DIR;
-        public RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = DriveConstants.USB_FACING_DIR;
+        public RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RobotSettings.LOGO_FACING_DIR;
+        public RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = RobotSettings.USB_FACING_DIR;
 
         public List<Long> nsTimes = new ArrayList<>();
 
