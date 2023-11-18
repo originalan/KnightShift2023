@@ -28,7 +28,8 @@ public class RobotSettings {
     */
     public static String OUTTAKE_MOTOR_NAME = "LinearSlide";
     public static boolean OUTTAKE_MOTOR_REVERSED = true;
-    public static int OUTTAKE_MOTOR_ENCODER_POSITION = (int)((80.0 / 360.0) * 1440.0);
+    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 100.0;
+    public static int OUTTAKE_MOTOR_ENCODER_POSITION = (int)((OUTTAKE_MOTOR_MOVEMENT_DEGREES / 360.0) * 1440.0);
     public static double OUTTAKE_MOTOR_POWER = 0.25;
     public static String OUTTAKE_SERVO_CLAW_NAME = "YellowPixelServo";
     public static boolean OUTTAKE_SERVO_CLAW_REVERSED = false;
@@ -40,7 +41,8 @@ public class RobotSettings {
     public static String PURPLE_PIXEL_SERVO_NAME = "PurplePixel";
     public static boolean PURPLE_PIXEL_SERVO_REVERSED = false;
     public static double PURPLE_PIXEL_SERVO_STARTING_POSITION = 1.0;
-    public static double PURPLE_PIXEL_SERVO_ENDING_POSITION = 1.0 - (22.0 / 180.0);
+    public static double PURPLE_PIXEL_SERVO_MOVEMENT_DEGREES = 22.0;
+    public static double PURPLE_PIXEL_SERVO_ENDING_POSITION = 1.0 - (PURPLE_PIXEL_SERVO_MOVEMENT_DEGREES / 180.0);
 
     /*
     =================RIGGING SETTINGS==============
@@ -78,7 +80,6 @@ public class RobotSettings {
     =================SENSOR SETTINGS==============
     */
     public static String CAMERA_NAME = "Webcam 1";
-
     public static final RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static final RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 

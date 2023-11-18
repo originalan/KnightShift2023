@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 @Config
 public class PoseStorage {
 
+    public static Pose2d currentPose = new Pose2d();
+
     // all spike mark locations since I'm lazy
     public static Pose2d redLeftSideLeftSpikeMark = new Pose2d(-47.5,-36);
     public static Pose2d redLeftSideMiddleSpikeMark = new Pose2d(-36,-24.5);

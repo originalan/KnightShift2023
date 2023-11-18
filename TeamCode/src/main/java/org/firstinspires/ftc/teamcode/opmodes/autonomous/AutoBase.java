@@ -11,7 +11,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.auto.PropDetectionProcessor;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -24,16 +26,13 @@ public abstract class AutoBase extends LinearOpMode {
     protected VisionPortal portal;
     protected Pose2d startingPose;
     protected PropDetectionProcessor.Detection detectedSide;
+    protected JVBoysSoccerRobot robot;
+    protected SampleMecanumDrive drive;
 
-    private HardwareMap hwMap;
-    private Telemetry telemetry;
-    private JVBoysSoccerRobot robot;
-
-    public void initialize(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot.AllianceType allianceType, Pose2d startingPose) {
-        this.hwMap = hwMap;
-        this.telemetry = telemetry;
+    public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
         ALLIANCE_TYPE = allianceType;
-        this.startingPose = startingPose;
+        drive = new SampleMecanumDrive(hardwareMap);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, ALLIANCE_TYPE);
 
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -64,12 +63,16 @@ public abstract class AutoBase extends LinearOpMode {
         portal.setProcessorEnabled(aprilTagProcessor, false);
         portal.setProcessorEnabled(propDetectionProcessor, true);
 
-        while (opModeInInit()) {
-            detectedSide = propDetectionProcessor.getDetectedSide();
-            telemetry.addData("Detected", detectedSide);
-            telemetry.update();
-            sleep(1);
-        }
+    }
+
+    public void transferPose() {
+
+        PoseStorage.currentPose = drive.getPoseEstimate();
+
+        telemetry.addData("Pose X", PoseStorage.currentPose.getX());
+        telemetry.addData("Pose Y", PoseStorage.currentPose.getY());
+        telemetry.addData("Pose Heading", PoseStorage.currentPose.getHeading());
+
     }
 
     @Override
