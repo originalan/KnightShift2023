@@ -147,46 +147,10 @@ public class Red1 extends LinearOpMode {
         }
 //        robot.stop();
     }
-//
-//    public void setBackdropGoalPose() {
-//        switch (navigation) {
-//            case "left":
-//
-//                spikeMarkGoalPose = new Pose2d(redRightSideLeftSpikeMark.getX()+(ROBOT_FRONT_LENGTH/Math.sqrt(2)), redRightSideLeftSpikeMark.getY()-(ROBOT_FRONT_LENGTH/Math.sqrt(2)), Math.toRadians(135));
-//                initialBackdropGoalPose = new Pose2d(redLeftBackdrop.getX()-ROBOT_BACK_LENGTH -0.5, 2.5-2.5+redLeftBackdrop.getY() -0.5, Math.toRadians(180));
-//                firstCycleBackdropGoalPose = new Pose2d(redMiddleBackdrop.getX()-ROBOT_BACK_LENGTH+0.5 -0.5, -1.5-2.5+redMiddleBackdrop.getY(), Math.toRadians(180));
-//                firstStackPose = new Pose2d(redInnerStack.getX()+ROBOT_FRONT_LENGTH+ROBOT_INTAKE_LENGTH-0.5, redInnerStack.getY()-3);
-//
-//                break;
-//            case "right":
-//                break;
-//            case "center":
-//                break;
-//            case "not found":
-//                // Should never be in this code but otherwise if it is this case, we screwed or i'll change the default to "left"
-//                break;
-//        }
-//    }
 
     public void buildTrajectories() {
 
-        // this does the scoring on the spike mark at the start of auto
-//        scoreSpikeMark = drive.trajectorySequenceBuilder(startPose)
-//                .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(40, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH))
-//                .setAccelConstraint(SampleMecanumDrive.getAccelerationConstraint(40))
-//                .splineTo(new Vector2d(12,-48), Math.toRadians(90))
-//                .splineToSplineHeading(spikeMarkGoalPose, spikeMarkGoalPose.getHeading())
-//                .setReversed(true)
-//                .splineToConstantHeading(new Vector2d(15,-48), Math.toRadians(90))
-//                .UNSTABLE_addTemporalMarkerOffset(0,()-> twoPersonDrive.startPreset(0, false))
-//                .splineToSplineHeading(new Pose2d(30, -56, Math.toRadians(180)), Math.toRadians(0))
-//                .splineToLinearHeading(new Pose2d(35, initialBackdropGoalPose.getY(), Math.toRadians(180.00001)), Math.toRadians(90))
-//                .setReversed(false)
-//                .lineToLinearHeading(initialBackdropGoalPose)
-//                .resetConstraints()
-//                .build();
-
-
+        //
 
     }
 
