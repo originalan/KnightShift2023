@@ -35,32 +35,33 @@ public class PropDetectionProcessor implements VisionProcessor {
 
     public static Rect leftRectRed = new Rect(
             // top left corner
-            new Point(17, 276),
+            new Point(50, 150),
             // bottom right corner
-            new Point(155, 480)
+            new Point(250, 325)
     );
     public static Rect leftRectBlue = new Rect(
-            new Point(10, 270),
-            new Point(175, 405)
+            new Point(50, 150),
+            // bottom right corner
+            new Point(250, 325)
     );
     public static Rect rightRectRed = new Rect(
-                new Point(376, 278),
-                new Point(490, 380)
+            new Point(370, 150),
+            new Point(550, 325)
     );
     public static Rect rightRectBlue = new Rect(
-            new Point(380, 270),
-            new Point(500, 375)
+            new Point(370, 150),
+            new Point(550, 325)
     );
 
     // Red constants
-    public double RED_THRESHOLD = 0.3;
+    public static double RED_THRESHOLD = 0.3;
     private final Scalar LOW_HSV_RED_LOWER = new Scalar(0, 100, 20);
     private final Scalar LOW_HSV_RED_UPPER = new Scalar(10, 255, 255);
     private final Scalar HIGH_HSV_RED_LOWER = new Scalar(160, 100, 20);
     private final Scalar HIGH_HSV_RED_UPPER = new Scalar(180, 255, 255);
 
     // Blue constants
-    public double BLUE_THRESHOLD = 0.3;
+    public static double BLUE_THRESHOLD = 0.3;
     private final Scalar LOW_HSV_BLUE_LOWER = new Scalar(100, 100, 20);
     private final Scalar LOW_HSV_BLUE_UPPER = new Scalar(130, 255, 255);
     private final Scalar HIGH_HSV_BLUE_LOWER = new Scalar(220, 100, 20);

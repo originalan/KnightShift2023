@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.blue;
 
+import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXEL_RELEASE;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -52,7 +54,7 @@ public class Blue2_2T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(-35.25 - 1.5, 25.0), Math.toRadians(90))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(13.25)
@@ -64,7 +66,7 @@ public class Blue2_2T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(-35.25 - 1.5, 25.0), Math.toRadians(90))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(13.25)
@@ -76,7 +78,7 @@ public class Blue2_2T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(-45.5 - 1.5, 29.5), Math.toRadians(90))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(17.75)

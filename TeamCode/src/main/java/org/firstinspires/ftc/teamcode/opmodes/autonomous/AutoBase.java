@@ -58,10 +58,10 @@ public abstract class AutoBase extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        detectedSide = propDetectionProcessor.getDetectedSide();
-
         portal.setProcessorEnabled(aprilTagProcessor, false);
         portal.setProcessorEnabled(propDetectionProcessor, true);
+
+        detectedSide = propDetectionProcessor.getDetectedSide();
 
     }
 

@@ -82,5 +82,6 @@ public class RobotSettings {
     public static String CAMERA_NAME = "Webcam 1";
     public static final RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static final RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
+    public static double AUTO_PURPLE_PIXEL_RELEASE = 8.0;
 
 }

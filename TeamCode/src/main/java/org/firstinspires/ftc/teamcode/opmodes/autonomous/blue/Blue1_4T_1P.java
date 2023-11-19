@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.blue;
 
+import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXEL_RELEASE;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -22,6 +25,7 @@ public class Blue1_4T_1P extends AutoBase {
         MOVING_TO_BACKBOARD,
         MANEUVER_ARM,
         OPEN_SERVO_CLAW,
+        BRING_ARM_BACK,
         PARKING,
         IDLE
     }
@@ -65,6 +69,8 @@ public class Blue1_4T_1P extends AutoBase {
                         robot.slide.slideState = LinearSlide.SlideState.HOLDING_PIXEL; // technically don't need this but whatever
                         if (!drive.isBusy()) {
                             autoState = AutoState.MANEUVER_ARM;
+                            robot.linearSlideMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
+                            robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_IN_PLACE;
                         }
                         break;
@@ -76,8 +82,16 @@ public class Blue1_4T_1P extends AutoBase {
                         break;
                     case OPEN_SERVO_CLAW:
                         if (robot.linearSlideServo.getPosition() == RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION) {
-                            autoState = AutoState.PARKING;
+                            autoState = AutoState.BRING_ARM_BACK;
+                            robot.linearSlideMotor.setTargetPosition(0);
+                            robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_BACK;
+                        }
+                        break;
+                    case BRING_ARM_BACK:
+                        if (!robot.linearSlideMotor.isBusy()) {
+                            autoState = AutoState.PARKING;
+                            robot.slide.slideState = LinearSlide.SlideState.OFF;
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }
                         break;
@@ -117,7 +131,7 @@ public class Blue1_4T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(22.0 + 1.5, 29.5), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(29.25)
@@ -130,7 +144,7 @@ public class Blue1_4T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(36.25)
@@ -143,7 +157,7 @@ public class Blue1_4T_1P extends AutoBase {
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(8, () -> {
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
                         })
                         .back(36.25)
