@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.robocol.TelemetryMessage;
@@ -33,6 +34,10 @@ public class Drivetrain extends Subsystem {
         this.robot = robot;
 
         lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double radians = PoseStorage.currentPose.getHeading();
+        // We want robot to face 90 degrees (in pose2d graph and in radians)
+
 
         initYaw = lastAngles.firstAngle;
     }

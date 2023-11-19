@@ -1,16 +1,15 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.red;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@TeleOp(name = "Red2_2T_1P", group = "Autonomous Opmode 11.19")
-public class Red2_2T_1P extends AutoBase{
+@TeleOp(name = "Red2_2T_1P (places pixel, parks inner)", group = "Autonomous Opmode 11.19")
+public class Red2_2T_1P extends AutoBase {
 
     private TrajectorySequence traj1;
     private TrajectorySequence detectionTraj;

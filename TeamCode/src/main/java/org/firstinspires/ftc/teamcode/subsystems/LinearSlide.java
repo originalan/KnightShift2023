@@ -25,11 +25,13 @@ public class LinearSlide extends Subsystem {
     }
 
     public SlideState slideState = SlideState.OFF;
+    public boolean isBusy;
 
     public LinearSlide(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
+        isBusy = false;
 
         robot.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
@@ -62,6 +64,7 @@ public class LinearSlide extends Subsystem {
                 break;
             case BRING_ARM_BACK:
                 robot.linearSlideMotor.setPower(RobotSettings.OUTTAKE_MOTOR_POWER);
+                robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION);
                 break;
         }
     }
