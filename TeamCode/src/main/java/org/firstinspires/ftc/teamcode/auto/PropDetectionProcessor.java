@@ -35,22 +35,22 @@ public class PropDetectionProcessor implements VisionProcessor {
 
     public static Rect leftRectRed = new Rect(
             // top left corner
-            new Point(50, 150),
+            new Point(50, 120),
             // bottom right corner
-            new Point(250, 325)
+            new Point(235, 275)
     );
     public static Rect leftRectBlue = new Rect(
-            new Point(50, 150),
+            new Point(50, 120),
             // bottom right corner
-            new Point(250, 325)
+            new Point(235, 275)
     );
     public static Rect rightRectRed = new Rect(
-            new Point(370, 150),
-            new Point(550, 325)
+            new Point(470, 120),
+            new Point(640, 240)
     );
     public static Rect rightRectBlue = new Rect(
-            new Point(370, 150),
-            new Point(550, 325)
+            new Point(470, 120),
+            new Point(640, 240)
     );
 
     // Red constants

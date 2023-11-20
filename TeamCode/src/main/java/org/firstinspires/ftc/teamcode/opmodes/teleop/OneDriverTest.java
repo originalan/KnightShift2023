@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.subsystems.PurplePixel;
 import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -26,6 +27,7 @@ public class OneDriverTest extends LinearOpMode{
 
     private boolean intakeOn = false;
     private boolean intakeReverse = false;
+    private boolean launcherFired = false;
 
     private boolean moveRigServo = false;
     private boolean undoRig = true;
@@ -53,6 +55,7 @@ public class OneDriverTest extends LinearOpMode{
         while (opModeInInit()) {
             robot.rig.noHang();
             robot.purplePixelServo.setPosition(1);
+            robot.launcher.notYet();
         }
 
 
@@ -81,11 +84,11 @@ public class OneDriverTest extends LinearOpMode{
                 double yawIMU2 = (gamepad1.right_trigger - gamepad1.left_trigger);
 
                 // Moves drivetrain on a field orientated drive and updates telemetry with wheel powers
-                if (switchDriveControls) {
-                    robot.drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
-                }else {
-                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
-                }
+//                if (switchDriveControls) {
+//                    robot.drivetrain.goXYRIMU(axialIMU2, lateralIMU2, yawIMU2);
+//                }else {
+//                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
+//                }
 
                 // PID control that adjusts for any irl inconsistencies with motor velocity
                 // drivetrain.checkAndAdjustMotors();
@@ -99,23 +102,23 @@ public class OneDriverTest extends LinearOpMode{
 //                    switchDriveControls = !switchDriveControls;
 //                }
 
-                if (Math.abs(currentGamepad1.left_trigger) > 0.1) {
+                if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.ON;
                 }
-                else if (Math.abs(currentGamepad1.right_trigger) > 0.1) {
+                else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;
                 }
                 else {
                     robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
-                if (currentGamepad1.right_bumper || currentGamepad1.left_bumper) {
-                    robot.rightRigMotor.setPower(0.4 * reversed);
-                    robot.leftRigMotor.setPower(-0.4 * reversed);
-                }else {
-                    robot.rightRigMotor.setPower(0);
-                    robot.leftRigMotor.setPower(0);
-                }
+//                if (currentGamepad1.right_bumper || currentGamepad1.left_bumper) {
+//                    robot.rightRigMotor.setPower(0.4 * reversed);
+//                    robot.leftRigMotor.setPower(-0.4 * reversed);
+//                }else {
+//                    robot.rightRigMotor.setPower(0);
+//                    robot.leftRigMotor.setPower(0);
+//                }
 
                 if (currentGamepad1.a && !previousGamepad1.a) {
                     deliverPurplePixel = !deliverPurplePixel;
@@ -124,12 +127,12 @@ public class OneDriverTest extends LinearOpMode{
 //                if (currentGamepad1.b && !previousGamepad1.b) {
 //                    robot.drivetrain.resetInitYaw();
 //                }
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    moveRigServo = true;
-                    timeElapsedRigging = getRuntime();
-                    undoRig = !undoRig;
-                    i = 1;
-                }
+//                if (currentGamepad1.x && !previousGamepad1.x) {
+//                    moveRigServo = true;
+//                    timeElapsedRigging = getRuntime();
+//                    undoRig = !undoRig;
+//                    i = 1;
+//                }
 
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     clawCounter++;
@@ -142,23 +145,20 @@ public class OneDriverTest extends LinearOpMode{
                         robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                 }
-                if (currentGamepad1.b && !previousGamepad1.b) {
-
-                }
 
                 if (clawCounter % 5 == 1) {
                     robot.slide.slideState = LinearSlide.SlideState.OFF;
                 }
-                if (clawCounter % 5 == 2) {
+                else if (clawCounter % 5 == 2) {
                     robot.slide.slideState = LinearSlide.SlideState.HOLDING_PIXEL;
                 }
-                if (clawCounter % 5 == 3) {
+                else if (clawCounter % 5 == 3) {
                     robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_IN_PLACE;
                 }
-                if (clawCounter % 5 == 4) {
+                else if (clawCounter % 5 == 4) {
                     robot.slide.slideState = LinearSlide.SlideState.RELEASE_PIXEL;
                 }
-                if (clawCounter % 5 == 0) {
+                else if (clawCounter % 5 == 0) {
                     robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_BACK;
                     if (!robot.linearSlideMotor.isBusy()) {
                         robot.slide.slideState = LinearSlide.SlideState.OFF;
@@ -167,7 +167,13 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    launcherFired = !launcherFired;
+                }
+
+                if (launcherFired) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                }else {
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
                 }
 
 //                telemetry.addData("I value: ", i);
@@ -201,14 +207,16 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 if (deliverPurplePixel) {
-
+                    robot.purplePixel.purplePixelState = PurplePixel.PurplePixelState.HOLD;
                 }else {
-                    robot.purplePixelServo.setPosition(1.0);
+                    robot.purplePixel.purplePixelState = PurplePixel.PurplePixelState.DROP;
                 }
 
                 // Update all subsystems (if applicable since drivetrain needs no update)
                 robot.update();
-
+                telemetry.addData("slide state", robot.launcher.launcherState);
+                telemetry.addData("claw counter", clawCounter);
+                telemetry.addData("claw counter % 5", clawCounter % 5);
                 telemetry.update();
             }
         }

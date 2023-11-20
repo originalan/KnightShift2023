@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.red;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
-@TeleOp(name = "Red2_3T_1P (parks inner)", group = "Autonomous Opmode 11.19")
+@Autonomous(name = "Red2_3T_1P (parks inner)", group = "Autonomous Opmode 11.19")
 public class Red2_3T_1P extends AutoBase {
 
     private TrajectorySequence traj1;

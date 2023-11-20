@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXE
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@TeleOp(name = "Blue1_4T_1P (places pixel, other pixel, parks outer)", group = "Autonomous Opmode 11.19")
+@Autonomous(name = "Blue1_4T_1P (places pixel, other pixel, parks outer)", group = "Autonomous Opmode 11.19")
 public class Blue1_4T_1P extends AutoBase {
 
     private TrajectorySequence detectionTraj;

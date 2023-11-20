@@ -46,6 +46,7 @@ public class OneDriver extends LinearOpMode{
         while (opModeInInit()) {
             robot.rig.noHang();
             robot.purplePixelServo.setPosition(RobotSettings.PURPLE_PIXEL_SERVO_STARTING_POSITION);
+            robot.launcher.notYet();
         }
 
         waitForStart();
