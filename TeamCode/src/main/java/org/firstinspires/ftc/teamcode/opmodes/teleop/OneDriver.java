@@ -30,6 +30,8 @@ public class OneDriver extends LinearOpMode{
     private double timeElapsedRigging = 0;
     private int i = 1;
 
+    private boolean switchDriveControls = false;
+
 
     @Override
     public void runOpMode() {
@@ -55,22 +57,38 @@ public class OneDriver extends LinearOpMode{
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
                 // Keep at top of loop, is used to check if buttons are pressed
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                double axialIMU = gamepad1.left_stick_x;
-                double lateralIMU = -1 * gamepad1.left_stick_y;
-                double yawIMU = gamepad1.right_stick_x;
+                // Records joystick values
+                double axial = -1 * gamepad1.left_stick_y; // pushing stick forward gives negative value
+                double lateral = gamepad1.left_stick_x;
+                double yaw = gamepad1.right_stick_x;
 
-                robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
+//                double axialIMU = gamepad1.left_stick_x;
+//                double lateralIMU = -1 * gamepad1.left_stick_y;
+//                double yawIMU = gamepad1.right_stick_x;
+
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                    switchDriveControls = !switchDriveControls;
+                }
+
+                if (switchDriveControls) {
+                    robot.drivetrain.goXYR(axial, lateral, yaw);
+                }else {
+                    robot.drivetrain.goXYRIMU(axial, lateral, yaw);
+                }
 
                 // Show elapsed game time
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 // Add all robot telemetry
                 robot.addTelemetry();
 
-//
+                /*
+                =================INTAKE CONTROLS==============
+                */
                 if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.ON;
                 }
@@ -81,33 +99,15 @@ public class OneDriver extends LinearOpMode{
                     robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
+                /*
+                =================RIGGING CONTROLS==============
+                */
                 if (hooksInPlace && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
                     robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                     robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
                     robot.rightRigMotor.setPower(0);
                     robot.leftRigMotor.setPower(0);
-                }
-
-                if (currentGamepad1.b && !previousGamepad1.b) {
-                    robot.drivetrain.resetInitYaw();
-                }
-
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    moveRigServo = true;
-                    timeElapsedRigging = getRuntime();
-                    undoRig = !undoRig;
-                    i = 1;
-                }
-
-                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    launcherFired = !launcherFired;
-                }
-
-                if (launcherFired) {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
-                }else {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
                 }
 
                 if (moveRigServo) {
@@ -138,6 +138,33 @@ public class OneDriver extends LinearOpMode{
                     }
                 }else {
                     robot.rig.noHang();
+                }
+
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    moveRigServo = true;
+                    timeElapsedRigging = getRuntime();
+                    undoRig = !undoRig;
+                    i = 1;
+                }
+
+                /*
+                =================AIRPLANE CONTROLS==============
+                */
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    launcherFired = !launcherFired;
+                }
+
+                if (launcherFired) {
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                }else {
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
+                }
+
+                /*
+                =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
+                */
+                if (currentGamepad1.b && !previousGamepad1.b) {
+                    robot.drivetrain.resetInitYaw();
                 }
 
                 // Update all subsystems (if applicable since drivetrain needs no update)

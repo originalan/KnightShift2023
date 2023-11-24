@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name="E_Blue1", group="chad")
+@Autonomous(name="E_Blue1", group="Emergency Autonomous Opmode")
 public class E_Blue1 extends LinearOpMode {
     //
     DcMotor frontleft;

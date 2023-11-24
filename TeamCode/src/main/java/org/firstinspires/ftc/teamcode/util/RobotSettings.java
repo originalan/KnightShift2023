@@ -77,7 +77,7 @@ public class RobotSettings {
     public static double LAUNCHER_POSITION_OUT = 1;
 
     /*
-    =================SENSOR SETTINGS==============
+    =================MISC SETTINGS==============
     */
     public static String CAMERA_NAME = "Webcam 1";
     public static final RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RevHubOrientationOnRobot.LogoFacingDirection.UP;

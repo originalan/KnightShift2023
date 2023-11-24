@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUNew;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -38,6 +41,7 @@ public class JVBoysSoccerRobot {
 
     // Hardware
     public BNO055IMU imu;
+    public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DcMotorEx intakeMotor;
     public Servo airplaneLauncherServo;
@@ -117,6 +121,11 @@ public class JVBoysSoccerRobot {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu.initialize(parameters);
+
+        imu2 = hwMap.get(IMU.class, "imu");
+        IMU.Parameters parameters1 = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RobotSettings.LOGO_FACING_DIR, RobotSettings.USB_FACING_DIR));
+        imu2.initialize(parameters1);
     }
 
     public void initHardware() {

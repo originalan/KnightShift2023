@@ -23,7 +23,7 @@ public class Drivetrain extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    private Orientation lastAngles = new Orientation();
+    private Orientation lastAngles;
 
     private double initYaw;
     private double adjustedYaw;
@@ -33,11 +33,11 @@ public class Drivetrain extends Subsystem {
         this.telemetry = telemetry;
         this.robot = robot;
 
-        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double radians = PoseStorage.currentPose.getHeading();
         // We want robot to face 90 degrees (in pose2d graph and in radians)
-
+        // insert some code here so that if robot ends up not facing this after auto, adjust initYaw to something that works
 
         initYaw = lastAngles.firstAngle;
     }
@@ -72,11 +72,125 @@ public class Drivetrain extends Subsystem {
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle
      */
     public void resetInitYaw() {
-        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = lastAngles.firstAngle;
 
         // For resetting absolute angle of imu
         robot.resetIMUAngle();
+    }
+
+    /**
+     * Makes robot move based on x, y, r values (axial, pitch, yaw)
+     *
+     * Axial - Driving forward and backwards - left joystick forward/backward
+     * Lateral - Strafing right and left - left joystick right and left
+     * Yaw - Rotating CW and CCW - right joystick right and left
+     **/
+    public void goXYR(double axial, double lateral, double yaw) {
+        double frontLeftPower = axial + lateral + yaw;
+        double frontRightPower = axial - lateral - yaw;
+        double backLeftPower = axial - lateral + yaw;
+        double backRightPower = axial + lateral - yaw;
+
+        // Makes sure power is always between [-1, 1] just in case some goof puts in wrong values when calling this method
+        frontLeftPower = Range.clip(frontLeftPower, -1, 1);
+        frontRightPower = Range.clip(frontRightPower, -1, 1);
+        backLeftPower = Range.clip(backLeftPower, -1, 1);
+        backRightPower = Range.clip(backRightPower, -1, 1);
+
+        // Normalize wheel power so none exceeds 100%
+        // Ensures robot maintains desired motion by keeping same ratio to every motor
+        // Max = largest motor power or 1
+        double max = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
+        frontLeftPower /= max;
+        frontRightPower /= max;
+        backLeftPower /= max;
+        backRightPower /= max;
+
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
+
+        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
+    }
+
+    /**
+     * Makes robot move based on a Field Oriented Drive
+     * Parameters are the exact same as goXYR()
+     * @param x
+     * @param y
+     * @param turn
+     */
+    public void goXYRIMU(double x, double y, double turn) {
+        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        adjustedYaw = lastAngles.firstAngle - initYaw;
+
+        double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
+
+        double theta = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
+        double realTheta = (360 - zerodYaw) + theta; // Real theta of robot in degrees
+        double power = Math.hypot(x, y); // Power (magnitude)
+
+        double piOverFour = Math.PI / 4.0;
+        double sin = Math.sin( (realTheta * Math.PI / 180) - piOverFour);
+        double cos = Math.cos( (realTheta * Math.PI / 180) - piOverFour);
+        double max = Math.max(Math.abs(sin), Math.abs(cos));
+
+        double frontLeftPower = (power * cos / max + turn);
+        double frontRightPower = (power * sin / max - turn);
+        double backLeftPower = (power * sin / max + turn);
+        double backRightPower = (power * cos / max - turn);
+
+        // Say you drive forward at full power and turn. If the value is greater than 1, remove power from all motors to make it consistent
+        if ( (power + Math.abs(turn)) > 1) {
+            frontLeftPower /= power + turn;
+            frontRightPower /= power - turn;
+            backLeftPower /= power + turn;
+            backRightPower /= power - turn;
+        }
+
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
+
+        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
+    }
+
+    /**
+     * Uses IMU to return angle of robot
+     * @return
+     */
+    public double getAngle() {
+        Orientation angles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+
+    /**
+     * PID calibrations for motors given any position that the robot wants to move forward to
+     * @param reference is the projected position in inches
+     * @return
+     */
+    public double powerFromPIDPosition(double reference) {
+
+        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false, false);
+        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false, false);
+        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false, false);
+        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false, false);
+
+        robot.backLeft.setPower(BLcal);
+        robot.backRight.setPower(BRcal);
+        robot.frontLeft.setPower(FLcal);
+        robot.frontRight.setPower(FRcal);
+
+        telemetry.addData("Front Left/Right Adjusted Powers", "%4.2f, %4.2f", FLcal, FRcal);
+        telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
+
+        return 0;
     }
 
     /**
@@ -138,141 +252,6 @@ public class Drivetrain extends Subsystem {
             }
 
         }
-    }
-
-    /**
-     * Makes robot move based on x, y, r values (axial, pitch, yaw)
-     *
-     * Axial - Driving forward and backwards - left joystick forward/backward
-     * Lateral - Strafing right and left - left joystick right and left
-     * Yaw - Rotating CW and CCW - right joystick right and left
-     **/
-    public void goXYR(double axial, double lateral, double yaw) {
-        double frontLeftPower = axial + lateral + yaw;
-        double frontRightPower = axial - lateral - yaw;
-        double backLeftPower = axial - lateral + yaw;
-        double backRightPower = axial + lateral - yaw;
-
-        // Makes sure power is always between [-1, 1] just in case some goof puts in wrong values when calling this method
-        frontLeftPower = Range.clip(frontLeftPower, -1, 1);
-        frontRightPower = Range.clip(frontRightPower, -1, 1);
-        backLeftPower = Range.clip(backLeftPower, -1, 1);
-        backRightPower = Range.clip(backRightPower, -1, 1);
-
-        // Normalize wheel power so none exceeds 100%
-        // Ensures robot maintains desired motion by keeping same ratio to every motor
-        // Max = largest motor power or 1
-        double max = Math.max(Math.abs(axial) + Math.abs(lateral) + Math.abs(yaw), 1);
-        frontLeftPower /= max;
-        frontRightPower /= max;
-        backLeftPower /= max;
-        backRightPower /= max;
-
-        robot.backLeft.setPower(backLeftPower);
-        robot.backRight.setPower(backRightPower);
-        robot.frontLeft.setPower(frontLeftPower);
-        robot.frontRight.setPower(frontRightPower);
-
-        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-    }
-
-    /**
-     * Makes robot move based on a Field Oriented Drive
-     * Parameters are the exact same as goXYR()
-     * @param x
-     * @param y
-     * @param turn
-     */
-    public void goXYRIMU(double x, double y, double turn) {
-        lastAngles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        adjustedYaw = lastAngles.firstAngle - initYaw;
-
-        double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
-
-        double theta = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
-        double realTheta = (360 - zerodYaw) + theta; // Real theta of robot in degrees
-        double power = Math.hypot(x, y); // Power (magnitude)
-
-        double piOverFour = Math.PI / 4.0;
-        double sin = Math.sin( (realTheta * Math.PI / 180) - piOverFour);
-        double cos = Math.cos( (realTheta * Math.PI / 180) - piOverFour);
-        double max = Math.max(Math.abs(sin), Math.abs(cos));
-
-        double frontLeftPower = (power * cos / max + turn);
-        double frontRightPower = (power * sin / max - turn);
-        double backLeftPower = (power * sin / max + turn);
-        double backRightPower = (power * cos / max - turn);
-
-        // Say you drive forward at full power and turn. If the value is greater than 1, remove power from all motors to make it consistent
-        if ( (power + Math.abs(turn)) > 1) {
-            frontLeftPower /= power + turn;
-            frontRightPower /= power - turn;
-            backLeftPower /= power + turn;
-            backRightPower /= power - turn;
-        }
-
-        robot.backLeft.setPower(backLeftPower);
-        robot.backRight.setPower(backRightPower);
-        robot.frontLeft.setPower(frontLeftPower);
-        robot.frontRight.setPower(frontRightPower);
-
-        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-    }
-
-    /**
-     * Strafes robot at any given angle for any magnitude of power
-     **/
-    public void goStrafeRadians(double angle, double magnitude) {
-        double piOverFour = Math.PI / 4.0;
-        double red = Math.sin(angle - piOverFour) * Range.clip(magnitude, -1, 1);
-        double blue = Math.sin(angle + piOverFour) * Range.clip(magnitude, -1, 1);
-
-        // Search up "seamonster mecanum drive" to see how math works
-        robot.frontRight.setPower(red);
-        robot.backLeft.setPower(red);
-        robot.frontLeft.setPower(blue);
-        robot.backRight.setPower(blue);
-    }
-    public void goStrafeDegrees(double angle, double magnitude) {
-        goStrafeRadians(Math.toRadians(angle), magnitude);
-    }
-
-
-    /**
-     * PID calibrations for motors given any position that the robot wants to move forward to
-     * @param reference is the projected position in inches
-     * @return
-     */
-    public double powerFromPIDPosition(double reference) {
-
-        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false, false);
-        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false, false);
-        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false, false);
-        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false, false);
-
-        robot.backLeft.setPower(BLcal);
-        robot.backRight.setPower(BRcal);
-        robot.frontLeft.setPower(FLcal);
-        robot.frontRight.setPower(FRcal);
-
-        telemetry.addData("Front Left/Right Adjusted Powers", "%4.2f, %4.2f", FLcal, FRcal);
-        telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
-
-        return 0;
-    }
-
-    /**
-     * Uses IMU to return angle of robot
-     * @return
-     */
-    public double getAngle() {
-        Orientation angles =
-                robot.imu.getAngularOrientation(
-                        AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // ZYX is Original
-        return angles.firstAngle;
     }
 
 }

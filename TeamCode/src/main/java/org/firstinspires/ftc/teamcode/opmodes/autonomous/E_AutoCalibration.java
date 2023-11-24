@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 @Config
-@Autonomous(name="Calibrate", group="chad")
+@Autonomous(name="E_AutoCalibration", group="Emergency Autonomous Opmode")
 public class E_AutoCalibration extends LinearOpMode {
     //
     DcMotor frontleft;
