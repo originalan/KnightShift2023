@@ -20,7 +20,7 @@ public class PIDFControl {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 0;
-    public static double ticksInDegrees = 1440 / 180.0;
+    public static double ticksInDegrees = 1440 / 360.0;
     public static double lastError = 0;
 
     // Used to control angle of robot
@@ -57,8 +57,7 @@ public class PIDFControl {
     }
 
     public double feedForwardCalculate(double state) {
-        double ffPower = Math.cos(Math.toRadians(state / ticksInDegrees)) + Kf;
-        return ffPower;
+        return Math.cos(Math.toRadians(state / ticksInDegrees)) + Kf;
     }
 
     public double angleWrap(double radians) {
