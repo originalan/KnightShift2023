@@ -26,24 +26,6 @@ public class CameraTest extends LinearOpMode {
     private VisionPortal portal;
     private ElapsedTime runtime = new ElapsedTime();
     private SampleMecanumDrive drive;
-    private boolean atBackdrop, runningTrajectory;
-
-
-    private Pose2d
-            spikeMarkGoalPose,
-            initialBackdropGoalPose,
-            firstStackPose,
-            firstCycleBackdropGoalPose;
-
-    private final long // in milliseconds
-            BACKDROP_WAIT_TIME = 0,
-            SCANNING_TIME = 1000,
-            SCORE_WAIT_TIME = 500,
-            INTAKING_TIME = 2000;
-
-    // TODO: adjust this for each auto
-    private Pose2d startPose = new Pose2d(11.75,-70.5 + (RobotSettings.ROBOT_SIDE_LENGTH / 2), Math.toRadians(90));
-    private TrajectorySequence scoreSpikeMark, getStackPixels, adjustStack, getStackPixels2, scoreFirstStackPixels, park;
 
     private AprilTagProcessor aprilTagProcessor;
     private PropDetectionProcessor propDetectionProcessor;
@@ -97,10 +79,6 @@ public class CameraTest extends LinearOpMode {
 
         waitForStart();
 
-        boolean changeValue = false;
-        double elapsedTimeSinceButton = -1;
-        double currentTime = -1;
-
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -109,15 +87,15 @@ public class CameraTest extends LinearOpMode {
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
 
-                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD + 0.1;
-                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD + 0.1;
+                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD + 0.05;
+                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD + 0.05;
 
                 }
 
                 if (currentGamepad1.a && !previousGamepad1.a) {
 
-                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD - 0.1;
-                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD - 0.1;
+                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD - 0.05;
+                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD - 0.05;
 
                 }
 

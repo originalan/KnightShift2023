@@ -37,7 +37,9 @@ public class RobotSettings {
     public static double OUTTAKE_SERVO_CLAW_HOLDING_POSITION = 0.6;
     public static double OUTTAKE_SERVO_CLAW_RELEASE_POSITION = 0.4;
 
-    // Purple Pixel Stuff
+    /*
+    =================PURPLE PIXEL SETTINGS==============
+    */
     public static String PURPLE_PIXEL_SERVO_NAME = "PurplePixel";
     public static boolean PURPLE_PIXEL_SERVO_REVERSED = false;
     public static double PURPLE_PIXEL_SERVO_STARTING_POSITION = 1.0;

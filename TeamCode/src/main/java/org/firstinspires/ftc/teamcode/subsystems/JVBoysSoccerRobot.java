@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMUNew;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,12 +13,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.PIDControl;
+import org.firstinspires.ftc.teamcode.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Robot super system - JV BOYS SOCCER TEAM
@@ -29,7 +27,7 @@ public class JVBoysSoccerRobot {
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private List<LynxModule> allHubs;
-    public PIDControl pid;
+    public PIDFControl pid;
 
     // Subsystems
     public Drivetrain drivetrain;
@@ -69,7 +67,7 @@ public class JVBoysSoccerRobot {
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
-        pid = new PIDControl();
+        pid = new PIDFControl();
 
         // Configuring Hubs to auto mode for bulk reads
         allHubs = hwMap.getAll(LynxModule.class);

@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.transition.Slide;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PIDControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 public class LinearSlide extends Subsystem {
@@ -16,12 +12,15 @@ public class LinearSlide extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
+    public double targetPower = 0;
+
     public enum SlideState {
         OFF,
         HOLDING_PIXEL,
         BRING_ARM_IN_PLACE,
         BRING_ARM_BACK,
-        RELEASE_PIXEL
+        RELEASE_PIXEL,
+        GO_TO_POSITION
     }
 
     public SlideState slideState = SlideState.OFF;
@@ -65,6 +64,9 @@ public class LinearSlide extends Subsystem {
             case BRING_ARM_BACK:
                 robot.linearSlideMotor.setPower(RobotSettings.OUTTAKE_MOTOR_POWER);
                 robot.linearSlideServo.setPosition(RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION);
+                break;
+            case GO_TO_POSITION:
+                robot.linearSlideMotor.setPower(targetPower);
                 break;
         }
     }

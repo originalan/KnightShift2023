@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.PIDControl;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Drivetrain extends Subsystem {
 
@@ -177,10 +170,10 @@ public class Drivetrain extends Subsystem {
      */
     public double powerFromPIDPosition(double reference) {
 
-        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false, false);
-        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false, false);
-        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false, false);
-        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false, false);
+        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false);
+        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false);
+        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false);
+        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false);
 
         robot.backLeft.setPower(BLcal);
         robot.backRight.setPower(BRcal);
@@ -210,9 +203,9 @@ public class Drivetrain extends Subsystem {
         // Two front motors
         if (robot.frontLeft.getVelocity() > robot.frontRight.getVelocity()) {
 
-            frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false, false);
+            frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false);
             if (frontRightPower > 1.0) {
-                frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false, false);
+                frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false);
                 robot.frontLeft.setPower(frontLeftPower);
             }else {
                 robot.frontRight.setPower(frontRightPower);
@@ -220,9 +213,9 @@ public class Drivetrain extends Subsystem {
 
         }else if (robot.frontLeft.getVelocity() < robot.frontRight.getVelocity()) {
 
-            frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false, false);
+            frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false);
             if (frontLeftPower > 1.0) {
-                frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false, false);
+                frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false);
                 robot.frontRight.setPower(frontRightPower);
             }else {
                 robot.frontLeft.setPower(frontLeftPower);
@@ -233,9 +226,9 @@ public class Drivetrain extends Subsystem {
         // Two back motors
         if (robot.backLeft.getVelocity() > robot.backRight.getVelocity()) {
 
-            backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false, false);
+            backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false);
             if (backRightPower > 1.0) {
-                backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false, false);
+                backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false);
                 robot.backLeft.setPower(backLeftPower);
             }else {
                 robot.backRight.setPower(backRightPower);
@@ -243,9 +236,9 @@ public class Drivetrain extends Subsystem {
 
         }else if (robot.backLeft.getVelocity() < robot.backRight.getVelocity()) {
 
-            backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false, false);
+            backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false);
             if (backLeftPower > 1.0) {
-                backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false, false);
+                backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false);
                 robot.backRight.setPower(backRightPower);
             }else {
                 robot.backLeft.setPower(backLeftPower);
