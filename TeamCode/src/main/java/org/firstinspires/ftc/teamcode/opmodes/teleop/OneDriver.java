@@ -62,7 +62,7 @@ public class OneDriver extends LinearOpMode{
                 double axial = -1 * gamepad1.left_stick_y; // pushing stick forward gives negative value
                 double lateral = gamepad1.left_stick_x;
                 double yaw = gamepad1.right_stick_x;
-
+                double asdkfjasdf = -1;
 //                double axialIMU = gamepad1.left_stick_x;
 //                double lateralIMU = -1 * gamepad1.left_stick_y;
 //                double yawIMU = gamepad1.right_stick_x;
