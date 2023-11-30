@@ -69,9 +69,9 @@ public class OneDriverTest extends LinearOpMode{
                 double lateral = gamepad1.left_stick_x;
                 double yaw = gamepad1.right_stick_x;
 
-//                double axialIMU = gamepad1.left_stick_x;
-//                double lateralIMU = -1 * gamepad1.left_stick_y;
-//                double yawIMU = gamepad1.right_stick_x;
+                double axialIMU = gamepad1.left_stick_x;
+                double lateralIMU = -1 * gamepad1.left_stick_y;
+                double yawIMU = gamepad1.right_stick_x;
 
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
                     switchDriveControls = !switchDriveControls;
@@ -80,7 +80,7 @@ public class OneDriverTest extends LinearOpMode{
                 if (switchDriveControls) {
                     robot.drivetrain.goXYR(axial, lateral, yaw);
                 }else {
-                    robot.drivetrain.goXYRIMU(axial, lateral, yaw);
+                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
                 }
 
                 // Show elapsed game time

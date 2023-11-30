@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 
 @Config
-@TeleOp
+@TeleOp (name = "Yellow Pixel Arm Test", group = "Testing")
 public class ArmTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
