@@ -12,6 +12,7 @@ public class Intake extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
+    public String IntakeStates = "OFF";
     public enum IntakeState {
         OFF,
         ON,

@@ -13,8 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 @TeleOp(name = "OneDriver", group = "TeleOpmode")
-
-public class OneDriver extends LinearOpMode{
+public class OneDriver extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
