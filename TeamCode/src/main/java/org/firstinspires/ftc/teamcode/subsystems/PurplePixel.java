@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * PurplePixel is a Subsystem representing all purple pixel servo hardware movement
+ * As of now this is outdated because the purple pixel servo no longer exists
+ */
 public class PurplePixel extends Subsystem {
 
     private HardwareMap hwMap;

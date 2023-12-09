@@ -18,6 +18,9 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+/**
+ * PropDetectionProcessor is a processor for VisionPortal that detects the team prop on camera
+ */
 @Config
 public class PropDetectionProcessor implements VisionProcessor {
 

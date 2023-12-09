@@ -19,6 +19,9 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+/**
+ * CameraTest is a testing Autonomous opmode that is used to test the bounding boxes for team prop detection during the autonomous phase
+ */
 @Autonomous (name = "CameraTest (testing rectangles)", group = "Testing")
 public class CameraTest extends LinearOpMode {
 

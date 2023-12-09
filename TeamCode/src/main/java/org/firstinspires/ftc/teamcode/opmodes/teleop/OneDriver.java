@@ -12,6 +12,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * OneDriver is a Teleop mode that only requires one controller.
+ * Manages joystick controls and telemetry updates.
+ * It is NOT updated yet as of 12.08.2023. See OneDriverTest for latest updates
+ */
 @TeleOp(name = "OneDriver", group = "TeleOpmode")
 public class OneDriver extends LinearOpMode {
 
@@ -29,6 +34,9 @@ public class OneDriver extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
+        telemetry.update();
+
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 

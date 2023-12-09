@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * AirplaneLauncher is a Subsystem representing all airplane launcher hardware movement
+ */
 public class AirplaneLauncher extends Subsystem {
 
     private HardwareMap hwMap;

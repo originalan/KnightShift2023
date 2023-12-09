@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Robot super system - JV BOYS SOCCER TEAM
+ * JVBoysSoccerRobot is the robot base superclass.
+ * All hardware and subsystems are initialized here.
+ * GO JV BOYS SOCCER TEAM!
  */
 public class JVBoysSoccerRobot {
 
@@ -186,7 +188,7 @@ public class JVBoysSoccerRobot {
 
     /**
      * Records the absolute angle of the imu compared to when it first started (-infinity, infinity)
-     * @return
+     * @return the current heading of the IMU in degrees
      */
     private double getIntegratedHeading() {
         double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
@@ -207,9 +209,5 @@ public class JVBoysSoccerRobot {
         integratedHeading = 0;
         previousHeading = 0;
     }
-
-//    public String formatDegrees(double degrees) {
-//        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-//    }
 
 }

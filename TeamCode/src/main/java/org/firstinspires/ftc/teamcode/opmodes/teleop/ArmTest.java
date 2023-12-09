@@ -12,6 +12,11 @@ import org.firstinspires.ftc.teamcode.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 
+/**
+ * ArmTest is a test Teleop mode that is used to tune the movement of the Yellow Pixel Arm
+ * Calibration can be changed live in FTC Dashboard
+ * As of now, is outdated because the yellow pixel arm does not exist anymore
+ */
 @Config
 @TeleOp (name = "Yellow Pixel Arm Test", group = "Testing")
 public class ArmTest extends LinearOpMode {

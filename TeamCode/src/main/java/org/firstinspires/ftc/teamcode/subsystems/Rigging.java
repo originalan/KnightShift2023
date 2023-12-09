@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Rigging is a Subsystem representing all rigging/hanging hardware movement
+ */
 public class Rigging extends Subsystem {
 
     private HardwareMap hwMap;

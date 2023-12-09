@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
+/**
+ * ForKids is a Teleop mode that only requires one controller.
+ * It is used for outreach events where others can control the robot themselves.
+ * Functionality is limited only to drivetrain movement
+ */
 @TeleOp (name = "4 Kidz", group = "KIDS")
 public class ForKids extends LinearOpMode {
 
@@ -35,19 +40,15 @@ public class ForKids extends LinearOpMode {
                 currentGamepad1.copy(gamepad1);
 
                 // Records joystick values
-                double axial = -1 * gamepad1.left_stick_y; // pushing stick forward gives negative value
-                double lateral = gamepad1.left_stick_x;
-                double yaw = gamepad1.right_stick_x;
-
-                double axialIMU = gamepad1.left_stick_x;
-                double lateralIMU = -1 * gamepad1.left_stick_y;
-                double yawIMU = gamepad1.right_stick_x;
+                double y = -1 * gamepad1.left_stick_y; // pushing stick forward gives negative value
+                double x = gamepad1.left_stick_x;
+                double r = gamepad1.right_stick_x;
 
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
                     switchDriveControls = !switchDriveControls;
                 }
 
-                robot.drivetrain.goXYR(axial, lateral, yaw);
+                robot.drivetrain.moveXYR(x, y, r, false);
 
                 telemetry.addLine("Use the joysticks to move the robot!");
                 telemetry.update();

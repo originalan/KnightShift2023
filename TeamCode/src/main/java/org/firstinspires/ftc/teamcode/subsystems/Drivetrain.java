@@ -10,6 +10,10 @@ import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 import com.qualcomm.robotcore.util.Range;
 
+/**
+ * Drivetrain is a Subsystem representing all drivetrain hardware movement
+ * Ex. Moving drivetrain based on Field-Centric or Robot-Centric Views during Teleop
+ */
 public class Drivetrain extends Subsystem {
 
     private HardwareMap hwMap;
@@ -17,9 +21,12 @@ public class Drivetrain extends Subsystem {
     private JVBoysSoccerRobot robot;
 
     private Orientation lastAngles;
-
     private double initYaw;
-    private double adjustedYaw;
+
+    private double  frontLeftPower,
+                    frontRightPower,
+                    backLeftPower,
+                    backRightPower;
 
     public Drivetrain(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -39,12 +46,11 @@ public class Drivetrain extends Subsystem {
     public void addTelemetry() {
         telemetry.addLine("Drivetrain");
 
-        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
-        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+        telemetry.addData("   Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("   Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
 
         telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
         telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
-
     }
 
     @Override
@@ -73,6 +79,56 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
+     * Moves robot based on joystick inputs and if it is field-centric or robot-centric drive
+     * @param x is the strafing (left-right) motion of the robot ; left joystick left-rightx
+     * @param y is the vertical (forward-backward) motion of the robot ; left joystick up-down
+     * @param r is the rotation of the robot CW or CCW ; right joystick left-right
+     * @param isFieldOriented is true if field centric drive, false if robot centric drive
+     */
+    public void moveXYR(double x, double y, double r, boolean isFieldOriented) {
+        double  power,
+                theta,
+                sin,
+                cos,
+                max;
+
+        if (isFieldOriented) {
+            lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            double zeroedYaw = (-1 * initYaw) + lastAngles.firstAngle;
+            double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
+            theta = (360 - zeroedYaw) + thetaGamepad; // Real theta that robot must travel in degrees
+            theta = theta * Math.PI / 180;
+            power = Math.hypot(x, y);
+        }else {
+            power = Math.hypot(x, y);
+            theta = Math.atan2(y, x);
+        }
+
+        sin = Math.sin(theta - Math.PI / 4);
+        cos = Math.cos(theta - Math.PI / 4);
+        max = Math.max(Math.abs(sin), Math.abs(cos));
+
+        frontLeftPower = power * cos / max + r;
+        frontRightPower = power * sin / max - r;
+        backLeftPower = power * sin / max + r;
+        backRightPower = power * cos / max - r;
+
+        if ((power + Math.abs(r) > 1)) {
+            frontLeftPower /= power + Math.abs(r);
+            frontRightPower /= power + Math.abs(r);
+            backLeftPower /= power + Math.abs(r);
+            backRightPower /= power + Math.abs(r);
+        }
+
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
+
+    }
+
+    /**
      * Makes robot move based on x, y, r values (axial, pitch, yaw)
      *
      * Axial - Driving forward and backwards - left joystick forward/backward
@@ -86,10 +142,10 @@ public class Drivetrain extends Subsystem {
         double backRightPower = axial + lateral - yaw;
 
         // Makes sure power is always between [-1, 1] just in case some goof puts in wrong values when calling this method
-        frontLeftPower = Range.clip(frontLeftPower, -1, 1);
-        frontRightPower = Range.clip(frontRightPower, -1, 1);
-        backLeftPower = Range.clip(backLeftPower, -1, 1);
-        backRightPower = Range.clip(backRightPower, -1, 1);
+//        frontLeftPower = Range.clip(frontLeftPower, -1, 1);
+//        frontRightPower = Range.clip(frontRightPower, -1, 1);
+//        backLeftPower = Range.clip(backLeftPower, -1, 1);
+//        backRightPower = Range.clip(backRightPower, -1, 1);
 
         // Normalize wheel power so none exceeds 100%
         // Ensures robot maintains desired motion by keeping same ratio to every motor
@@ -104,9 +160,6 @@ public class Drivetrain extends Subsystem {
         robot.backRight.setPower(backRightPower);
         robot.frontLeft.setPower(frontLeftPower);
         robot.frontRight.setPower(frontRightPower);
-
-        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
     }
 
     /**
@@ -119,8 +172,6 @@ public class Drivetrain extends Subsystem {
     public void goXYRIMU(double x, double y, double turn) {
         lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        adjustedYaw = lastAngles.firstAngle - initYaw;
-
         double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
 
         double theta = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
@@ -132,10 +183,10 @@ public class Drivetrain extends Subsystem {
         double cos = Math.cos( (realTheta * Math.PI / 180) - piOverFour);
         double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-        double frontLeftPower = (power * cos / max + turn);
-        double frontRightPower = (power * sin / max - turn);
-        double backLeftPower = (power * sin / max + turn);
-        double backRightPower = (power * cos / max - turn);
+        frontLeftPower = (power * cos / max + turn);
+        frontRightPower = (power * sin / max - turn);
+        backLeftPower = (power * sin / max + turn);
+        backRightPower = (power * cos / max - turn);
 
         // Say you drive forward at full power and turn. If the value is greater than 1, remove power from all motors to make it consistent
         if ( (power + Math.abs(turn)) > 1) {
@@ -150,8 +201,6 @@ public class Drivetrain extends Subsystem {
         robot.frontLeft.setPower(frontLeftPower);
         robot.frontRight.setPower(frontRightPower);
 
-        telemetry.addData("Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
     }
 
     /**

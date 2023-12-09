@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
+/**
+ * AirplaneLauncherTest is a test Teleop mode that is used purely to test the airplane launcher.
+ */
 @TeleOp (name = "Airplane Launcher Test", group = "Testing")
 public class AirplaneLauncherTest extends LinearOpMode {
 

@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * LinearSlide is a Subsystem representing all linear slide / arm hardware movement
+ */
 public class LinearSlide extends Subsystem {
 
     private HardwareMap hwMap;

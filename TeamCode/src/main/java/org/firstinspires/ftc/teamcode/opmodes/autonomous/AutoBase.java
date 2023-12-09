@@ -16,6 +16,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+/**
+ * AutoBase is the base used for all autonomous opmodes
+ * Streamlines the creation of multiple autonomous opmodes with different paths
+ */
 public abstract class AutoBase extends LinearOpMode {
     protected JVBoysSoccerRobot.AllianceType ALLIANCE_TYPE;
     protected PropDetectionProcessor propDetectionProcessor;

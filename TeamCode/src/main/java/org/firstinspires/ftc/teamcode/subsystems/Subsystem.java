@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 /**
- * "Inspired" from cruise control
+ * Subsystem is an abstract class used to easily integrate different hardware modules into the super robot class.
  */
 public abstract class Subsystem {
 

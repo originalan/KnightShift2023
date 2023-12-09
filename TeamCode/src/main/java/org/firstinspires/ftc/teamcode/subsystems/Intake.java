@@ -6,6 +6,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * Intake is a Subsystem representing all intake hardware movement
+ */
 public class Intake extends Subsystem {
 
     private HardwareMap hwMap;

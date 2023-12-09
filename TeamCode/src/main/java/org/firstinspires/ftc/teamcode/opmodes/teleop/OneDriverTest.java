@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.subsystems.PurplePixel;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+/**
+ * OneDriverTest is identical to OneDriver except it has more joystick controls for testing certain hardware.
+ */
 @TeleOp(name = "OneDriverTest", group = "Testing")
-
 public class OneDriverTest extends LinearOpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -35,6 +37,9 @@ public class OneDriverTest extends LinearOpMode{
 
     @Override
     public void runOpMode() {
+        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
+        telemetry.update();
+
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         double reversed = 1.0;
@@ -73,14 +78,20 @@ public class OneDriverTest extends LinearOpMode{
                 double lateralIMU = -1 * gamepad1.left_stick_y;
                 double yawIMU = gamepad1.right_stick_x;
 
+                double x = gamepad1.left_stick_x;
+                double y = gamepad1.left_stick_y * -1;
+                double r = gamepad1.right_stick_x;
+
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
                     switchDriveControls = !switchDriveControls;
                 }
 
                 if (switchDriveControls) {
-                    robot.drivetrain.goXYR(axial, lateral, yaw);
+//                    robot.drivetrain.goXYR(axial, lateral, yaw);
+                    robot.drivetrain.moveXYR(x, y, r, false);
                 }else {
-                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
+//                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
+                    robot.drivetrain.moveXYR(x, y, r, true);
                 }
 
                 // Show elapsed game time

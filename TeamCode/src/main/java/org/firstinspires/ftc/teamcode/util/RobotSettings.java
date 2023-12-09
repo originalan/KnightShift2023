@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.util;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
+/**
+ * RobotSettings is a class that stores all hardware settings and constants.
+ * Can be changed live in FTC Dashboard
+ */
 @Config
 public class RobotSettings {
 

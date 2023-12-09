@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
+/**
+ * ContinuousServoTest is a test Teleop mode that tests the movement of a continuous servo
+ * Servo positions can be changed live in FTC Dashboard
+ */
 @Config
 @TeleOp (name = "Continuous Servo Test", group = "Testing")
 public class ContinuousServoTest extends LinearOpMode {
