@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.subsystems.PurplePixel;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -196,21 +196,21 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 if (clawCounter % 5 == 1) {
-                    robot.slide.slideState = LinearSlide.SlideState.OFF;
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
                 }
                 else if (clawCounter % 5 == 2) {
-                    robot.slide.slideState = LinearSlide.SlideState.HOLDING_PIXEL;
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
                 }
                 else if (clawCounter % 5 == 3) {
-                    robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_IN_PLACE;
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
                 }
                 else if (clawCounter % 5 == 4) {
-                    robot.slide.slideState = LinearSlide.SlideState.RELEASE_PIXEL;
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
                 }
                 else if (clawCounter % 5 == 0) {
-                    robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_BACK;
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
                     if (!robot.linearSlideMotor.isBusy()) {
-                        robot.slide.slideState = LinearSlide.SlideState.OFF;
+                        robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
                         clawCounter++;
                     }
                 }

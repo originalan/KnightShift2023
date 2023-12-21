@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.RobotSettings;
 /**
  * LinearSlide is a Subsystem representing all linear slide / arm hardware movement
  */
-public class LinearSlide extends Subsystem {
+public class DeliveryArm extends Subsystem {
 
     private HardwareMap hwMap;
     private Telemetry telemetry;
@@ -17,7 +17,7 @@ public class LinearSlide extends Subsystem {
 
     public double targetPower = 0;
 
-    public enum SlideState {
+    public enum ArmState {
         OFF,
         HOLDING_PIXEL,
         BRING_ARM_IN_PLACE,
@@ -26,10 +26,10 @@ public class LinearSlide extends Subsystem {
         GO_TO_POSITION
     }
 
-    public SlideState slideState = SlideState.OFF;
+    public ArmState slideState = ArmState.OFF;
     public boolean isBusy;
 
-    public LinearSlide(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
+    public DeliveryArm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;

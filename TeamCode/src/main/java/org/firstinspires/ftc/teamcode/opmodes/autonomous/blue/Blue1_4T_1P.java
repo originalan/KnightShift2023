@@ -5,13 +5,12 @@ import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXE
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 @Autonomous(name = "Blue1_4T_1P (places pixel, other pixel, parks outer)", group = "Autonomous Opmode 11.19")
@@ -60,25 +59,25 @@ public class Blue1_4T_1P extends AutoBase {
                 switch (autoState) {
 
                     case PLACING_PURPLE_PIXEL:
-                        robot.slide.slideState = LinearSlide.SlideState.HOLDING_PIXEL;
+                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
                         if (!drive.isBusy()) {
                             autoState = AutoState.MOVING_TO_BACKBOARD;
                             drive.followTrajectorySequenceAsync(backboardTraj);
                         }
                         break;
                     case MOVING_TO_BACKBOARD:
-                        robot.slide.slideState = LinearSlide.SlideState.HOLDING_PIXEL; // technically don't need this but whatever
+                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL; // technically don't need this but whatever
                         if (!drive.isBusy()) {
                             autoState = AutoState.MANEUVER_ARM;
                             robot.linearSlideMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
                             robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_IN_PLACE;
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
                         }
                         break;
                     case MANEUVER_ARM:
                         if (!robot.linearSlideMotor.isBusy()) {
                             autoState = AutoState.OPEN_SERVO_CLAW;
-                            robot.slide.slideState = LinearSlide.SlideState.RELEASE_PIXEL;
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
                         }
                         break;
                     case OPEN_SERVO_CLAW:
@@ -86,20 +85,20 @@ public class Blue1_4T_1P extends AutoBase {
                             autoState = AutoState.BRING_ARM_BACK;
                             robot.linearSlideMotor.setTargetPosition(0);
                             robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.slide.slideState = LinearSlide.SlideState.BRING_ARM_BACK;
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
                         }
                         break;
                     case BRING_ARM_BACK:
                         if (!robot.linearSlideMotor.isBusy()) {
                             autoState = AutoState.PARKING;
-                            robot.slide.slideState = LinearSlide.SlideState.OFF;
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }
                         break;
                     case PARKING:
                         if (!drive.isBusy()) {
                             autoState = AutoState.IDLE;
-                            robot.slide.slideState = LinearSlide.SlideState.OFF;
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
                         }
                         break;
                     case IDLE:
@@ -109,7 +108,7 @@ public class Blue1_4T_1P extends AutoBase {
                 }
 
                 drive.update();
-                robot.slide.update();
+                robot.deliveryArm.update();
 
                 transferPose();
                 telemetry.update();

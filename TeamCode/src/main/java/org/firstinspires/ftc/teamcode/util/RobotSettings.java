@@ -17,6 +17,10 @@ public class RobotSettings {
     public static String DRIVETRAIN_BACKRIGHT_MOTOR_NAME = "backRight";
     public static String DRIVETRAIN_FRONTLEFT_MOTOR_NAME = "frontLeft";
     public static String DRIVETRAIN_FRONTRIGHT_MOTOR_NAME = "frontRight";
+    public static boolean DRIVETRAIN_BACKLEFT_REVERSED = true;
+    public static boolean DRIVETRAIN_BACKRIGHT_REVERSED = false;
+    public static boolean DRIVETRAIN_FRONTLEFT_REVERSED = true;
+    public static boolean DRIVETRAIN_FRONTRIGHT_REVERSED = false;
     public static boolean DRIVETRAIN_USE_ENCODERS = false;
 
     /*
@@ -28,14 +32,14 @@ public class RobotSettings {
     public static double INTAKE_CURRENT_THRESHOLD = 10000;
 
     /*
-    =================OUTTAKE SETTINGS==============
+    =================OUTTAKE (DELIVERY ARM) SETTINGS==============
     */
     public static String OUTTAKE_MOTOR_NAME = "LinearSlide";
     public static boolean OUTTAKE_MOTOR_REVERSED = true;
-    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 100.0;
+    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 120.0;
     public static int OUTTAKE_MOTOR_ENCODER_POSITION = (int)((OUTTAKE_MOTOR_MOVEMENT_DEGREES / 360.0) * 1440.0);
-    public static double OUTTAKE_MOTOR_POWER = 0.25;
-    public static String OUTTAKE_SERVO_CLAW_NAME = "YellowPixelServo";
+    public static double OUTTAKE_MOTOR_POWER = 0.5;
+    public static String OUTTAKE_SERVO_CLAW_NAME = "YellowPixelServo"; // change to servo at the top of the arm that rotates intake
     public static boolean OUTTAKE_SERVO_CLAW_REVERSED = false;
     public static double OUTTAKE_SERVO_CLAW_STARTING_POSITION = 0.5;
     public static double OUTTAKE_SERVO_CLAW_HOLDING_POSITION = 0.6;

@@ -34,7 +34,7 @@ public class JVBoysSoccerRobot {
     // Subsystems
     public Drivetrain drivetrain;
     public Intake intake;
-    public LinearSlide slide;
+    public DeliveryArm deliveryArm;
     public Rigging rig;
     public AirplaneLauncher launcher;
     public PurplePixel purplePixel;
@@ -81,12 +81,12 @@ public class JVBoysSoccerRobot {
         initHardware();
         drivetrain = new Drivetrain(hwMap, telemetry, this);
         intake = new Intake(hwMap, telemetry, this);
-        slide = new LinearSlide(hwMap, telemetry, this);
+        deliveryArm = new DeliveryArm(hwMap, telemetry, this);
         rig = new Rigging(hwMap, telemetry, this);
         launcher = new AirplaneLauncher(hwMap, telemetry, this);
         purplePixel = new PurplePixel(hwMap, telemetry, this);
 
-        subsystems = Arrays.asList(drivetrain, intake, slide, rig, launcher);
+        subsystems = Arrays.asList(drivetrain, intake, deliveryArm, rig, launcher);
     }
 
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry, AllianceType allianceType) {
@@ -140,10 +140,10 @@ public class JVBoysSoccerRobot {
         frontLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTLEFT_MOTOR_NAME);
         frontRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTRIGHT_MOTOR_NAME);
 
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(RobotSettings.DRIVETRAIN_BACKLEFT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        backRight.setDirection(RobotSettings.DRIVETRAIN_BACKRIGHT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(RobotSettings.DRIVETRAIN_FRONTLEFT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        frontRight.setDirection(RobotSettings.DRIVETRAIN_FRONTRIGHT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
 
         // This DOES NOT disable the tick counts
         // What it DOES do is disable the built in feedback loop

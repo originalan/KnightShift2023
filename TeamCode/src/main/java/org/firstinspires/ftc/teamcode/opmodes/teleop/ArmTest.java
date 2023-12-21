@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 
 /**
  * ArmTest is a test Teleop mode that is used to tune the movement of the Yellow Pixel Arm
@@ -45,12 +45,12 @@ public class ArmTest extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                robot.slide.slideState = LinearSlide.SlideState.GO_TO_POSITION;
+                robot.deliveryArm.slideState = DeliveryArm.ArmState.GO_TO_POSITION;
                 int armPos = robot.linearSlideMotor.getCurrentPosition();
                 double pidPower = pid.calculate(armPos, target, false);
                 double ffPower = pid.feedForwardCalculate(target);
 
-                robot.slide.targetPower = pidPower + ffPower;
+                robot.deliveryArm.targetPower = pidPower + ffPower;
 
                 robot.update();
 
