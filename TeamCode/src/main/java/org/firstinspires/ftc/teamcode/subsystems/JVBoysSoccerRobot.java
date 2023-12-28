@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.PIDFControl;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 import java.util.Arrays;
@@ -45,8 +45,7 @@ public class JVBoysSoccerRobot {
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DcMotorEx intakeMotor;
     public Servo airplaneLauncherServo;
-    public DcMotorEx linearSlideMotor;
-    public Servo linearSlideServo;
+    public DcMotorEx deliveryArmMotor;
     public Servo leftRigServo;
     public Servo rightRigServo;
     public DcMotorEx leftRigMotor;
@@ -161,17 +160,12 @@ public class JVBoysSoccerRobot {
         // Intake Subsystem
         intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
         intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-
-        // Purple Pixel Subsystem
-        purplePixelServo = hwMap.servo.get(RobotSettings.PURPLE_PIXEL_SERVO_NAME);
-        purplePixelServo.setDirection(RobotSettings.PURPLE_PIXEL_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Linear Slide Subsystem
-        linearSlideMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
-        linearSlideMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-        linearSlideServo = hwMap.servo.get(RobotSettings.OUTTAKE_SERVO_CLAW_NAME);
-        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlideServo.setDirection(RobotSettings.OUTTAKE_SERVO_CLAW_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        deliveryArmMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
+        deliveryArmMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        deliveryArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Rigging Subsystem
         leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);

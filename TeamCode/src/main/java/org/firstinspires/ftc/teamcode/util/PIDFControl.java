@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * An instance is made for every class that uses a PID loop
+ * An instance is made for every class that uses a PIDF loop
  */
 @Config
 public class PIDFControl {
@@ -20,7 +20,7 @@ public class PIDFControl {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 0;
-    public static double ticksInDegrees = 1440 / 360.0;
+    public static double ticksInDegrees = 1440.0 / 360.0; // may have to make 1440 into 720 idk
     public static double lastError = 0;
 
     // Used to control angle of robot

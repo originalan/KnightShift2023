@@ -8,23 +8,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.PIDFControl;
+import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 
 /**
- * ArmTest is a test Teleop mode that is used to tune the movement of the Yellow Pixel Arm
+ * ArmTest is a test Teleop mode that is used to tune the movement of the Arm
  * Calibration can be changed live in FTC Dashboard
- * As of now, is outdated because the yellow pixel arm does not exist anymore
  */
 @Config
-@TeleOp (name = "Yellow Pixel Arm Test", group = "Testing")
+@TeleOp (name = "Arm Test", group = "Testing")
 public class ArmTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
-    public static int target = 0;
+    private FullStateFeedback controller;
+    public static int targetPos = 0;
 
     @Override
     public void runOpMode() {
@@ -35,6 +36,7 @@ public class ArmTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         pid = new PIDFControl();
+        controller = new FullStateFeedback(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -46,16 +48,21 @@ public class ArmTest extends LinearOpMode {
             while (opModeIsActive()) {
 
                 robot.deliveryArm.slideState = DeliveryArm.ArmState.GO_TO_POSITION;
-                int armPos = robot.linearSlideMotor.getCurrentPosition();
-                double pidPower = pid.calculate(armPos, target, false);
-                double ffPower = pid.feedForwardCalculate(target);
+                int armPos = robot.deliveryArmMotor.getCurrentPosition();
 
-                robot.deliveryArm.targetPower = pidPower + ffPower;
+//                double pidPower = pid.calculate(armPos, targetPos, false);
+//                double ffPower = pid.feedForwardCalculate(targetPos);
+//
+//                robot.deliveryArm.targetPower = pidPower + ffPower;
+
+                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
+                robot.deliveryArm.targetPower = power;
 
                 robot.update();
 
-                telemetry.addData("Target", target);
+                telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
+                telemetry.addData("Arm actual velocity", robot.deliveryArmMotor.getVelocity());
                 telemetry.update();
             }
         }

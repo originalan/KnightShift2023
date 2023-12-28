@@ -186,12 +186,12 @@ public class OneDriverTest extends LinearOpMode{
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     clawCounter++;
                     if (clawCounter % 5 == 3) {
-                        robot.linearSlideMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
-                        robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        robot.deliveryArmMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
+                        robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                     if (clawCounter % 5 == 0) {
-                        robot.linearSlideMotor.setTargetPosition(0);
-                        robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        robot.deliveryArmMotor.setTargetPosition(0);
+                        robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                 }
 
@@ -209,7 +209,7 @@ public class OneDriverTest extends LinearOpMode{
                 }
                 else if (clawCounter % 5 == 0) {
                     robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
-                    if (!robot.linearSlideMotor.isBusy()) {
+                    if (!robot.deliveryArmMotor.isBusy()) {
                         robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
                         clawCounter++;
                     }

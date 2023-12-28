@@ -58,52 +58,52 @@ public class Blue1_4T_1P extends AutoBase {
 
                 switch (autoState) {
 
-                    case PLACING_PURPLE_PIXEL:
-                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.MOVING_TO_BACKBOARD;
-                            drive.followTrajectorySequenceAsync(backboardTraj);
-                        }
-                        break;
-                    case MOVING_TO_BACKBOARD:
-                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL; // technically don't need this but whatever
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.MANEUVER_ARM;
-                            robot.linearSlideMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
-                            robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
-                        }
-                        break;
-                    case MANEUVER_ARM:
-                        if (!robot.linearSlideMotor.isBusy()) {
-                            autoState = AutoState.OPEN_SERVO_CLAW;
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
-                        }
-                        break;
-                    case OPEN_SERVO_CLAW:
-                        if (robot.linearSlideServo.getPosition() == RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION) {
-                            autoState = AutoState.BRING_ARM_BACK;
-                            robot.linearSlideMotor.setTargetPosition(0);
-                            robot.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
-                        }
-                        break;
-                    case BRING_ARM_BACK:
-                        if (!robot.linearSlideMotor.isBusy()) {
-                            autoState = AutoState.PARKING;
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-                            drive.followTrajectorySequenceAsync(parkingTraj);
-                        }
-                        break;
-                    case PARKING:
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.IDLE;
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-                        }
-                        break;
-                    case IDLE:
-
-                        break;
+//                    case PLACING_PURPLE_PIXEL:
+//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.MOVING_TO_BACKBOARD;
+//                            drive.followTrajectorySequenceAsync(backboardTraj);
+//                        }
+//                        break;
+//                    case MOVING_TO_BACKBOARD:
+//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL; // technically don't need this but whatever
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.MANEUVER_ARM;
+//                            robot.deliveryArmMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
+//                            robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
+//                        }
+//                        break;
+//                    case MANEUVER_ARM:
+//                        if (!robot.deliveryArmMotor.isBusy()) {
+//                            autoState = AutoState.OPEN_SERVO_CLAW;
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
+//                        }
+//                        break;
+//                    case OPEN_SERVO_CLAW:
+//                        if (robot.linearSlideServo.getPosition() == RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION) {
+//                            autoState = AutoState.BRING_ARM_BACK;
+//                            robot.deliveryArmMotor.setTargetPosition(0);
+//                            robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
+//                        }
+//                        break;
+//                    case BRING_ARM_BACK:
+//                        if (!robot.deliveryArmMotor.isBusy()) {
+//                            autoState = AutoState.PARKING;
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
+//                            drive.followTrajectorySequenceAsync(parkingTraj);
+//                        }
+//                        break;
+//                    case PARKING:
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.IDLE;
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
+//                        }
+//                        break;
+//                    case IDLE:
+//
+//                        break;
 
                 }
 
