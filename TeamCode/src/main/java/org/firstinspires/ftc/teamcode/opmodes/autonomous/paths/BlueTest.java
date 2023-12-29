@@ -1,41 +1,47 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.blue;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths;
 
 import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXEL_RELEASE;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.old.blue.Blue1_4T_1P;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue1_4T_1P (places pixel, other pixel, parks outer)", group = "Autonomous Opmode 11.19")
-public class Blue1_4T_1P extends AutoBase {
+@Autonomous(name = "Blue (Closer) Test", group = "Testing")
+public class BlueTest extends AutoBase {
 
-    private TrajectorySequence detectionTraj;
-    private TrajectorySequence backboardTraj;
-    private TrajectorySequence parkingTraj;
+    private TrajectorySequence detectionTraj, backboardTraj, parkingTraj, waitingTraj, forceIntoBackboardTraj;
+    private FullStateFeedback controller;
 
     public enum AutoState {
+        ORIENT_PURPLE_PIXEL,
         PLACING_PURPLE_PIXEL,
         MOVING_TO_BACKBOARD,
         MANEUVER_ARM,
-        OPEN_SERVO_CLAW,
+        RELEASE_PIXEL,
         BRING_ARM_BACK,
         PARKING,
         IDLE
     }
+
     public AutoState autoState = AutoState.IDLE;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        controller = new FullStateFeedback();
         startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
-        initialize(JVBoysSoccerRobot.AllianceType.RED);
+        initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
         drive.setPoseEstimate(startingPose);
         buildTrajectories();
@@ -44,13 +50,12 @@ public class Blue1_4T_1P extends AutoBase {
             detectedSide = propDetectionProcessor.getDetectedSide();
             telemetry.addData("Detected", detectedSide);
             telemetry.update();
-            sleep(1);
         }
 
         waitForStart();
 
-        autoState = AutoState.IDLE;
-        drive.followTrajectorySequence(detectionTraj);
+        autoState = AutoState.ORIENT_PURPLE_PIXEL;
+        drive.followTrajectorySequenceAsync(detectionTraj);
 
         if (opModeIsActive()) {
 
@@ -58,52 +63,52 @@ public class Blue1_4T_1P extends AutoBase {
 
                 switch (autoState) {
 
-//                    case PLACING_PURPLE_PIXEL:
-//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.MOVING_TO_BACKBOARD;
-//                            drive.followTrajectorySequenceAsync(backboardTraj);
+                    case ORIENT_PURPLE_PIXEL:
+                        robot.intake.intakeState = Intake.IntakeState.OFF;
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.PLACING_PURPLE_PIXEL;
+                            drive.followTrajectorySequenceAsync(waitingTraj);
+                        }
+                        break;
+                    case PLACING_PURPLE_PIXEL:
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.MOVING_TO_BACKBOARD;
+                            drive.followTrajectorySequenceAsync(backboardTraj);
+                        }
+                        break;
+                    case MOVING_TO_BACKBOARD:
+                        robot.deliveryArm.slideState = DeliveryArm.ArmState.TOP;
+                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
+                            autoState = AutoState.RELEASE_PIXEL;
+                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
+                        }
+                        break;
+                    case MANEUVER_ARM:
+//                        if (robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
+//                            autoState = AutoState.RELEASE_PIXEL;
 //                        }
-//                        break;
-//                    case MOVING_TO_BACKBOARD:
-//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL; // technically don't need this but whatever
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.MANEUVER_ARM;
-//                            robot.deliveryArmMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
-//                            robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
-//                        }
-//                        break;
-//                    case MANEUVER_ARM:
-//                        if (!robot.deliveryArmMotor.isBusy()) {
-//                            autoState = AutoState.OPEN_SERVO_CLAW;
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
-//                        }
-//                        break;
-//                    case OPEN_SERVO_CLAW:
-//                        if (robot.linearSlideServo.getPosition() == RobotSettings.OUTTAKE_SERVO_CLAW_RELEASE_POSITION) {
-//                            autoState = AutoState.BRING_ARM_BACK;
-//                            robot.deliveryArmMotor.setTargetPosition(0);
-//                            robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
-//                        }
-//                        break;
-//                    case BRING_ARM_BACK:
+                        break;
+                    case RELEASE_PIXEL:
+                        if (!drive.isBusy()) {
+                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BOTTOM;
+                            autoState = AutoState.PARKING;
+                            drive.followTrajectorySequenceAsync(parkingTraj);
+                        }
+                        break;
+                    case BRING_ARM_BACK:
 //                        if (!robot.deliveryArmMotor.isBusy()) {
 //                            autoState = AutoState.PARKING;
 //                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
 //                            drive.followTrajectorySequenceAsync(parkingTraj);
 //                        }
-//                        break;
-//                    case PARKING:
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.IDLE;
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-//                        }
-//                        break;
-//                    case IDLE:
-//
-//                        break;
+                        break;
+                    case PARKING:
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.IDLE;
+                        }
+                        break;
+                    case IDLE:
+                        break;
 
                 }
 
@@ -114,10 +119,9 @@ public class Blue1_4T_1P extends AutoBase {
                 telemetry.update();
 
             }
+            drive.followTrajectorySequence(detectionTraj);
 
         }
-
-        transferPose();
 
     }
 
@@ -174,13 +178,22 @@ public class Blue1_4T_1P extends AutoBase {
 
         setGoalPose();
 
-        parkingTraj = drive.trajectorySequenceBuilder(backboardTraj.end())
+        forceIntoBackboardTraj = drive.trajectorySequenceBuilder(backboardTraj.end())
+                .forward(5) // need to change value later
+                .build();
+
+        parkingTraj = drive.trajectorySequenceBuilder(forceIntoBackboardTraj.end())
                 .waitSeconds(2) // give time for servo to do its thing
                 .forward(10)
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(40, 58.75))
                 .turn(Math.toRadians(-90))
                 .forward(58.75-40)
+                .build();
+
+
+        waitingTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                .waitSeconds(4)
                 .build();
 
     }

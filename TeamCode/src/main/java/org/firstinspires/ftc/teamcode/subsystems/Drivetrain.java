@@ -28,6 +28,8 @@ public class Drivetrain extends Subsystem {
                     backLeftPower,
                     backRightPower;
 
+    public boolean orientPerpendicular = false;
+
     public Drivetrain(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
@@ -86,6 +88,14 @@ public class Drivetrain extends Subsystem {
      * @param isFieldOriented is true if field centric drive, false if robot centric drive
      */
     public void moveXYR(double x, double y, double r, boolean isFieldOriented) {
+
+        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        if (orientPerpendicular) {
+            if (Math.abs(lastAngles.firstAngle - 90) % 180 <= 1) {
+                r = 0;
+            }
+        }
+
         double  power,
                 theta,
                 sin,
@@ -94,7 +104,6 @@ public class Drivetrain extends Subsystem {
 
         if (isFieldOriented) {
             lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
             double zeroedYaw = (-1 * initYaw) + lastAngles.firstAngle;
             double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
             theta = (360 - zeroedYaw) + thetaGamepad; // Real theta that robot must travel in degrees

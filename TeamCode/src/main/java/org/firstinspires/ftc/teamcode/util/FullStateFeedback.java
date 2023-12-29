@@ -20,6 +20,10 @@ public class FullStateFeedback {
     public static double kP = 0; // k for position state
     public static double kV = 0; // k for velocity state
 
+    public FullStateFeedback() {
+
+    }
+
     public FullStateFeedback(HardwareMap hwMap, Telemetry telemetry) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;

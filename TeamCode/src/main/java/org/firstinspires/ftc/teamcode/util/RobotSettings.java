@@ -36,14 +36,8 @@ public class RobotSettings {
     */
     public static String OUTTAKE_MOTOR_NAME = "LinearSlide";
     public static boolean OUTTAKE_MOTOR_REVERSED = true;
-    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 120.0;
+    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 180.0;
     public static int OUTTAKE_MOTOR_ENCODER_POSITION = (int)((OUTTAKE_MOTOR_MOVEMENT_DEGREES / 360.0) * 1440.0);
-    public static double OUTTAKE_MOTOR_POWER = 0.5;
-    public static String OUTTAKE_SERVO_CLAW_NAME = "YellowPixelServo"; // change to servo at the top of the arm that rotates intake
-    public static boolean OUTTAKE_SERVO_CLAW_REVERSED = false;
-    public static double OUTTAKE_SERVO_CLAW_STARTING_POSITION = 0.5;
-    public static double OUTTAKE_SERVO_CLAW_HOLDING_POSITION = 0.6;
-    public static double OUTTAKE_SERVO_CLAW_RELEASE_POSITION = 0.4;
 
     /*
     =================PURPLE PIXEL SETTINGS==============

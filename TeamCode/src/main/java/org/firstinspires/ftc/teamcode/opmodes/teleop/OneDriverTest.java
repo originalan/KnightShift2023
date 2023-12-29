@@ -29,9 +29,6 @@ public class OneDriverTest extends LinearOpMode{
     private boolean undoRig = true;
     private double timeElapsedRigging = 0;
     private int i = 1;
-
-    private boolean deliverPurplePixel = false;
-    private int clawCounter = 1;
     private boolean switchDriveControls = false;
 
 
@@ -181,58 +178,14 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 /*
-                =================TESTING YELLOW PIXEL ARM CONTROLS==============
-                */
-                if (currentGamepad1.y && !previousGamepad1.y) {
-                    clawCounter++;
-                    if (clawCounter % 5 == 3) {
-                        robot.deliveryArmMotor.setTargetPosition(RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION);
-                        robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    }
-                    if (clawCounter % 5 == 0) {
-                        robot.deliveryArmMotor.setTargetPosition(0);
-                        robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    }
-                }
-
-                if (clawCounter % 5 == 1) {
-                    robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-                }
-                else if (clawCounter % 5 == 2) {
-                    robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
-                }
-                else if (clawCounter % 5 == 3) {
-                    robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_IN_PLACE;
-                }
-                else if (clawCounter % 5 == 4) {
-                    robot.deliveryArm.slideState = DeliveryArm.ArmState.RELEASE_PIXEL;
-                }
-                else if (clawCounter % 5 == 0) {
-                    robot.deliveryArm.slideState = DeliveryArm.ArmState.BRING_ARM_BACK;
-                    if (!robot.deliveryArmMotor.isBusy()) {
-                        robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-                        clawCounter++;
-                    }
-                }
-
-                /*
-                =================TESTING PURPLE PIXEL SERVO CONTROLS==============
+                =================TOGGLE UTIL CONTROLS==============
                 */
                 if (currentGamepad1.a && !previousGamepad1.a) {
-                    deliverPurplePixel = !deliverPurplePixel;
-                }
-                if (deliverPurplePixel) {
-                    robot.purplePixel.purplePixelState = PurplePixel.PurplePixelState.HOLD;
-                }else {
-                    robot.purplePixel.purplePixelState = PurplePixel.PurplePixelState.DROP;
+                    robot.drivetrain.orientPerpendicular = !robot.drivetrain.orientPerpendicular;
                 }
 
-                // Update all subsystems (if applicable since drivetrain needs no update)
+                // Update all subsystems (if applicable)
                 robot.update();
-
-                telemetry.addData("slide state", robot.launcher.launcherState);
-                telemetry.addData("claw counter", clawCounter);
-                telemetry.addData("claw counter % 5", clawCounter % 5);
                 telemetry.update();
             }
         }

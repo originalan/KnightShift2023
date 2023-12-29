@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.red;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.old.red;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name="E_Red2", group="Emergency Autonomous Opmode")
-public class E_Red2 extends LinearOpMode {
+@Autonomous(name="E_Red1", group="Emergency Autonomous Opmode")
+public class E_Red1 extends LinearOpMode {
     //
     DcMotor frontleft;
     DcMotor frontright;
@@ -50,11 +50,11 @@ public class E_Red2 extends LinearOpMode {
         //
         waitForStartify();
         //
-        moveToPosition(50, 0.4);
+        moveToPosition(3, 0.4);
         //
         turnWithGyro(90, 0.4);
         //
-        moveToPosition(94, 0.4);
+        moveToPosition(47, 0.4);
         //
     }
     //

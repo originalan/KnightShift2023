@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.red;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.old.blue;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,15 +8,15 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
-@Autonomous(name = "Red1_3T_2P (just parks middle)", group = "Autonomous Opmode 11.19")
-public class Red1_3T_2P extends AutoBase {
+@Autonomous(name = "Blue1_3T_1P (just parks outer)", group = "Autonomous Opmode 11.19")
+public class Blue1_3T_1P extends AutoBase {
 
     private TrajectorySequence traj1;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(11.75, -61.5, Math.toRadians(90));
+        startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
         initialize(JVBoysSoccerRobot.AllianceType.RED);
 
         drive.setPoseEstimate(startingPose);
@@ -54,9 +54,9 @@ public class Red1_3T_2P extends AutoBase {
 
         traj1 = drive.trajectorySequenceBuilder(startingPose)
                 .waitSeconds(1)
-                .forward(26.25)
-                .turn(Math.toRadians(-90))
-                .forward(38)
+                .forward(3)
+                .turn(Math.toRadians(90))
+                .forward(47)
                 .build();
 
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.blue;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.old.blue;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
-@Autonomous(name = "Blue1_3T_1P (just parks outer)", group = "Autonomous Opmode 11.19")
-public class Blue1_3T_1P extends AutoBase {
+@Autonomous(name = "Blue1_3T_2P (just parks middle)", group = "Autonomous Opmode 11.19")
+public class Blue1_3T_2P extends AutoBase {
 
     private TrajectorySequence traj1;
 
@@ -54,9 +54,9 @@ public class Blue1_3T_1P extends AutoBase {
 
         traj1 = drive.trajectorySequenceBuilder(startingPose)
                 .waitSeconds(1)
-                .forward(3)
+                .forward(26.25)
                 .turn(Math.toRadians(90))
-                .forward(47)
+                .forward(38)
                 .build();
 
     }

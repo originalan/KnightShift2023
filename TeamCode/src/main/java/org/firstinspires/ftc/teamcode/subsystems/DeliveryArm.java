@@ -29,15 +29,15 @@ public class DeliveryArm extends Subsystem {
     public double targetPower = 0;
 
     public enum ArmState {
-        OFF,
-        HOLDING_PIXEL,
-        BRING_ARM_IN_PLACE,
-        BRING_ARM_BACK,
-        RELEASE_PIXEL,
-        GO_TO_POSITION
+        AT_REST,
+        GO_TO_POSITION,
+        BOTTOM,
+        TOP,
+        AUTO_INTAKE_1,
+        AUTO_INTAKE_2
     }
 
-    public ArmState slideState = ArmState.OFF;
+    public ArmState slideState = ArmState.AT_REST;
 
     public DeliveryArm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -68,6 +68,15 @@ public class DeliveryArm extends Subsystem {
         switch (slideState) {
             case GO_TO_POSITION:
                 robot.deliveryArmMotor.setPower(targetPower);
+                break;
+            case AT_REST:
+                robot.deliveryArmMotor.setPower(0);
+                break;
+            case BOTTOM:
+                robot.deliveryArmMotor.setPower(controller.calculate(0, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
+                break;
+            case TOP:
+                robot.deliveryArmMotor.setPower(controller.calculate(720, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
                 break;
         }
     }

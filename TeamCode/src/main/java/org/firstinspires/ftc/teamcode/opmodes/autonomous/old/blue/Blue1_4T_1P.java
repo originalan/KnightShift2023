@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.red;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.old.blue;
 
 import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXEL_RELEASE;
 
@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Red1_4T_1P", group = "Autonomous Opmode 11.19")
-public class Red1_4T_1P extends AutoBase {
+@Autonomous(name = "Blue1_4T_1P (places pixel, other pixel, parks outer)", group = "Autonomous Opmode 11.19")
+public class Blue1_4T_1P extends AutoBase {
 
     private TrajectorySequence detectionTraj;
     private TrajectorySequence backboardTraj;
@@ -34,7 +34,7 @@ public class Red1_4T_1P extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(11.75, -61.5, Math.toRadians(90));
+        startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
         initialize(JVBoysSoccerRobot.AllianceType.RED);
 
         drive.setPoseEstimate(startingPose);
@@ -56,8 +56,8 @@ public class Red1_4T_1P extends AutoBase {
 
             while (opModeIsActive() && !isStopRequested()) {
 
-                switch (autoState) {
-
+//                switch (autoState) {
+//
 //                    case PLACING_PURPLE_PIXEL:
 //                        robot.deliveryArm.slideState = DeliveryArm.ArmState.HOLDING_PIXEL;
 //                        if (!drive.isBusy()) {
@@ -104,7 +104,8 @@ public class Red1_4T_1P extends AutoBase {
 //                    case IDLE:
 //
 //                        break;
-                }
+//
+//                }
 
                 drive.update();
                 robot.deliveryArm.update();
@@ -126,35 +127,9 @@ public class Red1_4T_1P extends AutoBase {
     public void setGoalPose() {
 
         switch (detectedSide) {
-            case LEFT: // I physically don't know how to do it without running into the truss so we have middle case instead
+            case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(11.75 - 1.5, -22.0), Math.toRadians(90))
-                        // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-                            robot.purplePixel.drop();
-                        })
-                        .back(36.25)
-                        .build();
-                backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .splineToLinearHeading(new Pose2d(50, -35.25 + 6 - 2.375, Math.toRadians(180)), Math.toRadians(0))
-                        .build();
-                break;
-            case MIDDLE:
-                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(11.75 - 1.5, -22.0), Math.toRadians(90))
-                        // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-                            robot.purplePixel.drop();
-                        })
-                        .back(36.25)
-                        .build();
-                backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .splineToLinearHeading(new Pose2d(50, -35.25 - 2.375, Math.toRadians(180)), Math.toRadians(0))
-                        .build();
-                break;
-            case RIGHT:
-                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(22.0 - 1.5, -29.5), Math.toRadians(90))
+                        .splineTo(new Vector2d(22.0 + 1.5, 29.5), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
                         .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
                             robot.purplePixel.drop();
@@ -162,7 +137,33 @@ public class Red1_4T_1P extends AutoBase {
                         .back(29.25)
                         .build();
                 backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .splineToLinearHeading(new Pose2d(50, -35.25 - 6 - 2.375, Math.toRadians(180)), Math.toRadians(0))
+                        .splineToLinearHeading(new Pose2d(50, (-35.25 - 6 + 2.375) * -1, Math.toRadians(180)), Math.toRadians(0))
+                        .build();
+                break;
+            case MIDDLE:
+                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
+                        // Center of robot, adjusted so purple pixel servo is in line with the center
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
+                            robot.purplePixel.drop();
+                        })
+                        .back(36.25)
+                        .build();
+                backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .splineToLinearHeading(new Pose2d(50, (-35.25 + 2.375) * -1, Math.toRadians(180)), Math.toRadians(0))
+                        .build();
+                break;
+            case RIGHT: // I physically don't know how to do it without running into the truss so we have middle case instead
+                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
+                        // Center of robot, adjusted so purple pixel servo is in line with the center
+                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
+                            robot.purplePixel.drop();
+                        })
+                        .back(36.25)
+                        .build();
+                backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .splineToLinearHeading(new Pose2d(50, (-35.25 + 6 + 2.375) * -1, Math.toRadians(180)), Math.toRadians(0))
                         .build();
                 break;
         }
@@ -174,11 +175,11 @@ public class Red1_4T_1P extends AutoBase {
         setGoalPose();
 
         parkingTraj = drive.trajectorySequenceBuilder(backboardTraj.end())
-                .waitSeconds(2)
+                .waitSeconds(2) // give time for servo to do its thing
                 .forward(10)
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(40, -58.75))
-                .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(40, 58.75))
+                .turn(Math.toRadians(-90))
                 .forward(58.75-40)
                 .build();
 
