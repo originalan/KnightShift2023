@@ -51,7 +51,7 @@ public class OneDriverTest extends LinearOpMode{
 
         while (opModeInInit()) {
             robot.rig.noHang();
-            robot.purplePixelServo.setPosition(1);
+//            robot.purplePixelServo.setPosition(1);
             robot.launcher.notYet();
         }
 

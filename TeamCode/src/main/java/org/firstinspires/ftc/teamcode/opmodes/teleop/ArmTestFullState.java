@@ -14,12 +14,12 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 
 /**
- * ArmTest is a test Teleop mode that is used to tune the movement of the Arm
+ * ArmTestFullState is a test Teleop mode that is used to tune the movement of the Arm with a Full State Feedback controller
  * Calibration can be changed live in FTC Dashboard
  */
 @Config
-@TeleOp (name = "Arm Test", group = "Testing")
-public class ArmTest extends LinearOpMode {
+@TeleOp (name = "Arm Test (Full State Feedback)", group = "Testing")
+public class ArmTestFullState extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;

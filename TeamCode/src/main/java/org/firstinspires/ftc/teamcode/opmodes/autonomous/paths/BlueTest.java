@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 @Autonomous(name = "Blue (Closer) Test", group = "Testing")
@@ -40,7 +41,10 @@ public class BlueTest extends AutoBase {
     public void runOpMode() throws InterruptedException {
 
         controller = new FullStateFeedback();
+
         startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
+        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
+
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
         drive.setPoseEstimate(startingPose);

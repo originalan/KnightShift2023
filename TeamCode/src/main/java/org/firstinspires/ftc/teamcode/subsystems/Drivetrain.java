@@ -37,11 +37,17 @@ public class Drivetrain extends Subsystem {
 
         lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        double radians = PoseStorage.currentPose.getHeading();
         // We want robot to face 90 degrees (in pose2d graph and in radians)
         // insert some code here so that if robot ends up not facing this after auto, adjust initYaw to something that works
+        double goalHeading = PoseStorage.startingAutoPose.getHeading();
+        goalHeading = Math.toDegrees(goalHeading);
 
-        initYaw = lastAngles.firstAngle;
+        double curHeading = PoseStorage.currentPose.getHeading();
+        curHeading = Math.toDegrees(curHeading);
+
+        double diff = goalHeading - curHeading;
+
+        initYaw = lastAngles.firstAngle + diff;
     }
 
     @Override
@@ -76,7 +82,7 @@ public class Drivetrain extends Subsystem {
         lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = lastAngles.firstAngle;
 
-        // For resetting absolute angle of imu
+        // For resetting absolute angle of imu (purely for telemetry purposes)
         robot.resetIMUAngle();
     }
 
@@ -107,7 +113,7 @@ public class Drivetrain extends Subsystem {
             double zeroedYaw = (-1 * initYaw) + lastAngles.firstAngle;
             double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
             theta = (360 - zeroedYaw) + thetaGamepad; // Real theta that robot must travel in degrees
-            theta = theta * Math.PI / 180;
+            theta = theta * Math.PI / 180; // convert to radians
             power = Math.hypot(x, y);
         }else {
             power = Math.hypot(x, y);
@@ -244,65 +250,5 @@ public class Drivetrain extends Subsystem {
         return 0;
     }
 
-    /**
-     * During driver phase, if one motor lags behind, this uses PID loop to adjust
-     */
-    public void checkAndAdjustMotors() {
-        // Say all 4 motors are running at max power (1.0)
-        // Motors 3 is running at 100 rpm but motor 4 is running at 60 rpm
-        // You cannot increase the power of motor 4 because it is already at max (1.0)
-        // So, we check once the calculations for motor 4 are done, if the output power is greater than 1.0, we instead use motor 4 as a reference so motor 3 has to adjust to a lesser power
-
-        double frontLeftPower;
-        double frontRightPower;
-        double backLeftPower;
-        double backRightPower;
-
-        // Two front motors
-        if (robot.frontLeft.getVelocity() > robot.frontRight.getVelocity()) {
-
-            frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false);
-            if (frontRightPower > 1.0) {
-                frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false);
-                robot.frontLeft.setPower(frontLeftPower);
-            }else {
-                robot.frontRight.setPower(frontRightPower);
-            }
-
-        }else if (robot.frontLeft.getVelocity() < robot.frontRight.getVelocity()) {
-
-            frontLeftPower = robot.pid.calculate(robot.frontRight.getVelocity(), robot.frontLeft.getVelocity(), false);
-            if (frontLeftPower > 1.0) {
-                frontRightPower = robot.pid.calculate(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity(), false);
-                robot.frontRight.setPower(frontRightPower);
-            }else {
-                robot.frontLeft.setPower(frontLeftPower);
-            }
-
-        }
-
-        // Two back motors
-        if (robot.backLeft.getVelocity() > robot.backRight.getVelocity()) {
-
-            backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false);
-            if (backRightPower > 1.0) {
-                backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false);
-                robot.backLeft.setPower(backLeftPower);
-            }else {
-                robot.backRight.setPower(backRightPower);
-            }
-
-        }else if (robot.backLeft.getVelocity() < robot.backRight.getVelocity()) {
-
-            backLeftPower = robot.pid.calculate(robot.backRight.getVelocity(), robot.backLeft.getVelocity(), false);
-            if (backLeftPower > 1.0) {
-                backRightPower = robot.pid.calculate(robot.backLeft.getVelocity(), robot.backRight.getVelocity(), false);
-                robot.backRight.setPower(backRightPower);
-            }else {
-                robot.backLeft.setPower(backLeftPower);
-            }
-
-        }
-    }
 
 }
