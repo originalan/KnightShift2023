@@ -15,7 +15,6 @@ public class Intake extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    public String IntakeStates = "OFF";
     public enum IntakeState {
         OFF,
         ON,
@@ -61,11 +60,11 @@ public class Intake extends Subsystem {
     }
 
     public void moveForwards() {
-        robot.intakeMotor.setPower(RobotSettings.INTAKE_DEFAULT_MOTOR_SPEED);
+        robot.intakeMotor.setPower(0.1);
     }
 
     public void moveBackwards() {
-        robot.intakeMotor.setPower(-1 * RobotSettings.INTAKE_DEFAULT_MOTOR_SPEED);
+        robot.intakeMotor.setPower(-0.8);
     }
 
     public void turnOff() {

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.RobotSettings;
  * Manages joystick controls and telemetry updates.
  * It is NOT updated yet as of 12.08.2023. See OneDriverTest for latest updates
  */
-@TeleOp(name = "OneDriver", group = "TeleOpmode")
+@TeleOp(name = "OneDriver (OUTDATED)", group = "TeleOpmode")
 public class OneDriver extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -50,7 +50,6 @@ public class OneDriver extends LinearOpMode {
 
         while (opModeInInit()) {
             robot.rig.noHang();
-            robot.purplePixelServo.setPosition(RobotSettings.PURPLE_PIXEL_SERVO_STARTING_POSITION);
             robot.launcher.notYet();
         }
 

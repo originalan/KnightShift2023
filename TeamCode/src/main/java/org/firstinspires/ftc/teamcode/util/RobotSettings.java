@@ -13,10 +13,10 @@ public class RobotSettings {
     /*
     =================DRIVETRAIN SETTINGS==============
     */
-    public static String DRIVETRAIN_BACKLEFT_MOTOR_NAME = "backLeft";
-    public static String DRIVETRAIN_BACKRIGHT_MOTOR_NAME = "backRight";
-    public static String DRIVETRAIN_FRONTLEFT_MOTOR_NAME = "frontLeft";
-    public static String DRIVETRAIN_FRONTRIGHT_MOTOR_NAME = "frontRight";
+    public static String DRIVETRAIN_BACKLEFT_MOTOR_NAME = "BackLeftMotor";
+    public static String DRIVETRAIN_BACKRIGHT_MOTOR_NAME = "BackRightMotor";
+    public static String DRIVETRAIN_FRONTLEFT_MOTOR_NAME = "FrontLeftMotor";
+    public static String DRIVETRAIN_FRONTRIGHT_MOTOR_NAME = "FrontRightMotor";
     public static boolean DRIVETRAIN_BACKLEFT_REVERSED = true;
     public static boolean DRIVETRAIN_BACKRIGHT_REVERSED = false;
     public static boolean DRIVETRAIN_FRONTLEFT_REVERSED = true;
@@ -26,7 +26,7 @@ public class RobotSettings {
     /*
     =================INTAKE SETTINGS==============
     */
-    public static String INTAKE_MOTOR_NAME = "Intake";
+    public static String INTAKE_MOTOR_NAME = "IntakeMotor";
     public static boolean INTAKE_MOTOR_REVERSED = true;
     public static double INTAKE_DEFAULT_MOTOR_SPEED = 0.4;
     public static double INTAKE_CURRENT_THRESHOLD = 10000;
@@ -34,32 +34,25 @@ public class RobotSettings {
     /*
     =================OUTTAKE (DELIVERY ARM) SETTINGS==============
     */
-    public static String OUTTAKE_MOTOR_NAME = "LinearSlide";
+    public static String OUTTAKE_MOTOR_NAME = "ArmMotor";
     public static boolean OUTTAKE_MOTOR_REVERSED = true;
-    public static double OUTTAKE_MOTOR_MOVEMENT_DEGREES = 180.0;
-    public static int OUTTAKE_MOTOR_ENCODER_POSITION = (int)((OUTTAKE_MOTOR_MOVEMENT_DEGREES / 360.0) * 1440.0);
 
-    /*
-    =================PURPLE PIXEL SETTINGS==============
-    */
-    public static String PURPLE_PIXEL_SERVO_NAME = "PurplePixel";
-    public static boolean PURPLE_PIXEL_SERVO_REVERSED = false;
-    public static double PURPLE_PIXEL_SERVO_STARTING_POSITION = 1.0;
-    public static double PURPLE_PIXEL_SERVO_MOVEMENT_DEGREES = 22.0;
-    public static double PURPLE_PIXEL_SERVO_ENDING_POSITION = 1.0 - (PURPLE_PIXEL_SERVO_MOVEMENT_DEGREES / 180.0);
 
     /*
     =================RIGGING SETTINGS==============
     */
-    public static String RIGGING_LEFT_MOTOR_NAME = "LeftRigging";
-    public static String RIGGING_RIGHT_MOTOR_NAME = "RightRigging";
+    public static String RIGGING_LEFT_MOTOR_NAME = "LeftRiggingMotor";
+    public static String RIGGING_RIGHT_MOTOR_NAME = "RightRiggingMotor";
     public static String RIGGING_LEFT_SERVO_NAME = "RightRiggingServo";
     public static String RIGGING_RIGHT_SERVO_NAME = "LeftRiggingServo";
     public static boolean RIGGING_LEFT_MOTOR_REVERSED = false;
     public static boolean RIGGING_RIGHT_MOTOR_REVERSED = false;
     public static boolean RIGGING_LEFT_SERVO_REVERSED = false;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
-    public static double RIGGING_MOTOR_SPEED = 0.4;
+    public static double RIGGING_MOTOR_SPEED = 0.6;
+    public static double RIGGING_LEFT_REST = 0.0;
+    public static double RIGGING_RIGHT_REST = 1.0;
+    public static double RIGGING_MOVE_SERVO = 0.25;
 
     /*
     =================AUTONOMOUS MEASUREMENTS==============

@@ -37,7 +37,6 @@ public class JVBoysSoccerRobot {
     public DeliveryArm deliveryArm;
     public Rigging rig;
     public AirplaneLauncher launcher;
-    public PurplePixel purplePixel;
 
     // Hardware
     public BNO055IMU imu;
@@ -83,7 +82,6 @@ public class JVBoysSoccerRobot {
         deliveryArm = new DeliveryArm(hwMap, telemetry, this);
         rig = new Rigging(hwMap, telemetry, this);
         launcher = new AirplaneLauncher(hwMap, telemetry, this);
-        purplePixel = new PurplePixel(hwMap, telemetry, this);
 
         subsystems = Arrays.asList(drivetrain, intake, deliveryArm, rig, launcher);
     }

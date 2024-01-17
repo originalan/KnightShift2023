@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
  * Rigging is a Subsystem representing all rigging/hanging hardware movement
@@ -15,9 +16,6 @@ public class Rigging extends Subsystem {
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
-
-    private final double leftRigInitialPos = 0;
-    private final double rightRigInitialPos = 1;
 
     public enum RiggingState {
         NO_RIG,
@@ -57,19 +55,19 @@ public class Rigging extends Subsystem {
     }
 
     public void hang() {
-        robot.leftRigServo.setPosition(leftRigInitialPos + 0.5);
-        robot.rightRigServo.setPosition(rightRigInitialPos - 0.5);
+        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST + RobotSettings.RIGGING_MOVE_SERVO);
+        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST - RobotSettings.RIGGING_MOVE_SERVO);
         // Motor string code is handled elsewhere
     }
 
     public void hang(double increment) {
-        robot.leftRigServo.setPosition(leftRigInitialPos + increment);
-        robot.rightRigServo.setPosition(rightRigInitialPos - increment);
+        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST + increment);
+        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST - increment);
     }
 
     public void noHang() {
-        robot.leftRigServo.setPosition(leftRigInitialPos);
-        robot.rightRigServo.setPosition(rightRigInitialPos);
+        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST);
+        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST);
     }
 
 }

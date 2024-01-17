@@ -5,11 +5,8 @@ import static org.firstinspires.ftc.teamcode.util.RobotSettings.AUTO_PURPLE_PIXE
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.old.blue.Blue1_4T_1P;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -65,56 +62,56 @@ public class BlueTest extends AutoBase {
 
             while (opModeIsActive() && !isStopRequested()) {
 
-                switch (autoState) {
-
-                    case ORIENT_PURPLE_PIXEL:
-                        robot.intake.intakeState = Intake.IntakeState.OFF;
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.PLACING_PURPLE_PIXEL;
-                            drive.followTrajectorySequenceAsync(waitingTraj);
-                        }
-                        break;
-                    case PLACING_PURPLE_PIXEL:
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.MOVING_TO_BACKBOARD;
-                            drive.followTrajectorySequenceAsync(backboardTraj);
-                        }
-                        break;
-                    case MOVING_TO_BACKBOARD:
-                        robot.deliveryArm.slideState = DeliveryArm.ArmState.TOP;
-                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
-                            autoState = AutoState.RELEASE_PIXEL;
-                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
-                        }
-                        break;
-                    case MANEUVER_ARM:
-//                        if (robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
-//                            autoState = AutoState.RELEASE_PIXEL;
+//                switch (autoState) {
+//
+//                    case ORIENT_PURPLE_PIXEL:
+//                        robot.intake.intakeState = Intake.IntakeState.OFF;
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.PLACING_PURPLE_PIXEL;
+//                            drive.followTrajectorySequenceAsync(waitingTraj);
 //                        }
-                        break;
-                    case RELEASE_PIXEL:
-                        if (!drive.isBusy()) {
-                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BOTTOM;
-                            autoState = AutoState.PARKING;
-                            drive.followTrajectorySequenceAsync(parkingTraj);
-                        }
-                        break;
-                    case BRING_ARM_BACK:
-//                        if (!robot.deliveryArmMotor.isBusy()) {
+//                        break;
+//                    case PLACING_PURPLE_PIXEL:
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.MOVING_TO_BACKBOARD;
+//                            drive.followTrajectorySequenceAsync(backboardTraj);
+//                        }
+//                        break;
+//                    case MOVING_TO_BACKBOARD:
+//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.TOP;
+//                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
+//                            autoState = AutoState.RELEASE_PIXEL;
+//                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
+//                        }
+//                        break;
+//                    case MANEUVER_ARM:
+////                        if (robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
+////                            autoState = AutoState.RELEASE_PIXEL;
+////                        }
+//                        break;
+//                    case RELEASE_PIXEL:
+//                        if (!drive.isBusy()) {
+//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BOTTOM;
 //                            autoState = AutoState.PARKING;
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
 //                            drive.followTrajectorySequenceAsync(parkingTraj);
 //                        }
-                        break;
-                    case PARKING:
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.IDLE;
-                        }
-                        break;
-                    case IDLE:
-                        break;
-
-                }
+//                        break;
+//                    case BRING_ARM_BACK:
+////                        if (!robot.deliveryArmMotor.isBusy()) {
+////                            autoState = AutoState.PARKING;
+////                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
+////                            drive.followTrajectorySequenceAsync(parkingTraj);
+////                        }
+//                        break;
+//                    case PARKING:
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.IDLE;
+//                        }
+//                        break;
+//                    case IDLE:
+//                        break;
+//
+//                }
 
                 drive.update();
                 robot.deliveryArm.update();
@@ -140,7 +137,7 @@ public class BlueTest extends AutoBase {
                         .splineTo(new Vector2d(22.0 + 1.5, 29.5), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
                         .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-                            robot.purplePixel.drop();
+//                            robot.purplePixel.drop();
                         })
                         .back(29.25)
                         .build();
@@ -153,7 +150,7 @@ public class BlueTest extends AutoBase {
                         .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
                         .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-                            robot.purplePixel.drop();
+//                            robot.purplePixel.drop();
                         })
                         .back(36.25)
                         .build();
@@ -166,7 +163,7 @@ public class BlueTest extends AutoBase {
                         .splineTo(new Vector2d(11.75 + 1.5, 22.0), Math.toRadians(270))
                         // Center of robot, adjusted so purple pixel servo is in line with the center
                         .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-                            robot.purplePixel.drop();
+//                            robot.purplePixel.drop();
                         })
                         .back(36.25)
                         .build();

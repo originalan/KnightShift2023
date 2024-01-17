@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
-import org.firstinspires.ftc.teamcode.subsystems.PurplePixel;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
@@ -24,11 +22,8 @@ public class OneDriverTest extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private boolean launcherFired = false;
-    private boolean hooksInPlace = false;
-    private boolean moveRigServo = false;
-    private boolean undoRig = true;
-    private double timeElapsedRigging = 0;
-    private int i = 1;
+    private boolean isRigging = false;
+    private boolean rigStringMove = false;
     private boolean switchDriveControls = false;
 
 
@@ -51,7 +46,6 @@ public class OneDriverTest extends LinearOpMode{
 
         while (opModeInInit()) {
             robot.rig.noHang();
-//            robot.purplePixelServo.setPosition(1);
             robot.launcher.notYet();
         }
 
@@ -112,49 +106,29 @@ public class OneDriverTest extends LinearOpMode{
                 /*
                 =================RIGGING CONTROLS==============
                 */
-                if (hooksInPlace && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
+
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    isRigging = !isRigging;
+                }
+
+                if (!rigStringMove) {
+                    if (isRigging) {
+                        robot.rig.hang();
+                    }else {
+                        robot.rig.noHang();
+                    }
+                }else {
+                    robot.rightRigServo.getController().pwmDisable();
+                    robot.leftRigServo.getController().pwmDisable();
+                }
+
+                if (isRigging && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
+                    rigStringMove = true;
                     robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                     robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
                     robot.rightRigMotor.setPower(0);
                     robot.leftRigMotor.setPower(0);
-                }
-
-                if (moveRigServo) {
-                    double currentTime = getRuntime();
-                    double delta = currentTime - timeElapsedRigging;
-                    double incrementTime = 0.1; // in seconds
-                    double incrementServo = 0.025;
-
-                    if (undoRig) {
-                        if (delta < incrementTime * i && delta >= incrementTime * (i-1) && i < (0.5 / incrementServo)) {
-                            robot.rig.hang(0.5 - (incrementServo * i));
-                            i++;
-                        }
-                        if (i >= (0.5 / incrementServo)) {
-                            robot.rig.hang(0);
-                            moveRigServo = false;
-                            hooksInPlace = false;
-                        }
-                    }else {
-                        if (delta < incrementTime * i && delta >= incrementTime * (i-1) && i < (0.5 / incrementServo)) {
-                            robot.rig.hang(incrementServo * i);
-                            i++;
-                        }
-                        if (i >= (0.5 / incrementServo)) {
-                            robot.rig.hang(0.5);
-                            hooksInPlace = true;
-                        }
-                    }
-                }else {
-                    robot.rig.noHang();
-                }
-
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    moveRigServo = true;
-                    timeElapsedRigging = getRuntime();
-                    undoRig = !undoRig;
-                    i = 1;
                 }
 
                 /*
