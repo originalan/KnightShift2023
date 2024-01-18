@@ -47,7 +47,7 @@ public class ArmTestFullState extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                robot.deliveryArm.slideState = DeliveryArm.ArmState.GO_TO_POSITION;
+                robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
                 int armPos = robot.deliveryArmMotor.getCurrentPosition();
 
 //                double pidPower = pid.calculate(armPos, targetPos, false);

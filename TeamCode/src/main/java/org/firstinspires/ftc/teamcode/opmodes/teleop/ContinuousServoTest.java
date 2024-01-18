@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
 /**
@@ -43,11 +42,11 @@ public class ContinuousServoTest extends LinearOpMode {
                 }
 
                 if (counter % 3 == 0) {
-                    robot.airplaneLauncherServo.setPosition(reverse);
+                    robot.airplaneLauncherFireServo.setPosition(reverse);
                 }else if (counter % 3 == 1) {
-                    robot.airplaneLauncherServo.setPosition(0.5);
+                    robot.airplaneLauncherFireServo.setPosition(0.5);
                 }else if (counter % 3 == 2) {
-                    robot.airplaneLauncherServo.setPosition(forward);
+                    robot.airplaneLauncherFireServo.setPosition(forward);
                 }
 
                 robot.launcher.addTelemetry();

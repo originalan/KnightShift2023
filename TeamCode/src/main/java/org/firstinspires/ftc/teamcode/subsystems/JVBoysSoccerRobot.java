@@ -43,7 +43,8 @@ public class JVBoysSoccerRobot {
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DcMotorEx intakeMotor;
-    public Servo airplaneLauncherServo;
+    public Servo airplaneLauncherFireServo;
+    public Servo airplaneLauncherAdjustServo;
     public DcMotorEx deliveryArmMotor;
     public Servo leftRigServo;
     public Servo rightRigServo;
@@ -127,9 +128,13 @@ public class JVBoysSoccerRobot {
 
     public void initHardware() {
         // Airplane Launcher Subsystem
-        airplaneLauncherServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME);
-        airplaneLauncherServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-        airplaneLauncherServo.setPosition(0);
+        airplaneLauncherFireServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME);
+        airplaneLauncherFireServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        airplaneLauncherFireServo.setPosition(0);
+
+        airplaneLauncherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME_2);
+        airplaneLauncherAdjustServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED_2 ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        airplaneLauncherAdjustServo.setPosition(0);
 
         // Drivetrain Subsystem
         backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);

@@ -37,7 +37,7 @@ public class DeliveryArm extends Subsystem {
         AUTO_INTAKE_2
     }
 
-    public ArmState slideState = ArmState.AT_REST;
+    public ArmState armState = ArmState.AT_REST;
 
     public DeliveryArm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -65,19 +65,19 @@ public class DeliveryArm extends Subsystem {
 
     @Override
     public void update() {
-        switch (slideState) {
-            case GO_TO_POSITION:
-                robot.deliveryArmMotor.setPower(targetPower);
-                break;
-            case AT_REST:
-                robot.deliveryArmMotor.setPower(0);
-                break;
-            case BOTTOM:
-                robot.deliveryArmMotor.setPower(controller.calculate(0, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
-                break;
-            case TOP:
-                robot.deliveryArmMotor.setPower(controller.calculate(600, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
-                break;
+        switch (armState) {
+//            case GO_TO_POSITION:
+//                robot.deliveryArmMotor.setPower(targetPower);
+//                break;
+//            case AT_REST:
+//                robot.deliveryArmMotor.setPower(0);
+//                break;
+//            case BOTTOM:
+//                robot.deliveryArmMotor.setPower(controller.calculate(0, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
+//                break;
+//            case TOP:
+//                robot.deliveryArmMotor.setPower(controller.calculate((int)(150.0/360.0 * 537.6), 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
+//                break;
         }
     }
 

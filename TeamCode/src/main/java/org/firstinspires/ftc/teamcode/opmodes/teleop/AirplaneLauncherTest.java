@@ -37,7 +37,7 @@ public class AirplaneLauncherTest extends LinearOpMode {
                 if (launchPlane) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }else {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.AT_REST;
                 }
 
                 robot.launcher.addTelemetry();

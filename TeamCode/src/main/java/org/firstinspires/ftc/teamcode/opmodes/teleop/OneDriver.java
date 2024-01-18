@@ -50,7 +50,7 @@ public class OneDriver extends LinearOpMode {
 
         while (opModeInInit()) {
             robot.rig.noHang();
-            robot.launcher.notYet();
+            robot.launcher.launcherAtRest();
         }
 
         waitForStart();
@@ -159,7 +159,7 @@ public class OneDriver extends LinearOpMode {
                 if (launcherFired) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }else {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.OFF;
+                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.AT_REST;
                 }
 
                 /*

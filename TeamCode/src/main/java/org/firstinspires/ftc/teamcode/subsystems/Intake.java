@@ -45,10 +45,6 @@ public class Intake extends Subsystem {
                 break;
             case FORWARD:
                 moveForwards();
-//                // If intake is blocked, then current will spike and we will reverse motor to undo the blockage
-//                if(robot.intakeMotor.getCurrent(CurrentUnit.AMPS) > RobotSettings.INTAKE_CURRENT_THRESHOLD){
-//                    moveBackwards();
-//                }
                 break;
             case REVERSE:
                 moveBackwards();
