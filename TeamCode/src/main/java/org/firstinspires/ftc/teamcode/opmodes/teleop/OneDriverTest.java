@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -98,9 +99,10 @@ public class OneDriverTest extends LinearOpMode{
                 }
                 if (positionArm) {
                     robot.deliveryArm.armState = DeliveryArm.ArmState.TOP;
-//                    robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
+                    robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
                     // Because intake controls are underneath this if statement, we can override this state if we activate the intake
                 }else {
+                    robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
                 }
 

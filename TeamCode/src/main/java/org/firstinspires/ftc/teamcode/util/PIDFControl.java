@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 
 /**
  * An instance is made for every class that uses a PIDF loop
@@ -54,7 +55,7 @@ public class PIDFControl {
     }
 
     public double feedForwardCalculate(double state) {
-        return Math.cos(Math.toRadians(state / ticksInDegrees)) + Kf;
+        return Math.cos(Math.toRadians(state / ticksInDegrees)) * Kf;
     }
 
     public double angleWrap(double radians) {

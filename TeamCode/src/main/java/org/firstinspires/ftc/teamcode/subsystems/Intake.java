@@ -61,14 +61,17 @@ public class Intake extends Subsystem {
     }
 
     public void moveForwards() {
+        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.intakeMotor.setPower(RobotSettings.INTAKE_FORWARD_MOTOR_SPEED);
     }
 
     public void moveBackwards() {
+        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.intakeMotor.setPower(RobotSettings.INTAKE_REVERSE_MOTOR_SPEED);
     }
 
     public void turnOff() {
+        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.intakeMotor.setPower(0);
     }
 
@@ -82,8 +85,9 @@ public class Intake extends Subsystem {
 
         int targetPos = currentPos - remainder;
 
-        robot.intakeMotor.setTargetPosition(targetPos);
         robot.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.intakeMotor.setTargetPosition(targetPos);
+        robot.intakeMotor.setPower(0.2);
 
     }
 

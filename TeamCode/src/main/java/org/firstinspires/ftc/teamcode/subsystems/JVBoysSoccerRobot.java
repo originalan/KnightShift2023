@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class JVBoysSoccerRobot {
 
+    public static int initialArmPosition;
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private List<LynxModule> allHubs;
@@ -171,6 +172,7 @@ public class JVBoysSoccerRobot {
         deliveryArmMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
         deliveryArmMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
         deliveryArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Rigging Subsystem
         leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);

@@ -35,9 +35,10 @@ public class RobotSettings {
     =================DELIVERY ARM SETTINGS==============
     */
     public static String OUTTAKE_MOTOR_NAME = "ArmMotor";
-    public static boolean OUTTAKE_MOTOR_REVERSED = true;
+    public static boolean OUTTAKE_MOTOR_REVERSED = false;
     public static double ARM_TOP_POSITION_DEGREES = 150.0;
-    public static double ARM_MOTOR_POWER = -1;
+    public static double ARM_MOTOR_POWER = 1;
+    public static int ARM_FLIP_POSITION = 550;
     public static double ARM_BOTTOM_POSITION_DEGREES = 0;
     public static int ARM_ENCODER_TOP = (int)(ARM_TOP_POSITION_DEGREES / 360.0 * 537.6);
 

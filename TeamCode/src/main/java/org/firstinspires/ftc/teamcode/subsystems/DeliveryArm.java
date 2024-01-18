@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.InterpLUT;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
@@ -19,6 +19,7 @@ public class DeliveryArm extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
     private FullStateFeedback controller;
+    private PIDFControl pid;
     private InterpLUT kPCoefficients = new InterpLUT(),
                         kVCoefficients = new InterpLUT();
 
@@ -47,6 +48,8 @@ public class DeliveryArm extends Subsystem {
         this.robot = robot;
         controller = new FullStateFeedback(hwMap, telemetry);
 
+        JVBoysSoccerRobot.initialArmPosition = robot.deliveryArmMotor.getCurrentPosition();
+
 //        robot.deliveryArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 //        kPCoefficients.add(0, kPatRest);
@@ -68,15 +71,16 @@ public class DeliveryArm extends Subsystem {
     @Override
     public void update() {
         switch (armState) {
-//            case GO_TO_POSITION:
-//                robot.deliveryArmMotor.setPower(targetPower);
-//                break;
-//            case BOTTOM:
-//                robot.deliveryArmMotor.setPower(controller.calculate(0, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
-//                break;
-//            case TOP:
+            case GO_TO_POSITION:
+                robot.deliveryArmMotor.setPower(targetPower);
+                break;
+            case BOTTOM:
+                robot.deliveryArmMotor.setPower(pid.calculate(0, robot.deliveryArmMotor.getCurrentPosition(), false));
+                break;
+            case TOP:
+                robot.deliveryArmMotor.setPower(pid.calculate((int)(150.0 / 360.0 * 537.6 * 3), robot.deliveryArmMotor.getCurrentPosition(), false));
 //                robot.deliveryArmMotor.setPower(controller.calculate((int)(150.0/360.0 * 537.6), 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
-//                break;
+                break;
             case TEST:
 //                robot.deliveryArmMotor.setTargetPosition(RobotSettings.ARM_ENCODER_TOP);
 //                robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

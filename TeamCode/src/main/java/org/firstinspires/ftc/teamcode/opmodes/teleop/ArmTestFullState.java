@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -43,10 +44,14 @@ public class ArmTestFullState extends LinearOpMode {
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
 
+        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         waitForStart();
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
@@ -78,6 +83,7 @@ public class ArmTestFullState extends LinearOpMode {
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
                 telemetry.addData("Arm actual velocity", robot.deliveryArmMotor.getVelocity());
+                telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
                 telemetry.update();
             }
         }
