@@ -20,6 +20,7 @@ public class AirplaneLauncher extends Subsystem {
     private int timerCounter = 1;
 
     public enum LauncherState {
+        SETUP,
         AT_REST,
         ZONE_ONE_OR_BUST
     }
@@ -41,8 +42,8 @@ public class AirplaneLauncher extends Subsystem {
     public void update() {
         switch (launcherState) {
             case AT_REST:
-                launcherAtRest();
-                adjustClamped();
+                restFireServo();
+                clampAdjustServo();
                 break;
             case ZONE_ONE_OR_BUST:
                 if (timerCounter == 1) {
@@ -50,32 +51,36 @@ public class AirplaneLauncher extends Subsystem {
                     timerCounter++;
                 }
                 currentTime = timer.seconds();
-                adjustUnclamped();
-                if (currentTime > 2.0) {
-                    ZONE_ONE_OR_BUST();
+                unclampAdjustServo();
+                if (currentTime > 2.0) { // unclamp, then wait 2 seconds before firing airplane
+                    releaseFireServo();
                 }
+                break;
+            case SETUP:
+                restFireServo();
+                unclampAdjustServo();
                 break;
         }
     }
 
     @Override
     public void stop() {
-        launcherAtRest();
+        restFireServo();
     }
 
-    public void ZONE_ONE_OR_BUST() {
+    public void releaseFireServo() {
         robot.airplaneLauncherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
     }
 
-    public void launcherAtRest() {
+    public void restFireServo() {
         robot.airplaneLauncherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
     }
 
-    public void adjustUnclamped() {
+    public void unclampAdjustServo() {
         robot.airplaneLauncherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_UNCLAMPED);
     }
 
-    public void adjustClamped() {
+    public void clampAdjustServo() {
         robot.airplaneLauncherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_CLAMPED);
     }
 

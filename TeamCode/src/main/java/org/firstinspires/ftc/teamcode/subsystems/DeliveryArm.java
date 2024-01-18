@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
  * DeliveryArm is a Subsystem representing all linear slide / arm hardware movement
@@ -34,7 +35,8 @@ public class DeliveryArm extends Subsystem {
         BOTTOM,
         TOP,
         AUTO_INTAKE_1,
-        AUTO_INTAKE_2
+        AUTO_INTAKE_2,
+        TEST
     }
 
     public ArmState armState = ArmState.AT_REST;
@@ -45,7 +47,7 @@ public class DeliveryArm extends Subsystem {
         this.robot = robot;
         controller = new FullStateFeedback(hwMap, telemetry);
 
-        robot.deliveryArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.deliveryArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 //        kPCoefficients.add(0, kPatRest);
 //        kPCoefficients.add(120, kPatTop); // change 120 degrees to ____ encoder ticks
@@ -59,7 +61,7 @@ public class DeliveryArm extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Linear Slide");
+        telemetry.addLine("Delivery Arm");
         telemetry.addData("   Motor Position Encoder Value", "%d", robot.deliveryArmMotor.getCurrentPosition());
     }
 
@@ -69,15 +71,20 @@ public class DeliveryArm extends Subsystem {
 //            case GO_TO_POSITION:
 //                robot.deliveryArmMotor.setPower(targetPower);
 //                break;
-//            case AT_REST:
-//                robot.deliveryArmMotor.setPower(0);
-//                break;
 //            case BOTTOM:
 //                robot.deliveryArmMotor.setPower(controller.calculate(0, 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
 //                break;
 //            case TOP:
 //                robot.deliveryArmMotor.setPower(controller.calculate((int)(150.0/360.0 * 537.6), 0, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity()));
 //                break;
+            case TEST:
+//                robot.deliveryArmMotor.setTargetPosition(RobotSettings.ARM_ENCODER_TOP);
+//                robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.deliveryArmMotor.setPower(RobotSettings.ARM_MOTOR_POWER);
+                break;
+            case AT_REST:
+                robot.deliveryArmMotor.setPower(0);
+                break;
         }
     }
 

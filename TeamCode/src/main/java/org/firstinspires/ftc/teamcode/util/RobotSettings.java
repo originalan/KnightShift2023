@@ -27,16 +27,19 @@ public class RobotSettings {
     =================INTAKE SETTINGS==============
     */
     public static String INTAKE_MOTOR_NAME = "IntakeMotor";
-    public static boolean INTAKE_MOTOR_REVERSED = true;
-    public static double INTAKE_FORWARD_MOTOR_SPEED = 0.1;
-    public static double INTAKE_REVERSE_MOTOR_SPEED = -1;
-    public static double INTAKE_CURRENT_THRESHOLD = 10000;
+    public static boolean INTAKE_MOTOR_REVERSED = false;
+    public static double INTAKE_FORWARD_MOTOR_SPEED = 0.75;
+    public static double INTAKE_REVERSE_MOTOR_SPEED = -0.25;
 
     /*
-    =================OUTTAKE (DELIVERY ARM) SETTINGS==============
+    =================DELIVERY ARM SETTINGS==============
     */
     public static String OUTTAKE_MOTOR_NAME = "ArmMotor";
     public static boolean OUTTAKE_MOTOR_REVERSED = true;
+    public static double ARM_TOP_POSITION_DEGREES = 150.0;
+    public static double ARM_MOTOR_POWER = -1;
+    public static double ARM_BOTTOM_POSITION_DEGREES = 0;
+    public static int ARM_ENCODER_TOP = (int)(ARM_TOP_POSITION_DEGREES / 360.0 * 537.6);
 
 
     /*

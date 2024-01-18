@@ -50,7 +50,7 @@ public class OneDriver extends LinearOpMode {
 
         while (opModeInInit()) {
             robot.rig.noHang();
-            robot.launcher.launcherAtRest();
+            robot.launcher.restFireServo();
         }
 
         waitForStart();

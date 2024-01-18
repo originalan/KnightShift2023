@@ -96,9 +96,10 @@ public class Drivetrain extends Subsystem {
     public void moveXYR(double x, double y, double r, boolean isFieldOriented) {
 
         lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         if (orientPerpendicular) {
-            if (Math.abs(lastAngles.firstAngle - 90) % 180 <= 1) {
-                r = 0;
+            if (Math.abs(lastAngles.firstAngle - 90) % 180 <= 1) { // if within 1 angle of perpendicular...
+                r = 0; // don't rotate
             }
         }
 
@@ -226,29 +227,5 @@ public class Drivetrain extends Subsystem {
         Orientation angles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
     }
-
-    /**
-     * PID calibrations for motors given any position that the robot wants to move forward to
-     * @param reference is the projected position in inches
-     * @return
-     */
-    public double powerFromPIDPosition(double reference) {
-
-        double BLcal = robot.pid.calculate(reference, robot.backLeft.getCurrentPosition(), false);
-        double BRcal = robot.pid.calculate(reference, robot.backRight.getCurrentPosition(), false);
-        double FLcal = robot.pid.calculate(reference, robot.frontLeft.getCurrentPosition(), false);
-        double FRcal = robot.pid.calculate(reference, robot.frontRight.getCurrentPosition(), false);
-
-        robot.backLeft.setPower(BLcal);
-        robot.backRight.setPower(BRcal);
-        robot.frontLeft.setPower(FLcal);
-        robot.frontRight.setPower(FRcal);
-
-        telemetry.addData("Front Left/Right Adjusted Powers", "%4.2f, %4.2f", FLcal, FRcal);
-        telemetry.addData("Back Left/Right Adjusted Powers", "%4.2f, %4.2f", BLcal, BRcal);
-
-        return 0;
-    }
-
 
 }

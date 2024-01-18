@@ -35,7 +35,6 @@ public class OneDriverTest extends LinearOpMode{
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
-        double reversed = 1.0;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
@@ -47,7 +46,6 @@ public class OneDriverTest extends LinearOpMode{
 
         while (opModeInInit()) {
             robot.rig.noHang();
-            robot.launcher.launcherAtRest();
         }
 
         waitForStart();
@@ -100,7 +98,7 @@ public class OneDriverTest extends LinearOpMode{
                 }
                 if (positionArm) {
                     robot.deliveryArm.armState = DeliveryArm.ArmState.TOP;
-                    robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
+//                    robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
                     // Because intake controls are underneath this if statement, we can override this state if we activate the intake
                 }else {
                     robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
@@ -114,8 +112,7 @@ public class OneDriverTest extends LinearOpMode{
                 }
                 else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;
-                }
-                else {
+                }else {
                     robot.intake.intakeState = Intake.IntakeState.OFF;
                 }
 
@@ -141,10 +138,10 @@ public class OneDriverTest extends LinearOpMode{
                     robot.leftRigServo.getController().pwmDisable();
                 }
 
-                if (isRigging && (currentGamepad1.right_bumper)) {
+                if (isRigging && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
                     rigStringMove = true;
-                    robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                    robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.leftRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                 }
                 else {
                     robot.rightRigMotor.setPower(0);
@@ -152,7 +149,7 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 // CAN SET MOTOR STRING WITH THIS CODE:
-                if (currentGamepad1.dpad_down) {
+                if (currentGamepad1.dpad_right) {
                     if (currentGamepad1.left_bumper) {
                         robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                     }
@@ -167,7 +164,6 @@ public class OneDriverTest extends LinearOpMode{
                     if (currentGamepad1.right_bumper) {
                         robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                     }
-
                 }
 
                 /*

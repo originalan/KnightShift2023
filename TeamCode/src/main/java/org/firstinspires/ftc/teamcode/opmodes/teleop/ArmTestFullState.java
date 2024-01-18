@@ -25,6 +25,7 @@ public class ArmTestFullState extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
     private FullStateFeedback controller;
+    private boolean armOn = false;
     public static int targetPos = 0;
 
     @Override
@@ -47,7 +48,10 @@ public class ArmTestFullState extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
+                previousGamepad1.copy(currentGamepad1);
+                currentGamepad1.copy(gamepad1);
+
+//                robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
                 int armPos = robot.deliveryArmMotor.getCurrentPosition();
 
 //                double pidPower = pid.calculate(armPos, targetPos, false);
@@ -55,8 +59,19 @@ public class ArmTestFullState extends LinearOpMode {
 //
 //                robot.deliveryArm.targetPower = pidPower + ffPower;
 
-                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
-                robot.deliveryArm.targetPower = power;
+//                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
+//                robot.deliveryArm.targetPower = power;
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    armOn = !armOn;
+                }
+
+                if (armOn) {
+                    robot.deliveryArm.armState = DeliveryArm.ArmState.TEST;
+                    telemetry.addLine("ARM IS ON");
+                }else {
+                    robot.deliveryArm.armState = DeliveryArm.ArmState.AT_REST;
+                    telemetry.addLine("ARM IS OFF");
+                }
 
                 robot.update();
 

@@ -63,6 +63,7 @@ public class ArmTestPIDF extends LinearOpMode {
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
                 telemetry.addData("Arm actual velocity", robot.deliveryArmMotor.getVelocity());
+                telemetry.addData("Arm calculated power", pidPower + ffPower);
                 telemetry.update();
             }
         }

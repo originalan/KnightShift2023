@@ -1,29 +1,26 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-/**
- * IntakeTest is a test Teleop mode that is used to test the speed of the intake
- * Calibration can be changed live in FTC Dashboard
- */
-@Config
-@TeleOp (name = "Intake Box Test", group = "Testing")
-public class IntakeTest extends LinearOpMode {
+@TeleOp(name = "", group = "Testing")
+public class ResetEverything extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
 
-    @Override
     public void runOpMode() {
+
+        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
+        telemetry.update();
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -36,29 +33,36 @@ public class IntakeTest extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.FORWARD;
-                    telemetry.addLine("FORWARD");
+                robot.rig.noHang();
+                robot.launcher.launcherState = AirplaneLauncher.LauncherState.SETUP;
+
+                // CAN SET MOTOR STRING WITH THIS CODE:
+                if (currentGamepad1.dpad_right) {
+                    if (currentGamepad1.left_bumper) {
+                        robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    }
+                    if (currentGamepad1.right_bumper) {
+                        robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    }
                 }
-                else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.REVERSE;
-                    telemetry.addLine("REVERSE");
-                }
-                else {
-                    robot.intake.intakeState = Intake.IntakeState.OFF;
-                    telemetry.addLine("OFF");
+                if (currentGamepad1.dpad_left) {
+                    if (currentGamepad1.left_bumper) {
+                        robot.leftRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    }
+                    if (currentGamepad1.right_bumper) {
+                        robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    }
                 }
 
                 robot.update();
-
                 telemetry.update();
+
             }
         }
 
