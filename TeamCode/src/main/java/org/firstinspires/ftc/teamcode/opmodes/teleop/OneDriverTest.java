@@ -5,10 +5,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
+import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -25,6 +25,7 @@ public class OneDriverTest extends LinearOpMode{
     private boolean isRigging = false;
     private boolean rigStringMove = false;
     private boolean switchDriveControls = false;
+    private boolean positionArm = false;
 
 
     @Override
@@ -91,10 +92,23 @@ public class OneDriverTest extends LinearOpMode{
                 robot.addTelemetry();
 
                 /*
+                =================DELIVERY ARM CONTROLS==============
+                */
+
+                if (currentGamepad1.y && !previousGamepad1.y) {
+                    positionArm = !positionArm;
+                }
+                if (positionArm) {
+                    robot.deliveryArm.slideState = DeliveryArm.ArmState.TOP;
+                    robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
+                    // Because intake controls are underneath this if statement, we can override this state if we activate the intake
+                }
+
+                /*
                 =================INTAKE CONTROLS==============
                 */
                 if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.ON;
+                    robot.intake.intakeState = Intake.IntakeState.FORWARD;
                 }
                 else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;

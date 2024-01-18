@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-//import com.arcrobotics.ftclib.util.InterpLUT;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -18,8 +18,8 @@ public class DeliveryArm extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
     private FullStateFeedback controller;
-//    private InterpLUT kPCoefficients = new InterpLUT(),
-//                        kVCoefficients = new InterpLUT();
+    private InterpLUT kPCoefficients = new InterpLUT(),
+                        kVCoefficients = new InterpLUT();
 
     public static double kPatTop = 0;
     public static double kVatTop = 0;

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
@@ -17,8 +18,9 @@ public class Intake extends Subsystem {
 
     public enum IntakeState {
         OFF,
-        ON,
+        FORWARD,
         REVERSE,
+        HOLDING_PIXEL
     }
 
     public IntakeState intakeState = IntakeState.OFF;
@@ -41,7 +43,7 @@ public class Intake extends Subsystem {
             case OFF:
                 turnOff();
                 break;
-            case ON:
+            case FORWARD:
                 moveForwards();
 //                // If intake is blocked, then current will spike and we will reverse motor to undo the blockage
 //                if(robot.intakeMotor.getCurrent(CurrentUnit.AMPS) > RobotSettings.INTAKE_CURRENT_THRESHOLD){
@@ -50,6 +52,9 @@ public class Intake extends Subsystem {
                 break;
             case REVERSE:
                 moveBackwards();
+                break;
+            case HOLDING_PIXEL:
+                holdPixel();
                 break;
         }
     }
@@ -60,15 +65,30 @@ public class Intake extends Subsystem {
     }
 
     public void moveForwards() {
-        robot.intakeMotor.setPower(0.1);
+        robot.intakeMotor.setPower(RobotSettings.INTAKE_FORWARD_MOTOR_SPEED);
     }
 
     public void moveBackwards() {
-        robot.intakeMotor.setPower(-0.8);
+        robot.intakeMotor.setPower(RobotSettings.INTAKE_REVERSE_MOTOR_SPEED);
     }
 
     public void turnOff() {
         robot.intakeMotor.setPower(0);
+    }
+
+    public void holdPixel() {
+
+        // Code is not as efficient as possible, may tinker later
+        int currentPos = robot.intakeMotor.getCurrentPosition();
+        int modFactor = (int)(PIDFControl.motorEncoderTicks / 2);
+
+        int remainder = currentPos % modFactor;
+
+        int targetPos = currentPos - remainder;
+
+        robot.intakeMotor.setTargetPosition(targetPos);
+        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
 }

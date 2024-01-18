@@ -28,7 +28,8 @@ public class RobotSettings {
     */
     public static String INTAKE_MOTOR_NAME = "IntakeMotor";
     public static boolean INTAKE_MOTOR_REVERSED = true;
-    public static double INTAKE_DEFAULT_MOTOR_SPEED = 0.4;
+    public static double INTAKE_FORWARD_MOTOR_SPEED = 0.1;
+    public static double INTAKE_REVERSE_MOTOR_SPEED = -1;
     public static double INTAKE_CURRENT_THRESHOLD = 10000;
 
     /*
@@ -50,9 +51,9 @@ public class RobotSettings {
     public static boolean RIGGING_LEFT_SERVO_REVERSED = false;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
     public static double RIGGING_MOTOR_SPEED = 0.6;
-    public static double RIGGING_LEFT_REST = 0.0;
-    public static double RIGGING_RIGHT_REST = 1.0;
-    public static double RIGGING_MOVE_SERVO = 0.25;
+    public static double RIGGING_LEFT_REST = 0.975;
+    public static double RIGGING_RIGHT_REST = 0.0;
+    public static double RIGGING_MOVE_SERVO = -0.25;
 
     /*
     =================AUTONOMOUS MEASUREMENTS==============
@@ -68,7 +69,7 @@ public class RobotSettings {
     /*
     =================AIRPLANE LAUNCHER SETTINGS==============
     */
-    public static String LAUNCHER_SERVO_NAME = "AirplaneLauncher";
+    public static String LAUNCHER_SERVO_NAME = "AirplaneLauncherFireServo";
     public static boolean LAUNCHER_SERVO_REVERSED = false;
     public static double LAUNCHER_POSITION_IN = 0;
     public static double LAUNCHER_POSITION_OUT = 1;

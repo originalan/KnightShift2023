@@ -92,7 +92,7 @@ public class OneDriver extends LinearOpMode {
                 =================INTAKE CONTROLS==============
                 */
                 if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.ON;
+                    robot.intake.intakeState = Intake.IntakeState.FORWARD;
                 }
                 else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;

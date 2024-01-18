@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 @Config
 public class PIDFControl {
-
     private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
@@ -20,11 +19,9 @@ public class PIDFControl {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 0;
-    public static double ticksInDegrees = 1440.0 / 360.0; // may have to make 1440 into 720 idk
+    public static double motorEncoderTicks = 537.6; // or 560, idk
+    public static double ticksInDegrees = motorEncoderTicks / 360.0; // may have to make 1440 into 560 b/c idk if 20:1 motor is planetary or not
     public static double lastError = 0;
-
-    // Used to control angle of robot
-    private BNO055IMU imu; // Inertial measurement unit, built into expansion hub (has a gyro inside of it)
 
     private HardwareMap hwMap;
 
