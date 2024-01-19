@@ -3,10 +3,15 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
@@ -34,6 +39,8 @@ public abstract class AutoBase extends LinearOpMode {
         ALLIANCE_TYPE = allianceType;
         drive = new SampleMecanumDrive(hardwareMap);
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry, ALLIANCE_TYPE);
+
+        PoseStorage.originalInitYaw = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()

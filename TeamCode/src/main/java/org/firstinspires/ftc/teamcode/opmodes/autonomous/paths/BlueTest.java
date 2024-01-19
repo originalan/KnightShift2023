@@ -36,8 +36,8 @@ public class BlueTest extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(11.75, 61.625, Math.toRadians(90)); // the front of the robot is the control hub, not the delivery box so we rotate this by 180 degrees
-        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.625, Math.toRadians(90)); // to prevent shadowing
+        startingPose = new Pose2d(11.75, 61.625, Math.toRadians(270)); // the front of the robot is the control hub, not the delivery box so we rotate this by 180 degrees
+        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.625, Math.toRadians(270)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
@@ -140,11 +140,11 @@ public class BlueTest extends AutoBase {
         switch (detectedSide) {
             case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(23, 35.25 + 17.75/2.0 - 2.5 ), Math.toRadians(90))
+                        .splineTo(new Vector2d(23 - distanceFromCenterToPurplePixel, 35.25 + 17.75/2.0 - 2.5 ), Math.toRadians(270))
                         .build();
                 backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .splineToLinearHeading(new Pose2d(47 + 12.25 - 17.75/2.0 - 0.5,
-                                35.25 + 6 - distanceFromCenterToPurplePixel, Math.toRadians(180)), Math.toRadians(180))
+                        .splineTo(new Vector2d(47 + 12.25 - 17.75/2.0 - 0.5,
+                                35.25 + 6 + distanceFromCenterToPurplePixel), Math.toRadians(0))
                         .build();
                 break;
             case MIDDLE:
