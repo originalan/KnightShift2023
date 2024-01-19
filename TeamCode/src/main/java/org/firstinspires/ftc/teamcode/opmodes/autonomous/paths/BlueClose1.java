@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue (Closer to backboard) Test", group = "Testing")
-public class BlueTest extends AutoBase {
+@Autonomous(name = "Blue Close with arm", group = "AUTO")
+public class BlueClose1 extends AutoBase {
 
     private TrajectorySequence detectionTraj,
             backboardTraj, parkingTraj, waitingTraj1,

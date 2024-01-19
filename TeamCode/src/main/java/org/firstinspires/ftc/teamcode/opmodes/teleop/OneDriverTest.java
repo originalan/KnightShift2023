@@ -79,7 +79,6 @@ public class OneDriverTest extends LinearOpMode{
                 /*
                 =================DELIVERY ARM CONTROLS==============
                 */
-
                 if (currentGamepad1.y && !previousGamepad1.y) {
                     positionArm = !positionArm;
                 }
@@ -92,17 +91,17 @@ public class OneDriverTest extends LinearOpMode{
                     robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
                 }
 
-                // Manual "override" of arm
-                // NOT GONNA WORK BECAUSE OF STATES, CHANGE LATER
+                // Manual "override" of PIDF control of delivery arm
                 if (currentGamepad1.left_bumper) {
                     robot.deliveryArm.overridePowerForward = true;
-                    robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower + RobotSettings.ARM_OVERRIDE_POWER);
-                }
-                else if (currentGamepad1.right_bumper) {
-                    robot.deliveryArm.overridePowerForward = true;
-                    robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower - RobotSettings.ARM_OVERRIDE_POWER);
                 }else {
                     robot.deliveryArm.overridePowerForward = false;
+                }
+
+                if (currentGamepad1.right_bumper) {
+                    robot.deliveryArm.overridePowerBackward = true;
+                }else {
+                    robot.deliveryArm.overridePowerBackward = false;
                 }
 
                 /*
@@ -110,8 +109,7 @@ public class OneDriverTest extends LinearOpMode{
                 */
                 if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.FORWARD;
-                }
-                else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
+                }else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
                     robot.intake.intakeState = Intake.IntakeState.REVERSE;
                 }else {
                     robot.intake.intakeState = Intake.IntakeState.OFF;
@@ -172,7 +170,7 @@ public class OneDriverTest extends LinearOpMode{
                 /*
                 =================TOGGLE UTIL CONTROLS==============
                 */
-                if (currentGamepad1.a && !previousGamepad1.a) {
+                if (currentGamepad1.a && !previousGamepad1.a) { // never tested this lol
                     robot.drivetrain.orientPerpendicular = !robot.drivetrain.orientPerpendicular;
                 }
 
