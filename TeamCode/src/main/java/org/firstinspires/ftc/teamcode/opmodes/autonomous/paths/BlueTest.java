@@ -19,7 +19,7 @@ public class BlueTest extends AutoBase {
 
     private TrajectorySequence detectionTraj,
             backboardTraj, parkingTraj, waitingTraj1,
-            forceIntoBackboardTraj, waitingTraj2;
+            waitingTraj3, waitingTraj2;
 
     public enum AutoState {
         ORIENT_PURPLE_PIXEL,
@@ -36,8 +36,8 @@ public class BlueTest extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
-        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.5, Math.toRadians(270)); // to prevent shadowing
+        startingPose = new Pose2d(11.75, 61.625, Math.toRadians(90)); // the front of the robot is the control hub, not the delivery box so we rotate this by 180 degrees
+        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.625, Math.toRadians(90)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
@@ -90,19 +90,24 @@ public class BlueTest extends AutoBase {
                     case MOVING_TO_BACKBOARD:
                         // robot is moving to the backboard, moving arm into position
                         robot.deliveryArm.armState = DeliveryArm.ArmState.TOP;
-                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.ARM_ENCODER_TOP) {
+                        if (!drive.isBusy() &&
+                                withinMargin(robot.deliveryArmMotor.getCurrentPosition(), RobotSettings.ARM_ENCODER_TOP, 4)) {
                             autoState = AutoState.RELEASE_PIXEL;
-                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
+                            robot.intake.intakeState = Intake.IntakeState.REVERSE;
+                            drive.followTrajectorySequenceAsync(waitingTraj3);
                         }
                         break;
                     case RELEASE_PIXEL:
+                        // robot is at backdrop, arm is in place, intake is in place, wait 2 seconds as intake reverses to release pixel
                         if (!drive.isBusy()) {
-                            robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
+                            robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM; // bring arm back down
+                            robot.intake.intakeState = Intake.IntakeState.OFF; // turn off intake
                             autoState = AutoState.PARKING;
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }
                         break;
                     case PARKING:
+                        // robot is moving to parking destination
                         if (!drive.isBusy()) {
                             autoState = AutoState.IDLE;
                         }
@@ -114,12 +119,13 @@ public class BlueTest extends AutoBase {
 
                 drive.update();
                 robot.deliveryArm.update();
+                robot.intake.update();
 
                 transferPose();
                 telemetry.update();
 
             }
-            drive.followTrajectorySequence(detectionTraj);
+//            drive.followTrajectorySequence(detectionTraj);
 
         }
 
@@ -130,18 +136,15 @@ public class BlueTest extends AutoBase {
      */
     public void setGoalPose() {
 
+        double distanceFromCenterToPurplePixel = 2;
         switch (detectedSide) {
             case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(22.0 + 1.5, 29.5), Math.toRadians(270))
-                        // Center of robot, adjusted so purple pixel servo is in line with the center
-                        .UNSTABLE_addDisplacementMarkerOffset(AUTO_PURPLE_PIXEL_RELEASE, () -> {
-//                            robot.purplePixel.drop();
-                        })
-                        .back(29.25)
+                        .splineTo(new Vector2d(23, 35.25 + 17.75/2.0 - 2.5 ), Math.toRadians(90))
                         .build();
                 backboardTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .splineToLinearHeading(new Pose2d(50, (-35.25 - 6 + 2.375) * -1, Math.toRadians(180)), Math.toRadians(0))
+                        .splineToLinearHeading(new Pose2d(47 + 12.25 - 17.75/2.0 - 0.5,
+                                35.25 + 6 - distanceFromCenterToPurplePixel, Math.toRadians(180)), Math.toRadians(180))
                         .build();
                 break;
             case MIDDLE:
@@ -178,11 +181,11 @@ public class BlueTest extends AutoBase {
 
         setGoalPose();
 
-        forceIntoBackboardTraj = drive.trajectorySequenceBuilder(backboardTraj.end())
-                .forward(5) // need to change value later
+        waitingTraj3 = drive.trajectorySequenceBuilder(backboardTraj.end())
+                .waitSeconds(2)
                 .build();
 
-        parkingTraj = drive.trajectorySequenceBuilder(forceIntoBackboardTraj.end())
+        parkingTraj = drive.trajectorySequenceBuilder(waitingTraj3.end())
                 .waitSeconds(2) // give time for servo to do its thing
                 .forward(10)
                 .turn(Math.toRadians(-90))
@@ -199,6 +202,15 @@ public class BlueTest extends AutoBase {
         waitingTraj2 = drive.trajectorySequenceBuilder(waitingTraj1.end())
                 .waitSeconds(2)
                 .build();
+
+    }
+
+    public boolean withinMargin(double first, double second, double margin) {
+
+        if (Math.abs(first - second) <= margin) {
+            return true;
+        }
+        return false;
 
     }
 

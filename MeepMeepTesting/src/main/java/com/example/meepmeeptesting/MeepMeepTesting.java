@@ -10,7 +10,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(700);
 
-        Pose2d startingPose = new Pose2d(-35.25, 61.5, Math.toRadians(270));
+        Pose2d startingPose = new Pose2d(11.75, 61.625, Math.toRadians(90));
 
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
@@ -19,8 +19,9 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startingPose)
                                 .waitSeconds(1)
-                                .splineTo(new Vector2d(-35.25, 11.75), Math.toRadians(0))
-                                .forward(94)
+                                .splineToLinearHeading(new Pose2d(23, 35.25 + 17.75/2.0 - 2.5, Math.toRadians(90) ), Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(47 + 12.25 - 17.75/2.0 - 0.5,
+                                        35.25 + 6 - 2, Math.toRadians(180)), Math.toRadians(0))
                                 .build()
                 );
 
