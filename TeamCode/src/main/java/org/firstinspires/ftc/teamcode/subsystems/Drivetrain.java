@@ -49,18 +49,18 @@ public class Drivetrain extends Subsystem {
 //
 //        initYaw = lastAngles.firstAngle + diff;
 
-        initYaw = PoseStorage.originalInitYaw;
+        initYaw = PoseStorage.originalInitYaw - 180; // b/c auto started with back facing front
     }
 
     @Override
     public void addTelemetry() {
         telemetry.addLine("Drivetrain");
-
-        telemetry.addData("   Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-        telemetry.addData("   Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-
-        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
-        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+//
+//        telemetry.addData("   Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+//        telemetry.addData("   Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
+//
+//        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+//        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
     }
 
     @Override

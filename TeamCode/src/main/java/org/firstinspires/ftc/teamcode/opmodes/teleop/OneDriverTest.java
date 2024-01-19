@@ -98,6 +98,15 @@ public class OneDriverTest extends LinearOpMode{
                     robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
                 }
 
+                // Manual "override" of arm
+                // NOT GONNA WORK BECAUSE OF STATES, CHANGE LATER
+                if (currentGamepad1.left_bumper) {
+                    robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower + RobotSettings.ARM_OVERRIDE_POWER);
+                }
+                else if (currentGamepad1.right_bumper) {
+                    robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower - RobotSettings.ARM_OVERRIDE_POWER);
+                }
+
                 /*
                 =================INTAKE CONTROLS==============
                 */
@@ -132,7 +141,7 @@ public class OneDriverTest extends LinearOpMode{
                     robot.leftRigServo.getController().pwmDisable();
                 }
 
-                if (isRigging && (currentGamepad1.right_bumper || currentGamepad1.left_bumper)) {
+                if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
                     rigStringMove = true;
                     robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
                     robot.leftRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
@@ -140,24 +149,6 @@ public class OneDriverTest extends LinearOpMode{
                 else {
                     robot.rightRigMotor.setPower(0);
                     robot.leftRigMotor.setPower(0);
-                }
-
-                // CAN SET MOTOR STRING WITH THIS CODE:
-                if (currentGamepad1.dpad_right) {
-                    if (currentGamepad1.left_bumper) {
-                        robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
-                    }
-                    if (currentGamepad1.right_bumper) {
-                        robot.rightRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                    }
-                }
-                if (currentGamepad1.dpad_left) {
-                    if (currentGamepad1.left_bumper) {
-                        robot.leftRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                    }
-                    if (currentGamepad1.right_bumper) {
-                        robot.leftRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
-                    }
                 }
 
                 /*

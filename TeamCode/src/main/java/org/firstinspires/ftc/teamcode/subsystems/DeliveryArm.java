@@ -30,6 +30,8 @@ public class DeliveryArm extends Subsystem {
     public static double kVatRest = 0;
 
     public double targetPower = 0;
+    public double projectedPower = 0;
+    public boolean overridePower = false;
 
     public enum ArmState {
         AT_REST,
@@ -46,6 +48,7 @@ public class DeliveryArm extends Subsystem {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
+        this.pid = new PIDFControl();
         controller = new FullStateFeedback(hwMap, telemetry);
 
         JVBoysSoccerRobot.initialArmPosition = robot.deliveryArmMotor.getCurrentPosition();
@@ -71,25 +74,29 @@ public class DeliveryArm extends Subsystem {
         switch (armState) {
             case GO_TO_POSITION:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                projectedPower = targetPower;
                 robot.deliveryArmMotor.setPower(targetPower);
                 break;
             case BOTTOM:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.deliveryArmMotor.setPower(pid.calculate(JVBoysSoccerRobot.initialArmPosition + (3 * 3),
+                projectedPower = pid.calculate(JVBoysSoccerRobot.initialArmPosition + (3 * 3),
                         robot.deliveryArmMotor.getCurrentPosition(),
-                        false));
+                        false);
+                robot.deliveryArmMotor.setPower(projectedPower);
                 break;
-            case LIFT:
+            case LIFT: // lifts arm a little bit
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.deliveryArmMotor.setPower(pid.calculate(JVBoysSoccerRobot.initialArmPosition + 90,
+                projectedPower = pid.calculate(JVBoysSoccerRobot.initialArmPosition + 90,
                         robot.deliveryArmMotor.getCurrentPosition(),
-                        false));
+                        false);
+                robot.deliveryArmMotor.setPower(projectedPower);
                 break;
             case TOP:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.deliveryArmMotor.setPower(pid.calculate((int)(150.0 / 360.0 * 537.6 * 3),
+                projectedPower = pid.calculate((int)(150.0 / 360.0 * 537.6 * 3),
                         robot.deliveryArmMotor.getCurrentPosition(),
-                        false));
+                        false);
+                robot.deliveryArmMotor.setPower(projectedPower);
                 break;
             case TEST:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -97,6 +104,7 @@ public class DeliveryArm extends Subsystem {
                 break;
             case AT_REST:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                projectedPower = 0;
                 robot.deliveryArmMotor.setPower(0);
                 break;
         }

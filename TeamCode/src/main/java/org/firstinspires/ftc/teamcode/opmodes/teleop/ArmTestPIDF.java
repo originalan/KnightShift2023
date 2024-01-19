@@ -28,7 +28,7 @@ public class ArmTestPIDF extends LinearOpMode {
     private PIDFControl pid;
     private FullStateFeedback controller;
     public static int degrees = 30;
-    public static int targetPos = (int)(degrees / 360.0 * 537.6);
+    public static int targetPos = (int)(degrees / 360.0 * 537.6 * 3);
 
     @Override
     public void runOpMode() {
@@ -53,12 +53,9 @@ public class ArmTestPIDF extends LinearOpMode {
                 robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
                 int armPos = robot.deliveryArmMotor.getCurrentPosition();
 
-                double pidPower = pid.calculate(armPos, targetPos, false);
+                double pidPower = pid.calculate(targetPos, armPos, false);
                 double ffPower = pid.feedForwardCalculate(targetPos);
 
-//                if (targetPos >= JVBoysSoccerRobot.initialArmPosition + RobotSettings.ARM_FLIP_POSITION) {
-//
-//                }
                 robot.deliveryArm.targetPower = pidPower + ffPower;
 
 //                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
