@@ -38,7 +38,6 @@ public class RobotSettings {
     public static boolean OUTTAKE_MOTOR_REVERSED = false;
     public static double ARM_TOP_POSITION_DEGREES = 150.0;
     public static double ARM_FLIP_POSITION_DEGREES = 122.77;
-    public static double ARM_MOTOR_POWER = 1;
     public static double ARM_BOTTOM_POSITION_DEGREES = 0;
     public static int ARM_ENCODER_TOP = (int)(ARM_TOP_POSITION_DEGREES / 360.0 * 537.6 * 3);
     public static double ARM_OVERRIDE_POWER = 0.2;

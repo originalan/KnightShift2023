@@ -19,19 +19,12 @@ public class DeliveryArm extends Subsystem {
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
-    private FullStateFeedback controller;
     private PIDFControl pid;
-    private InterpLUT kPCoefficients = new InterpLUT(),
-                        kVCoefficients = new InterpLUT();
-
-    public static double kPatTop = 0;
-    public static double kVatTop = 0;
-    public static double kPatRest = 0;
-    public static double kVatRest = 0;
 
     public double targetPower = 0;
     public double projectedPower = 0;
-    public boolean overridePower = false;
+    public boolean overridePowerForward = false;
+    public boolean overridePowerBackward = false;
 
     public enum ArmState {
         AT_REST,
@@ -49,18 +42,8 @@ public class DeliveryArm extends Subsystem {
         this.telemetry = telemetry;
         this.robot = robot;
         this.pid = new PIDFControl();
-        controller = new FullStateFeedback(hwMap, telemetry);
 
         JVBoysSoccerRobot.initialArmPosition = robot.deliveryArmMotor.getCurrentPosition();
-
-//        kPCoefficients.add(0, kPatRest);
-//        kPCoefficients.add(120, kPatTop); // change 120 degrees to ____ encoder ticks
-//        kVCoefficients.add(0, kVatRest);
-//        kVCoefficients.add(120, kVatTop);
-//
-//        kPCoefficients.createLUT();
-//        kVCoefficients.createLUT();
-
     }
 
     @Override
@@ -74,36 +57,41 @@ public class DeliveryArm extends Subsystem {
         switch (armState) {
             case GO_TO_POSITION:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                projectedPower = targetPower;
-                robot.deliveryArmMotor.setPower(targetPower);
+
+                setArmPower(targetPower, overridePowerForward, overridePowerBackward);
                 break;
             case BOTTOM:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                projectedPower = pid.calculate(JVBoysSoccerRobot.initialArmPosition + (3 * 3),
+
+                projectedPower = pid.calculate(JVBoysSoccerRobot.initialArmPosition + 3,
                         robot.deliveryArmMotor.getCurrentPosition(),
                         false);
-                robot.deliveryArmMotor.setPower(projectedPower);
+                setArmPower(projectedPower, overridePowerForward, overridePowerBackward);
                 break;
             case LIFT: // lifts arm a little bit
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
                 projectedPower = pid.calculate(JVBoysSoccerRobot.initialArmPosition + 90,
                         robot.deliveryArmMotor.getCurrentPosition(),
                         false);
-                robot.deliveryArmMotor.setPower(projectedPower);
+                setArmPower(projectedPower, overridePowerForward, overridePowerBackward);
                 break;
             case TOP:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                projectedPower = pid.calculate((int)(150.0 / 360.0 * 537.6 * 3),
+
+                projectedPower = pid.calculate((int)(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3)),
                         robot.deliveryArmMotor.getCurrentPosition(),
                         false);
-                robot.deliveryArmMotor.setPower(projectedPower);
+                setArmPower(projectedPower, overridePowerForward, overridePowerBackward);
                 break;
             case TEST:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.deliveryArmMotor.setPower(RobotSettings.ARM_MOTOR_POWER);
+
+                setArmPower(0.8, overridePowerForward, overridePowerBackward);
                 break;
             case AT_REST:
                 robot.deliveryArmMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
                 projectedPower = 0;
                 robot.deliveryArmMotor.setPower(0);
                 break;
@@ -115,17 +103,14 @@ public class DeliveryArm extends Subsystem {
 
     }
 
-//    public void gainScheduling(double targetPosition, double targetVelocity) {
-//
-//        double armAngle = robot.deliveryArmMotor.getCurrentPosition() / 360.0; // actual position of arm -> degrees
-//
-//        double Kp = kPCoefficients.get(armAngle);
-//        double Kv = kVCoefficients.get(armAngle);
-//
-//        controller.setCoefficients(Kp, Kv);
-//        double output = controller.calculate(targetPosition, targetVelocity, robot.deliveryArmMotor.getCurrentPosition(), robot.deliveryArmMotor.getVelocity());
-//        robot.deliveryArmMotor.setPower(output);
-//
-//    }
+    public void setArmPower(double power, boolean overrideForward, boolean overrideBackward) {
+        if (overrideForward) {
+            robot.deliveryArmMotor.setPower(power - RobotSettings.ARM_OVERRIDE_POWER);
+        }else if (overrideBackward) {
+            robot.deliveryArmMotor.setPower(power + RobotSettings.ARM_OVERRIDE_POWER);
+        }else {
+            robot.deliveryArmMotor.setPower(power);
+        }
+    }
 
 }

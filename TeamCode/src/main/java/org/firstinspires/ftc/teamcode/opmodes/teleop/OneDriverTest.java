@@ -69,13 +69,7 @@ public class OneDriverTest extends LinearOpMode{
                     switchDriveControls = !switchDriveControls;
                 }
 
-                if (switchDriveControls) {
-//                    robot.drivetrain.goXYR(axial, lateral, yaw);
-                    robot.drivetrain.moveXYR(x, y, r, false);
-                }else {
-//                    robot.drivetrain.goXYRIMU(axialIMU, lateralIMU, yawIMU);
-                    robot.drivetrain.moveXYR(x, y, r, true);
-                }
+                robot.drivetrain.moveXYR(x, y, r, !switchDriveControls);
 
                 // Show elapsed game time
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -101,10 +95,14 @@ public class OneDriverTest extends LinearOpMode{
                 // Manual "override" of arm
                 // NOT GONNA WORK BECAUSE OF STATES, CHANGE LATER
                 if (currentGamepad1.left_bumper) {
+                    robot.deliveryArm.overridePowerForward = true;
                     robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower + RobotSettings.ARM_OVERRIDE_POWER);
                 }
                 else if (currentGamepad1.right_bumper) {
+                    robot.deliveryArm.overridePowerForward = true;
                     robot.deliveryArmMotor.setPower(robot.deliveryArm.projectedPower - RobotSettings.ARM_OVERRIDE_POWER);
+                }else {
+                    robot.deliveryArm.overridePowerForward = false;
                 }
 
                 /*

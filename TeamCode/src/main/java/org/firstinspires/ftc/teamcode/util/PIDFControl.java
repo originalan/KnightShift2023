@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,14 +25,38 @@ public class PIDFControl {
     public static double ticksInDegrees = motorEncoderTicks / 360.0;
     public static double lastError = 0;
 
+    // Gain scheduling (if we have time)
+    public static double Kp_at_150 = 0, Ki_at_150 = 0, Kd_at_150 = 0; // encoder tick = 672
+    public static double Kp_at_30 = 0, Ki_at_30 = 0, Kd_at_30 = 0; // encoder tick = 134.4
+    private InterpLUT KpCoefficients = new InterpLUT(),
+            KiCoefficients = new InterpLUT(),
+            KdCoefficients = new InterpLUT();
+
     private HardwareMap hwMap;
 
     public PIDFControl() {
-
+        initGainScheduling();
     }
     public PIDFControl(HardwareMap hwMap, Telemetry telemetry) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
+        initGainScheduling();
+    }
+
+    public void initGainScheduling() {
+
+        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Kp_at_30);
+        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Ki_at_30);
+        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Kd_at_30);
+
+        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Kp_at_150);
+        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Ki_at_150);
+        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Kd_at_150);
+
+        KpCoefficients.createLUT();
+        KiCoefficients.createLUT();
+        KdCoefficients.createLUT();
+
     }
 
     /**
@@ -50,6 +75,29 @@ public class PIDFControl {
         timer.reset();
 
         double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+
+        return output;
+    }
+
+    public double calculate(double reference, double state, boolean isAngle, boolean gainScheduling) {
+        double p = Kp;
+        double i = Ki;
+        double d = Kd;
+
+        if (gainScheduling) {
+            p = KpCoefficients.get(state);
+            i = KiCoefficients.get(state);
+            d = KdCoefficients.get(state);
+        }
+
+        double error = isAngle ? angleWrap(reference - state) : (reference - state);
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+
+        timer.reset();
+
+        double output = (error * p) + (derivative * d) + (integralSum * i);
 
         return output;
     }
