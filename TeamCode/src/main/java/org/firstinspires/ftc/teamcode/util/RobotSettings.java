@@ -55,9 +55,11 @@ public class RobotSettings {
     public static boolean RIGGING_LEFT_SERVO_REVERSED = false;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
     public static double RIGGING_MOTOR_SPEED = 0.6;
-    public static double RIGGING_LEFT_REST = 0.975;
+    public static double RIGGING_LEFT_REST = 0.975; // left and right servos are switched irl
     public static double RIGGING_RIGHT_REST = 0.0;
-    public static double RIGGING_MOVE_SERVO = -0.25;
+    public static double RIGGING_MOVE_SERVO = -0.25; // gear ratio is 2:1 so this moves it 90 degrees
+
+    public static double RIGGING_RESET_MOTOR_SPEED = 0.2;
 
     /*
     =================AUTONOMOUS MEASUREMENTS==============

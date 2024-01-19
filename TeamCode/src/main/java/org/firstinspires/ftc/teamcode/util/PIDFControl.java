@@ -20,8 +20,8 @@ public class PIDFControl {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 0;
-    public static double motorEncoderTicks = 537.6; // or 560, idk
-    public static double ticksInDegrees = motorEncoderTicks / 360.0; // may have to make 1440 into 560 b/c idk if 20:1 motor is planetary or not
+    public static double motorEncoderTicks = 537.6;
+    public static double ticksInDegrees = motorEncoderTicks / 360.0;
     public static double lastError = 0;
 
     private HardwareMap hwMap;

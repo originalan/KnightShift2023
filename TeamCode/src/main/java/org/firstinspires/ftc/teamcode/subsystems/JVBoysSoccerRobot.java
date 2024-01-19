@@ -165,14 +165,13 @@ public class JVBoysSoccerRobot {
         intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
         intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Delivery Arm Subsystem
         deliveryArmMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
         deliveryArmMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
         deliveryArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        deliveryArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Rigging Subsystem
         leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);

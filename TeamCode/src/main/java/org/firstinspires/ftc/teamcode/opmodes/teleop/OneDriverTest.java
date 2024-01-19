@@ -46,7 +46,7 @@ public class OneDriverTest extends LinearOpMode{
         telemetry.update();
 
         while (opModeInInit()) {
-            robot.rig.noHang();
+//            robot.rig.noHang();
         }
 
         waitForStart();
@@ -61,14 +61,6 @@ public class OneDriverTest extends LinearOpMode{
                 currentGamepad1.copy(gamepad1);
 
                 // Records joystick values
-                double axial = -1 * gamepad1.left_stick_y; // pushing stick forward gives negative value
-                double lateral = gamepad1.left_stick_x;
-                double yaw = gamepad1.right_stick_x;
-
-                double axialIMU = gamepad1.left_stick_x;
-                double lateralIMU = -1 * gamepad1.left_stick_y;
-                double yawIMU = gamepad1.right_stick_x;
-
                 double x = gamepad1.left_stick_x;
                 double y = gamepad1.left_stick_y * -1;
                 double r = gamepad1.right_stick_x;

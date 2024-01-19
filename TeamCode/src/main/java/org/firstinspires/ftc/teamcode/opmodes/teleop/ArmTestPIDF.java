@@ -45,14 +45,10 @@ public class ArmTestPIDF extends LinearOpMode {
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
 
-        robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         waitForStart();
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
-                robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
                 robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
                 int armPos = robot.deliveryArmMotor.getCurrentPosition();
@@ -60,11 +56,10 @@ public class ArmTestPIDF extends LinearOpMode {
                 double pidPower = pid.calculate(armPos, targetPos, false);
                 double ffPower = pid.feedForwardCalculate(targetPos);
 
-                if (targetPos >= JVBoysSoccerRobot.initialArmPosition + RobotSettings.ARM_FLIP_POSITION) {
-                    ;robot.deliveryArm.targetPower = -1 * (pidPower + ffPower);
-                }else {
-                    robot.deliveryArm.targetPower = pidPower + ffPower;
-                }
+//                if (targetPos >= JVBoysSoccerRobot.initialArmPosition + RobotSettings.ARM_FLIP_POSITION) {
+//
+//                }
+                robot.deliveryArm.targetPower = pidPower + ffPower;
 
 //                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
 //                robot.deliveryArm.targetPower = power;

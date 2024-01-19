@@ -11,23 +11,22 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue (Closer) Test", group = "Testing")
+@Autonomous(name = "Blue (Closer to backboard) Test", group = "Testing")
 public class BlueTest extends AutoBase {
 
-    private TrajectorySequence detectionTraj, backboardTraj, parkingTraj, waitingTraj, forceIntoBackboardTraj;
-    private FullStateFeedback controller;
+    private TrajectorySequence detectionTraj,
+            backboardTraj, parkingTraj, waitingTraj1,
+            forceIntoBackboardTraj, waitingTraj2;
 
     public enum AutoState {
         ORIENT_PURPLE_PIXEL,
         PLACING_PURPLE_PIXEL,
+        LIFT_ARM_SLIGHTLY,
         MOVING_TO_BACKBOARD,
-        MANEUVER_ARM,
         RELEASE_PIXEL,
-        BRING_ARM_BACK,
         PARKING,
         IDLE
     }
@@ -37,10 +36,8 @@ public class BlueTest extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        controller = new FullStateFeedback();
-
         startingPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
-        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.5, Math.toRadians(270));
+        PoseStorage.startingAutoPose = new Pose2d(11.75, 61.5, Math.toRadians(270)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
@@ -49,6 +46,7 @@ public class BlueTest extends AutoBase {
 
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
+            robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
             telemetry.addData("Detected", detectedSide);
             telemetry.update();
         }
@@ -62,56 +60,57 @@ public class BlueTest extends AutoBase {
 
             while (opModeIsActive() && !isStopRequested()) {
 
-//                switch (autoState) {
-//
-//                    case ORIENT_PURPLE_PIXEL:
-//                        robot.intake.intakeState = Intake.IntakeState.OFF;
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.PLACING_PURPLE_PIXEL;
-//                            drive.followTrajectorySequenceAsync(waitingTraj);
-//                        }
-//                        break;
-//                    case PLACING_PURPLE_PIXEL:
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.MOVING_TO_BACKBOARD;
-//                            drive.followTrajectorySequenceAsync(backboardTraj);
-//                        }
-//                        break;
-//                    case MOVING_TO_BACKBOARD:
-//                        robot.deliveryArm.slideState = DeliveryArm.ArmState.TOP;
-//                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
-//                            autoState = AutoState.RELEASE_PIXEL;
-//                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
-//                        }
-//                        break;
-//                    case MANEUVER_ARM:
-////                        if (robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.OUTTAKE_MOTOR_ENCODER_POSITION) {
-////                            autoState = AutoState.RELEASE_PIXEL;
-////                        }
-//                        break;
-//                    case RELEASE_PIXEL:
-//                        if (!drive.isBusy()) {
-//                            robot.deliveryArm.slideState = DeliveryArm.ArmState.BOTTOM;
-//                            autoState = AutoState.PARKING;
-//                            drive.followTrajectorySequenceAsync(parkingTraj);
-//                        }
-//                        break;
-//                    case BRING_ARM_BACK:
-////                        if (!robot.deliveryArmMotor.isBusy()) {
-////                            autoState = AutoState.PARKING;
-////                            robot.deliveryArm.slideState = DeliveryArm.ArmState.OFF;
-////                            drive.followTrajectorySequenceAsync(parkingTraj);
-////                        }
-//                        break;
-//                    case PARKING:
-//                        if (!drive.isBusy()) {
-//                            autoState = AutoState.IDLE;
-//                        }
-//                        break;
-//                    case IDLE:
-//                        break;
-//
-//                }
+                switch (autoState) {
+
+                    case ORIENT_PURPLE_PIXEL:
+                        // robot is moving to the purple pixel location
+                        robot.intake.intakeState = Intake.IntakeState.OFF;
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.PLACING_PURPLE_PIXEL;
+                            drive.followTrajectorySequenceAsync(waitingTraj1);
+                        }
+                        break;
+                    case PLACING_PURPLE_PIXEL:
+                        // robot is at the purple pixel location, waiting 4 seconds to spit out purple pixel
+                        robot.intake.intakeState = Intake.IntakeState.REVERSE;
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.LIFT_ARM_SLIGHTLY;
+                            drive.followTrajectorySequenceAsync(waitingTraj2);
+                        }
+                        break;
+                    case LIFT_ARM_SLIGHTLY:
+                        // robot is still at purple pixel, waiting 2 seconds to turn off intake and lift up arm out of the way
+                        robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
+                        robot.deliveryArm.armState = DeliveryArm.ArmState.LIFT;
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.MOVING_TO_BACKBOARD;
+                            drive.followTrajectorySequenceAsync(backboardTraj);
+                        }
+                        break;
+                    case MOVING_TO_BACKBOARD:
+                        // robot is moving to the backboard, moving arm into position
+                        robot.deliveryArm.armState = DeliveryArm.ArmState.TOP;
+                        if (!drive.isBusy() && robot.deliveryArmMotor.getCurrentPosition() == RobotSettings.ARM_ENCODER_TOP) {
+                            autoState = AutoState.RELEASE_PIXEL;
+                            drive.followTrajectorySequenceAsync(forceIntoBackboardTraj);
+                        }
+                        break;
+                    case RELEASE_PIXEL:
+                        if (!drive.isBusy()) {
+                            robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
+                            autoState = AutoState.PARKING;
+                            drive.followTrajectorySequenceAsync(parkingTraj);
+                        }
+                        break;
+                    case PARKING:
+                        if (!drive.isBusy()) {
+                            autoState = AutoState.IDLE;
+                        }
+                        break;
+                    case IDLE:
+                        break;
+
+                }
 
                 drive.update();
                 robot.deliveryArm.update();
@@ -193,8 +192,12 @@ public class BlueTest extends AutoBase {
                 .build();
 
 
-        waitingTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+        waitingTraj1 = drive.trajectorySequenceBuilder(detectionTraj.end())
                 .waitSeconds(4)
+                .build();
+
+        waitingTraj2 = drive.trajectorySequenceBuilder(waitingTraj1.end())
+                .waitSeconds(2)
                 .build();
 
     }
