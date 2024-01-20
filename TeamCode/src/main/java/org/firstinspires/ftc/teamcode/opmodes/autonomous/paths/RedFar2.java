@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Red Far (push both pixels, park)", group = "AUTO")
+@Autonomous(name = "RedFar2 (push both pixels, park)", group = "AUTO")
 public class RedFar2 extends AutoBase {
 
     private TrajectorySequence parkingTraj, waitingTraj1;
@@ -31,7 +31,7 @@ public class RedFar2 extends AutoBase {
         startingPose = new Pose2d(-36, -63.125, Math.toRadians(90));
         PoseStorage.startingAutoPose = new Pose2d(-36, -63.125, Math.toRadians(90)); // to prevent shadowing
 
-        initialize(JVBoysSoccerRobot.AllianceType.BLUE);
+        initialize(JVBoysSoccerRobot.AllianceType.RED);
         PoseStorage.AUTO_SHIFT_DEGREES = 180.0;
 
         drive.setPoseEstimate(startingPose);

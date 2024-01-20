@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue Close (push both pixels, park)", group = "AUTO")
+@Autonomous(name = "BlueClose2 (push both pixels, park)", group = "AUTO")
 public class BlueClose2 extends AutoBase {
 
     private TrajectorySequence parkingTraj, waitingTraj1;

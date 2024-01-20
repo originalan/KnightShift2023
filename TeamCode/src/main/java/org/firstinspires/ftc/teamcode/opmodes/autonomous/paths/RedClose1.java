@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Red Close with arm", group = "AUTO")
+@Autonomous(name = "RedClose1 (with arm)", group = "AUTO")
 public class RedClose1 extends AutoBase {
 
     private TrajectorySequence detectionTraj,
@@ -39,7 +39,8 @@ public class RedClose1 extends AutoBase {
         startingPose = new Pose2d(11.75, 61.625, Math.toRadians(270)); // the front of the robot is the control hub, not the delivery box so we rotate this by 180 degrees
         PoseStorage.startingAutoPose = new Pose2d(11.75, 61.625, Math.toRadians(270)); // to prevent shadowing
 
-        initialize(JVBoysSoccerRobot.AllianceType.BLUE);
+        initialize(JVBoysSoccerRobot.AllianceType.RED);
+        PoseStorage.AUTO_SHIFT_DEGREES = -90.0;
 
         drive.setPoseEstimate(startingPose);
         buildTrajectories();
@@ -47,7 +48,8 @@ public class RedClose1 extends AutoBase {
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
             robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM;
-            telemetry.addData("Detected", detectedSide);
+            telemetry.addLine("Red, starting closer to backstage");
+            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
             telemetry.update();
         }
 

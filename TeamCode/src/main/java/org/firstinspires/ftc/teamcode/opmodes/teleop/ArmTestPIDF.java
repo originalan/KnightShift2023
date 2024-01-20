@@ -54,7 +54,7 @@ public class ArmTestPIDF extends LinearOpMode {
                 int armPos = robot.deliveryArmMotor.getCurrentPosition();
 
                 double pidPower = pid.calculate(targetPos, armPos, false);
-                double ffPower = pid.feedForwardCalculate(targetPos);
+                double ffPower = pid.feedForwardCalculate(armPos);
 
                 robot.deliveryArm.targetPower = pidPower + ffPower;
 

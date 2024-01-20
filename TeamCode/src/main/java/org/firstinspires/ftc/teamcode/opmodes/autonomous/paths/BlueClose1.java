@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue Close with arm", group = "AUTO")
+@Autonomous(name = "BlueClose1 (with arm)", group = "AUTO")
 public class BlueClose1 extends AutoBase {
 
     private TrajectorySequence detectionTraj,
@@ -47,8 +47,8 @@ public class BlueClose1 extends AutoBase {
 
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
-            robot.deliveryArm.armState = DeliveryArm.ArmState.AT_REST;
-            telemetry.addData("Detected", detectedSide);
+            telemetry.addLine("Blue, starting closer to backstage");
+            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
             telemetry.update();
         }
 
