@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-@Autonomous(name = "Blue Close (push both pixels, park)", group = "AUTO")
-public class BlueClose2 extends AutoBase {
+@Autonomous(name = "Red Close (push both pixels, park)", group = "AUTO")
+public class RedClose2 extends AutoBase {
 
     private TrajectorySequence parkingTraj, waitingTraj1;
 
@@ -28,18 +28,18 @@ public class BlueClose2 extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(12, 63.75, Math.toRadians(0));
-        PoseStorage.startingAutoPose = new Pose2d(12, 63.75, Math.toRadians(0)); // to prevent shadowing
+        startingPose = new Pose2d(12, -63.75, Math.toRadians(0));
+        PoseStorage.startingAutoPose = new Pose2d(12, -63.75, Math.toRadians(0)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
-        PoseStorage.AUTO_SHIFT_DEGREES = 90.0;
+        PoseStorage.AUTO_SHIFT_DEGREES = -90.0;
 
         drive.setPoseEstimate(startingPose);
         buildTrajectories();
 
         robot.deliveryArm.armState = DeliveryArm.ArmState.AT_REST;
         robot.intake.intakeState = Intake.IntakeState.OFF;
-        telemetry.addLine("Blue, starting closer to backstage");
+        telemetry.addLine("Red, starting closer to backstage");
         telemetry.addLine("Parks, spits pixels into backstage");
         telemetry.update();
 

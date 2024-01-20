@@ -49,7 +49,7 @@ public class Drivetrain extends Subsystem {
 //
 //        initYaw = lastAngles.firstAngle + diff;
 
-        initYaw = PoseStorage.originalInitYaw - 180; // b/c auto started with back facing front
+        initYaw = PoseStorage.originalInitYaw + PoseStorage.AUTO_SHIFT_DEGREES; // b/c auto started with back facing front
     }
 
     @Override

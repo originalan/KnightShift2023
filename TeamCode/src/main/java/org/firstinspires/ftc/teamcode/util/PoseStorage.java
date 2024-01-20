@@ -13,5 +13,6 @@ public class PoseStorage {
     public static Pose2d startingAutoPose = new Pose2d();
     public static Pose2d currentPose = new Pose2d();
     public static double originalInitYaw = -1;
+    public static double AUTO_SHIFT_DEGREES = 180.0;
 
 }
