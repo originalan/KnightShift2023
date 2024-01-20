@@ -93,7 +93,7 @@ public class PropDetectionProcessor implements VisionProcessor {
         RIGHT_RECTANGLE = (type == JVBoysSoccerRobot.AllianceType.RED) ? rightRectRed : rightRectBlue;
     }
 
-    private Detection detectedSide = Detection.RIGHT;
+    private Detection detectedSide = Detection.LEFT;
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
 

@@ -36,7 +36,7 @@ public class BlueClose1 extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(12, 63.125, Math.toRadians(270)); // the front of the robot is the control hub, not the delivery box so we rotate this by 180 degrees
+        startingPose = new Pose2d(12, 63.125, Math.toRadians(270));
         PoseStorage.startingAutoPose = new Pose2d(12, 63.125, Math.toRadians(270)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);

@@ -38,7 +38,7 @@ public class BlueClose3 extends AutoBase {
         PoseStorage.startingAutoPose = new Pose2d(12, 63.125, Math.toRadians(270)); // to prevent shadowing
 
         initialize(JVBoysSoccerRobot.AllianceType.BLUE);
-        PoseStorage.AUTO_SHIFT_DEGREES = 180.0;
+        PoseStorage.AUTO_SHIFT_DEGREES = 0;
 
         drive.setPoseEstimate(startingPose);
         buildTrajectories();
