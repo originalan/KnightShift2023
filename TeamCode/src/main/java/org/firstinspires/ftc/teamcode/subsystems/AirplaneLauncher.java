@@ -52,8 +52,9 @@ public class AirplaneLauncher extends Subsystem {
                 }
                 currentTime = timer.seconds();
                 unclampAdjustServo();
+                releaseFireServo();
                 if (currentTime > 2.0) { // unclamp, then wait 2 seconds before firing airplane
-                    releaseFireServo();
+
                 }
                 break;
             case SETUP:

@@ -40,7 +40,6 @@ public class ResetEverything extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                robot.rig.noHang();
                 robot.launcher.launcherState = AirplaneLauncher.LauncherState.SETUP;
 
                 // CAN SET MOTOR STRING WITH THIS CODE:

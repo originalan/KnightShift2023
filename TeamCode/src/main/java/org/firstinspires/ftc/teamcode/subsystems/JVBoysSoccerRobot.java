@@ -131,11 +131,9 @@ public class JVBoysSoccerRobot {
         // Airplane Launcher Subsystem
         airplaneLauncherFireServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME);
         airplaneLauncherFireServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-        airplaneLauncherFireServo.setPosition(0);
 
         airplaneLauncherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME_2);
         airplaneLauncherAdjustServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED_2 ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-        airplaneLauncherAdjustServo.setPosition(0);
 
         // Drivetrain Subsystem
         backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);

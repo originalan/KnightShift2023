@@ -92,7 +92,7 @@ public class RedClose2 extends AutoBase {
 
         parkingTraj = drive.trajectorySequenceBuilder(startingPose)
                 .waitSeconds(1) // idk j wait a second j in case
-                .forward(45)
+                .back(45)
                 .build();
 
         waitingTraj1 = drive.trajectorySequenceBuilder(parkingTraj.end())

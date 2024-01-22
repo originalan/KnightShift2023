@@ -46,7 +46,8 @@ public class OneDriverTest extends LinearOpMode{
         telemetry.update();
 
         while (opModeInInit()) {
-//            robot.rig.noHang();
+            robot.launcher.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+            telemetry.addLine("AT REST");
         }
 
         waitForStart();
@@ -156,8 +157,10 @@ public class OneDriverTest extends LinearOpMode{
 
                 if (launcherFired) {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                    telemetry.addLine("LAUNCHER FIRED");
                 }else {
                     robot.launcher.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+                    telemetry.addLine("LAUNCHER AT REST");
                 }
 
                 /*
