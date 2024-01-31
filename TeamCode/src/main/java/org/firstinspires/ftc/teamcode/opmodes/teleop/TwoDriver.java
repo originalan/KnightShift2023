@@ -2,108 +2,76 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
-/**
- * OneDriverTest is identical to OneDriver except it has more joystick controls for testing certain hardware.
- */
-@TeleOp(name = "OneDriverTest", group = "Testing")
-public class OneDriverTest extends LinearOpMode{
+@TeleOp (name = "TwoDriver", group = "Final")
+public class TwoDriver extends LinearOpMode {
 
-    private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
-    private boolean launcherFired = false;
+    private ElapsedTime runtime = new ElapsedTime();
+
+    // RIGGING
     private boolean isRigging = false;
     private boolean rigStringMove = false;
+    // AIRPLANE LAUNCHER
+    private boolean launcherFired = false;
+
     private boolean switchDriveControls = false;
-    private boolean positionArm = false;
+
+    // ARMS
+    private boolean atPos1 = false;
+    private boolean atPos2 = false;
+    private boolean atPos3 = false;
+    private boolean atBottom = false;
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+
         telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
         telemetry.update();
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
-        // WAIT FOR THIS TELEMETRY MESSAGE BEFORE PRESSING START because IMU takes a while to be initialized
-        telemetry.addData("Status", "Initialized");
-        telemetry.addData("Elapsed time", runtime.toString());
-        telemetry.update();
-
-        while (opModeInInit()) {
-            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
-            telemetry.addLine("AT REST");
-        }
-
         waitForStart();
-
-        runtime.reset();
-
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                // Gamepad1 = driving, rigging, airplane launcher
+                // Gamepad2 = all arm control, failsafes/override commands
 
                 // Keep at top of loop, is used to check if buttons are pressed
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
+                previousGamepad2.copy(currentGamepad2);
+                currentGamepad2.copy(gamepad2);
 
-                // Records joystick values
+                /*
+                =================DRIVETRAIN CONTROLS==============
+                 */
                 double x = gamepad1.left_stick_x;
                 double y = gamepad1.left_stick_y * -1;
                 double r = gamepad1.right_stick_x;
 
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     switchDriveControls = !switchDriveControls;
                 }
 
                 robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
-
-                // Show elapsed game time
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-                // Add all robot telemetry
-                robot.addTelemetry();
-
-                /*
-                =================DELIVERY ARM CONTROLS==============
-                */
-                if (currentGamepad1.y && !previousGamepad1.y) {
-                    positionArm = !positionArm;
-                }
-                if (positionArm) {
-                    robot.armSubsystem.armState = Arm.ArmState.POS1;
-//                    robot.clawSubsystem.clawState = Claw.ClawState.HOLDING_PIXEL;
-                    // Because intake controls are underneath this if statement, we can override this state if we activate the intake
-                }else {
-//                    robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    robot.armSubsystem.armState = Arm.ArmState.BOTTOM;
-                }
-
-                // Manual "override" of PIDF control of delivery arm
-                if (currentGamepad1.left_bumper) {
-                    robot.armSubsystem.overridePowerForward = true;
-                }else {
-                    robot.armSubsystem.overridePowerForward = false;
-                }
-
-                if (currentGamepad1.right_bumper) {
-                    robot.armSubsystem.overridePowerBackward = true;
-                }else {
-                    robot.armSubsystem.overridePowerBackward = false;
-                }
 
                 /*
                 =================RIGGING CONTROLS==============
@@ -153,24 +121,68 @@ public class OneDriverTest extends LinearOpMode{
                 }
 
                 /*
-                =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
+                =================ARM CONTROLS==============
                 */
-                if (currentGamepad1.b && !previousGamepad1.b) {
-                    robot.drivetrainSubsystem.resetInitYaw();
+                if (currentGamepad2.y && !previousGamepad2.y) {
+                    atPos1 = !atPos1;
+                    atPos2 = false;
+                    atPos3 = false;
+                    atBottom = false;
+                }
+                if (currentGamepad2.a && !previousGamepad2.a) {
+                    atPos1 = false;
+                    atPos2 = false;
+                    atPos3 = false;
+                    atBottom = !atBottom;
+                }
+                if (currentGamepad2.b && !previousGamepad2.b) {
+                    atPos1 = false;
+                    atPos2 = !atPos2;
+                    atPos3 = false;
+                    atBottom = false;
+                }
+                if (currentGamepad2.x && !previousGamepad2.x) {
+                    atPos1 = false;
+                    atPos2 = false;
+                    atPos3 = !atPos3;
+                    atBottom = false;
+                }
+
+                if (atPos1) {
+                    robot.armSubsystem.armState = Arm.ArmState.POS1;
+                }
+                if (atPos2) {
+                    robot.armSubsystem.armState = Arm.ArmState.POS2;
+                }
+                if (atPos3) {
+                    robot.armSubsystem.armState = Arm.ArmState.POS3;
+                }
+                if (atBottom) {
+                    robot.armSubsystem.armState = Arm.ArmState.BOTTOM;
+                }
+
+                // Manual "override" of PIDF control of arm
+                if (currentGamepad2.left_bumper) {
+                    robot.armSubsystem.overridePowerForward = true;
+                }else {
+                    robot.armSubsystem.overridePowerForward = false;
+                }
+
+                if (currentGamepad2.right_bumper) {
+                    robot.armSubsystem.overridePowerBackward = true;
+                }else {
+                    robot.armSubsystem.overridePowerBackward = false;
                 }
 
                 /*
-                =================TOGGLE UTIL CONTROLS==============
+                =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
                 */
-                if (currentGamepad1.a && !previousGamepad1.a) { // never tested this lol
-                    robot.drivetrainSubsystem.orientPerpendicular = !robot.drivetrainSubsystem.orientPerpendicular;
+                if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
+                    robot.drivetrainSubsystem.resetInitYaw();
                 }
 
-                // Update all subsystems (if applicable)
-                robot.update();
-                telemetry.update();
             }
         }
-    }
 
+    }
 }

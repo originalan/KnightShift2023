@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,9 +9,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -33,29 +29,30 @@ public class JVBoysSoccerRobot {
     public PIDFControl pid;
 
     // Subsystems
-    public Drivetrain drivetrain;
-    public Intake intake;
-    public DeliveryArm deliveryArm;
-    public Rigging rig;
-    public AirplaneLauncher launcher;
+    public Drivetrain drivetrainSubsystem;
+    public Claw clawSubsystem;
+    public Arm armSubsystem;
+    public Rigging riggingSubsystem;
+    public AirplaneLauncher launcherSubsystem;
 
     // Hardware
-    public BNO055IMU imu;
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
-    public DcMotorEx intakeMotor;
-    public Servo airplaneLauncherFireServo;
-    public Servo airplaneLauncherAdjustServo;
-    public DcMotorEx deliveryArmMotor;
-    public Servo leftRigServo;
-    public Servo rightRigServo;
-    public DcMotorEx leftRigMotor;
-    public DcMotorEx rightRigMotor;
-    public Servo purplePixelServo;
-
-    // Integrated Heading for IMU
-    private double previousHeading = 0;
-    private double integratedHeading = 0;
+    
+    public Servo launcherFireServo;
+    public Servo launcherAdjustServo;
+    
+    public DcMotorEx armLeftMotor;
+    public DcMotorEx armRightMotor;
+    
+    public Servo rigLeftServo;
+    public Servo rigRightServo;
+    public DcMotorEx rigLeftMotor;
+    public DcMotorEx rigRightMotor;
+    
+    public Servo clawLeftServo;
+    public Servo clawRightServo;
+    public Servo clawPivotServo;
 
     // Alliance Type
     public enum AllianceType {
@@ -79,13 +76,13 @@ public class JVBoysSoccerRobot {
 
         initIMU();
         initHardware();
-        drivetrain = new Drivetrain(hwMap, telemetry, this);
-        intake = new Intake(hwMap, telemetry, this);
-        deliveryArm = new DeliveryArm(hwMap, telemetry, this);
-        rig = new Rigging(hwMap, telemetry, this);
-        launcher = new AirplaneLauncher(hwMap, telemetry, this);
+        drivetrainSubsystem = new Drivetrain(hwMap, telemetry, this);
+        clawSubsystem = new Claw(hwMap, telemetry, this);
+        armSubsystem = new Arm(hwMap, telemetry, this);
+        riggingSubsystem = new Rigging(hwMap, telemetry, this);
+        launcherSubsystem = new AirplaneLauncher(hwMap, telemetry, this);
 
-        subsystems = Arrays.asList(drivetrain, intake, deliveryArm, rig, launcher);
+        subsystems = Arrays.asList(drivetrainSubsystem, clawSubsystem, armSubsystem, riggingSubsystem, launcherSubsystem);
     }
 
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry, AllianceType allianceType) {
@@ -97,8 +94,6 @@ public class JVBoysSoccerRobot {
         for (Subsystem s : subsystems) {
             s.addTelemetry();
         }
-        telemetry.addLine("Misc.");
-        telemetry.addData("   IMU Absolute Angle Rotation", getIntegratedHeading());
     }
 
     public void update() {
@@ -114,13 +109,6 @@ public class JVBoysSoccerRobot {
     }
 
     public void initIMU() {
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);
-
         imu2 = hwMap.get(IMU.class, "imu");
         IMU.Parameters parameters1 = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RobotSettings.LOGO_FACING_DIR, RobotSettings.USB_FACING_DIR));
@@ -129,13 +117,30 @@ public class JVBoysSoccerRobot {
 
     public void initHardware() {
         // Airplane Launcher Subsystem
-        airplaneLauncherFireServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME);
-        airplaneLauncherFireServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-
-        airplaneLauncherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_SERVO_NAME_2);
-        airplaneLauncherAdjustServo.setDirection(RobotSettings.LAUNCHER_SERVO_REVERSED_2 ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-
+        initLauncherHardware();
+        
         // Drivetrain Subsystem
+        initDrivetrainHardware();
+
+        // Claw Subsystem
+        initClawHardware();
+
+        // Arm Subsystem
+        initArmHardware();
+
+        // Rigging Subsystem
+        initRiggingHardware();
+    }
+    
+    public void initLauncherHardware() {
+        launcherFireServo = hwMap.servo.get(RobotSettings.LAUNCHER_FIRE_SERVO_NAME);
+        launcherFireServo.setDirection(RobotSettings.LAUNCHER_FIRE_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+
+        launcherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_ADJUST_SERVO_NAME);
+        launcherAdjustServo.setDirection(RobotSettings.LAUNCHER_ADJUST_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+    }
+    
+    public void initDrivetrainHardware() {
         backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);
         backRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKRIGHT_MOTOR_NAME);
         frontLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTLEFT_MOTOR_NAME);
@@ -158,54 +163,43 @@ public class JVBoysSoccerRobot {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Intake Subsystem
-        intakeMotor = hwMap.get(DcMotorEx.class, RobotSettings.INTAKE_MOTOR_NAME);
-        intakeMotor.setDirection(RobotSettings.INTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Delivery Arm Subsystem
-        deliveryArmMotor = hwMap.get(DcMotorEx.class, RobotSettings.OUTTAKE_MOTOR_NAME);
-        deliveryArmMotor.setDirection(RobotSettings.OUTTAKE_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-        deliveryArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        deliveryArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Rigging Subsystem
-        leftRigServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);
-        rightRigServo = hwMap.servo.get(RobotSettings.RIGGING_RIGHT_SERVO_NAME);
-        leftRigServo.setDirection(RobotSettings.RIGGING_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-        rightRigServo.setDirection(RobotSettings.RIGGING_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
-        leftRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_LEFT_MOTOR_NAME);
-        rightRigMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_RIGHT_MOTOR_NAME);
-        leftRigMotor.setDirection(RobotSettings.RIGGING_LEFT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-        rightRigMotor.setDirection(RobotSettings.RIGGING_RIGHT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
-        leftRigMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRigMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+    
+    public void initClawHardware() {
+        clawLeftServo = hwMap.servo.get(RobotSettings.CLAW_LEFT_SERVO_NAME);
+        clawRightServo = hwMap.servo.get(RobotSettings.CLAW_RIGHT_SERVO_NAME);
 
-    /**
-     * Records the absolute angle of the imu compared to when it first started (-infinity, infinity)
-     * @return the current heading of the IMU in degrees
-     */
-    private double getIntegratedHeading() {
-        double currentHeading = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-        double deltaHeading = currentHeading - previousHeading;
-
-        if (deltaHeading < -180) {
-            deltaHeading += 360;
-        } else if (deltaHeading >= 180) {
-            deltaHeading -= 360;
-        }
-        integratedHeading += deltaHeading;
-        previousHeading = currentHeading;
-
-        return integratedHeading;
+        clawLeftServo.setDirection(RobotSettings.CLAW_LEFT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        clawRightServo.setDirection(RobotSettings.CLAW_RIGHT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
+    
+    public void initArmHardware() {
+        armLeftMotor = hwMap.get(DcMotorEx.class, RobotSettings.ARM_MOTOR_LEFT_NAME);
+        armLeftMotor.setDirection(RobotSettings.ARM_MOTOR_LEFT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        armLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    public void resetIMUAngle() {
-        integratedHeading = 0;
-        previousHeading = 0;
+        armRightMotor = hwMap.get(DcMotorEx.class, RobotSettings.ARM_MOTOR_RIGHT_NAME);
+        armRightMotor.setDirection(RobotSettings.ARM_MOTOR_RIGHT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        armRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        clawPivotServo = hwMap.servo.get(RobotSettings.CLAW_PIVOT_SERVO_NAME);
+        clawPivotServo.setDirection(RobotSettings.CLAW_PIVOT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+    }
+    
+    public void initRiggingHardware() {
+        rigLeftServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);
+        rigRightServo = hwMap.servo.get(RobotSettings.RIGGING_RIGHT_SERVO_NAME);
+        rigLeftServo.setDirection(RobotSettings.RIGGING_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        rigRightServo.setDirection(RobotSettings.RIGGING_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+
+        rigLeftMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_LEFT_MOTOR_NAME);
+        rigRightMotor = hwMap.get(DcMotorEx.class, RobotSettings.RIGGING_RIGHT_MOTOR_NAME);
+        rigLeftMotor.setDirection(RobotSettings.RIGGING_LEFT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        rigRightMotor.setDirection(RobotSettings.RIGGING_RIGHT_MOTOR_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        rigLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rigRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 }

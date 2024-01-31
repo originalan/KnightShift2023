@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -40,30 +39,30 @@ public class RiggingTest extends LinearOpMode {
 
                 if (!rigStringMove) {
                     if (isRigging) {
-                        robot.rightRigServo.getController().pwmEnable();
-                        robot.leftRigServo.getController().pwmEnable();
-                        robot.rig.hang();
+                        robot.rigRightServo.getController().pwmEnable();
+                        robot.rigLeftServo.getController().pwmEnable();
+                        robot.riggingSubsystem.hang();
                     }else {
-                        robot.rightRigServo.getController().pwmDisable();
-                        robot.leftRigServo.getController().pwmDisable();
+                        robot.rigRightServo.getController().pwmDisable();
+                        robot.rigLeftServo.getController().pwmDisable();
                     }
                 }else {
-                    robot.rightRigServo.getController().pwmDisable();
-                    robot.leftRigServo.getController().pwmDisable();
+                    robot.rigRightServo.getController().pwmDisable();
+                    robot.rigLeftServo.getController().pwmDisable();
                 }
 
                 if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
                     rigStringMove = true;
-                    robot.rightRigMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
-                    robot.leftRigMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigRightMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                 }
                 else {
-                    robot.rightRigMotor.setPower(0);
-                    robot.leftRigMotor.setPower(0);
+                    robot.rigRightMotor.setPower(0);
+                    robot.rigLeftMotor.setPower(0);
                 }
 
-                robot.rig.addTelemetry();
-                robot.rig.update();
+                robot.riggingSubsystem.addTelemetry();
+                robot.riggingSubsystem.update();
                 telemetry.update();
 
             }

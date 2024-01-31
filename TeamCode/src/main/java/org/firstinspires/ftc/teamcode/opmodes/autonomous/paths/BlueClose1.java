@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -63,64 +63,64 @@ public class BlueClose1 extends AutoBase {
 
                 switch (autoState) {
 
-                    case ORIENT_PURPLE_PIXEL:
-                        // robot is moving to the purple pixel location
-                        robot.intake.intakeState = Intake.IntakeState.OFF;
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.PLACING_PURPLE_PIXEL;
-                            drive.followTrajectorySequenceAsync(waitingTraj1);
-                        }
-                        break;
-                    case PLACING_PURPLE_PIXEL:
-                        // robot is at the purple pixel location, waiting 4 seconds to spit out purple pixel
-                        robot.intake.intakeState = Intake.IntakeState.REVERSE;
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.LIFT_ARM_SLIGHTLY;
-                            drive.followTrajectorySequenceAsync(waitingTraj2);
-                        }
-                        break;
-                    case LIFT_ARM_SLIGHTLY:
-                        // robot is still at purple pixel, waiting 2 seconds to turn off intake and lift up arm out of the way
-                        robot.intake.intakeState = Intake.IntakeState.HOLDING_PIXEL;
-                        robot.deliveryArm.armState = DeliveryArm.ArmState.LIFT;
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.MOVING_TO_BACKBOARD;
-                            drive.followTrajectorySequenceAsync(backboardTraj);
-                        }
-                        break;
-                    case MOVING_TO_BACKBOARD:
-                        // robot is moving to the backboard, moving arm into position
-                        robot.deliveryArm.armState = DeliveryArm.ArmState.TOP;
-                        if (!drive.isBusy() &&
-                                withinMargin(robot.deliveryArmMotor.getCurrentPosition(), RobotSettings.ARM_ENCODER_TOP, 4)) {
-                            autoState = AutoState.RELEASE_PIXEL;
-                            robot.intake.intakeState = Intake.IntakeState.REVERSE;
-                            drive.followTrajectorySequenceAsync(waitingTraj3);
-                        }
-                        break;
-                    case RELEASE_PIXEL:
-                        // robot is at backdrop, arm is in place, intake is in place, wait 2 seconds as intake reverses to release pixel
-                        if (!drive.isBusy()) {
-                            robot.deliveryArm.armState = DeliveryArm.ArmState.BOTTOM; // bring arm back down
-                            robot.intake.intakeState = Intake.IntakeState.OFF; // turn off intake
-                            autoState = AutoState.PARKING;
-                            drive.followTrajectorySequenceAsync(parkingTraj);
-                        }
-                        break;
-                    case PARKING:
-                        // robot is moving to parking destination
-                        if (!drive.isBusy()) {
-                            autoState = AutoState.IDLE;
-                        }
-                        break;
-                    case IDLE:
-                        break;
+//                    case ORIENT_PURPLE_PIXEL:
+//                        // robot is moving to the purple pixel location
+//                        robot.clawSubsystem.clawState = Claw.ClawState.OFF;
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.PLACING_PURPLE_PIXEL;
+//                            drive.followTrajectorySequenceAsync(waitingTraj1);
+//                        }
+//                        break;
+//                    case PLACING_PURPLE_PIXEL:
+//                        // robot is at the purple pixel location, waiting 4 seconds to spit out purple pixel
+//                        robot.clawSubsystem.clawState = Claw.ClawState.REVERSE;
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.LIFT_ARM_SLIGHTLY;
+//                            drive.followTrajectorySequenceAsync(waitingTraj2);
+//                        }
+//                        break;
+//                    case LIFT_ARM_SLIGHTLY:
+//                        // robot is still at purple pixel, waiting 2 seconds to turn off intake and lift up arm out of the way
+//                        robot.clawSubsystem.clawState = Claw.ClawState.HOLDING_PIXEL;
+//                        robot.armSubsystem.armState = Arm.ArmState.LIFT;
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.MOVING_TO_BACKBOARD;
+//                            drive.followTrajectorySequenceAsync(backboardTraj);
+//                        }
+//                        break;
+//                    case MOVING_TO_BACKBOARD:
+//                        // robot is moving to the backboard, moving arm into position
+//                        robot.armSubsystem.armState = Arm.ArmState.POS1;
+//                        if (!drive.isBusy() &&
+//                                withinMargin(robot.armLeftMotor.getCurrentPosition(), RobotSettings.ARM_ENCODER_TOP, 4)) {
+//                            autoState = AutoState.RELEASE_PIXEL;
+//                            robot.clawSubsystem.clawState = Claw.ClawState.REVERSE;
+//                            drive.followTrajectorySequenceAsync(waitingTraj3);
+//                        }
+//                        break;
+//                    case RELEASE_PIXEL:
+//                        // robot is at backdrop, arm is in place, intake is in place, wait 2 seconds as intake reverses to release pixel
+//                        if (!drive.isBusy()) {
+//                            robot.armSubsystem.armState = Arm.ArmState.BOTTOM; // bring arm back down
+//                            robot.clawSubsystem.clawState = Claw.ClawState.OFF; // turn off intake
+//                            autoState = AutoState.PARKING;
+//                            drive.followTrajectorySequenceAsync(parkingTraj);
+//                        }
+//                        break;
+//                    case PARKING:
+//                        // robot is moving to parking destination
+//                        if (!drive.isBusy()) {
+//                            autoState = AutoState.IDLE;
+//                        }
+//                        break;
+//                    case IDLE:
+//                        break;
 
                 }
 
                 drive.update();
-                robot.deliveryArm.update();
-                robot.intake.update();
+                robot.armSubsystem.update();
+                robot.clawSubsystem.update();
 
                 transferPose();
                 telemetry.update();

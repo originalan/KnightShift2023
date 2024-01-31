@@ -55,12 +55,12 @@ public class Drivetrain extends Subsystem {
     @Override
     public void addTelemetry() {
         telemetry.addLine("Drivetrain");
-//
-//        telemetry.addData("   Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-//        telemetry.addData("   Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
-//
-//        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
-//        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
+
+        telemetry.addData("   Front Left/Right Calculated Powers", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("   Back Left/Right Calculated Powers", "%4.2f, %4.2f", backLeftPower, backRightPower);
+
+        telemetry.addData("   Front Left/Right Actual Positions", "%d, %d", robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition());
+        telemetry.addData("   Back Left/Right Actual Positions", "%d, %d", robot.backLeft.getCurrentPosition(), robot.backRight.getCurrentPosition());
     }
 
     @Override
@@ -83,9 +83,6 @@ public class Drivetrain extends Subsystem {
     public void resetInitYaw() {
         lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = lastAngles.firstAngle;
-
-        // For resetting absolute angle of imu (purely for telemetry purposes)
-        robot.resetIMUAngle();
     }
 
     /**
@@ -219,15 +216,6 @@ public class Drivetrain extends Subsystem {
         robot.frontLeft.setPower(frontLeftPower);
         robot.frontRight.setPower(frontRightPower);
 
-    }
-
-    /**
-     * Uses IMU to return angle of robot
-     * @return
-     */
-    public double getAngle() {
-        Orientation angles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
     }
 
 }

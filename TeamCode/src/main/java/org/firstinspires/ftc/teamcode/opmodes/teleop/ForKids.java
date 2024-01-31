@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
  * It is used for outreach events where others can control the robot themselves.
  * Functionality is limited only to drivetrain movement
  */
-@TeleOp (name = "4 Kidz", group = "KIDS")
+@TeleOp (name = "4 Kidz", group = "Testing")
 public class ForKids extends LinearOpMode {
 
     private boolean switchDriveControls = false;
@@ -48,7 +48,7 @@ public class ForKids extends LinearOpMode {
                     switchDriveControls = !switchDriveControls;
                 }
 
-                robot.drivetrain.moveXYR(x, y, r, false);
+                robot.drivetrainSubsystem.moveXYR(x, y, r, false);
 
                 telemetry.addLine("Use the joysticks to move the robot!");
                 telemetry.update();

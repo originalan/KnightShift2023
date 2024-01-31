@@ -22,7 +22,8 @@ public class AirplaneLauncher extends Subsystem {
     public enum LauncherState {
         SETUP,
         AT_REST,
-        ZONE_ONE_OR_BUST
+        ZONE_ONE_OR_BUST,
+        NOTHING
     }
     public LauncherState launcherState = LauncherState.AT_REST;
 
@@ -35,7 +36,8 @@ public class AirplaneLauncher extends Subsystem {
     @Override
     public void addTelemetry() {
         telemetry.addLine("Airplane Launcher");
-        telemetry.addData("   Servo Current Position", "%4.2f", robot.airplaneLauncherFireServo.getPosition());
+        telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
+        telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
     }
 
     @Override
@@ -61,28 +63,30 @@ public class AirplaneLauncher extends Subsystem {
                 restFireServo();
                 unclampAdjustServo();
                 break;
+            case NOTHING:
+                break;
         }
     }
 
     @Override
     public void stop() {
-        restFireServo();
+
     }
 
     public void releaseFireServo() {
-        robot.airplaneLauncherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+        robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
     }
 
     public void restFireServo() {
-        robot.airplaneLauncherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+        robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
     }
 
     public void unclampAdjustServo() {
-        robot.airplaneLauncherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_UNCLAMPED);
+        robot.launcherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_UNCLAMPED);
     }
 
     public void clampAdjustServo() {
-        robot.airplaneLauncherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_CLAMPED);
+        robot.launcherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_CLAMPED);
     }
 
 }

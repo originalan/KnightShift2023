@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
  * IntakeTest is a test Teleop mode that is used to test the speed of the intake
@@ -17,10 +18,13 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
  */
 @Config
 @TeleOp (name = "Intake Box Test", group = "Testing")
-public class IntakeTest extends LinearOpMode {
+public class ClawTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+
+    private boolean left = false;
+    private boolean right = false;
 
     @Override
     public void runOpMode() {
@@ -43,17 +47,23 @@ public class IntakeTest extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                if (Math.abs(currentGamepad1.left_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.FORWARD;
-                    telemetry.addLine("FORWARD");
+                if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
+                    left = !left;
                 }
-                else if (Math.abs(currentGamepad1.right_trigger) > 0.01) {
-                    robot.intake.intakeState = Intake.IntakeState.REVERSE;
-                    telemetry.addLine("REVERSE");
+                if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+                    right = !right;
                 }
-                else {
-                    robot.intake.intakeState = Intake.IntakeState.OFF;
-                    telemetry.addLine("OFF");
+
+                if (left) {
+                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
+                }else {
+                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSED);
+                }
+
+                if (right) {
+                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
+                }else {
+                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSED);
                 }
 
                 robot.update();

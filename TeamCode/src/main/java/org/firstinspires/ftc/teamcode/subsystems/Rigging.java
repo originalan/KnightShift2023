@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -33,8 +30,8 @@ public class Rigging extends Subsystem {
     @Override
     public void addTelemetry() {
         telemetry.addLine("Rigging");
-        telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.leftRigServo.getPosition(), robot.rightRigServo.getPosition());
-        telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.leftRigMotor.getCurrentPosition(), robot.rightRigMotor.getCurrentPosition());
+        telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.rigLeftServo.getPosition(), robot.rigRightServo.getPosition());
+        telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.rigLeftMotor.getCurrentPosition(), robot.rigRightMotor.getCurrentPosition());
     }
 
     @Override
@@ -55,19 +52,19 @@ public class Rigging extends Subsystem {
     }
 
     public void hang() {
-        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST + RobotSettings.RIGGING_MOVE_SERVO);
-        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST - RobotSettings.RIGGING_MOVE_SERVO);
+        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_REST + RobotSettings.RIGGING_MOVE_SERVO);
+        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST + RobotSettings.RIGGING_MOVE_SERVO);
         // Motor string code is handled elsewhere
     }
 
     public void hang(double increment) {
-        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST + increment);
-        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST - increment);
+        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_REST + increment);
+        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST + increment);
     }
 
     public void noHang() {
-        robot.leftRigServo.setPosition(RobotSettings.RIGGING_LEFT_REST);
-        robot.rightRigServo.setPosition(RobotSettings.RIGGING_RIGHT_REST);
+        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_REST);
+        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST);
     }
 
 }

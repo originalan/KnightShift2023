@@ -23,8 +23,6 @@ public class AirplaneLauncherTest extends LinearOpMode {
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 
-
-
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -37,13 +35,13 @@ public class AirplaneLauncherTest extends LinearOpMode {
                 }
 
                 if (launchPlane) {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }else {
-                    robot.launcher.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
                 }
 
-                robot.launcher.addTelemetry();
-                robot.launcher.update();
+                robot.launcherSubsystem.addTelemetry();
+                robot.launcherSubsystem.update();
                 telemetry.update();
 
             }

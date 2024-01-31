@@ -5,15 +5,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.subsystems.DeliveryArm;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 /**
  * ArmTestPIDF is a test Teleop mode that is used to tune the movement of the Arm with a PIDF controller
@@ -50,13 +48,13 @@ public class ArmTestPIDF extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                robot.deliveryArm.armState = DeliveryArm.ArmState.GO_TO_POSITION;
-                int armPos = robot.deliveryArmMotor.getCurrentPosition();
+                robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
+                int armPos = robot.armLeftMotor.getCurrentPosition();
 
                 double pidPower = pid.calculate(targetPos, armPos, false);
                 double ffPower = pid.feedForwardCalculate(armPos);
 
-                robot.deliveryArm.targetPower = pidPower + ffPower;
+                robot.armSubsystem.targetPower = pidPower + ffPower;
 
 //                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
 //                robot.deliveryArm.targetPower = power;
@@ -65,7 +63,7 @@ public class ArmTestPIDF extends LinearOpMode {
 
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
-                telemetry.addData("Arm actual velocity", robot.deliveryArmMotor.getVelocity());
+                telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
                 telemetry.addData("Arm calculated power", pidPower + ffPower);
                 telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
                 telemetry.update();
