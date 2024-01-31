@@ -65,8 +65,8 @@ public class RobotSettings {
     public static double RIGGING_MOTOR_SPEED = 0.6;
     public static double RIGGING_LEFT_REST = 0;
     public static double RIGGING_RIGHT_REST = 0;
-    public static double RIGGING_MOVE_SERVO = 0.25;
-
+    public static double RIGGING_LEFT_TOP = 1;
+    public static double RIGGING_RIGHT_TOP = 1;
     public static double RIGGING_RESET_MOTOR_SPEED = 0.2;
 
     /*

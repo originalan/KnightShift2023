@@ -36,14 +36,7 @@ public class Rigging extends Subsystem {
 
     @Override
     public void update() {
-//        switch (riggingState) {
-//            case NO_RIG:
-//                noHang();
-//                break;
-//            case RIG:
-//                hang();
-//                break;
-//        }
+
     }
 
     @Override
@@ -52,14 +45,9 @@ public class Rigging extends Subsystem {
     }
 
     public void hang() {
-        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_REST + RobotSettings.RIGGING_MOVE_SERVO);
-        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST + RobotSettings.RIGGING_MOVE_SERVO);
+        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_TOP);
+        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_TOP);
         // Motor string code is handled elsewhere
-    }
-
-    public void hang(double increment) {
-        robot.rigLeftServo.setPosition(RobotSettings.RIGGING_LEFT_REST + increment);
-        robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST + increment);
     }
 
     public void noHang() {
