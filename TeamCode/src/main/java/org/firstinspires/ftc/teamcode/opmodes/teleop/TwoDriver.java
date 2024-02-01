@@ -33,9 +33,10 @@ public class TwoDriver extends LinearOpMode {
     private boolean atBottom = false;
     private boolean overrideLeft= false;
     private int overrideLeftCounter = 0;
-    private double startingTime = 0;
+    private double startingTimeLeft = 0;
     private boolean overrideRight = false;
     private int overrideRightCounter = 0;
+    private double startingTimeRight = 0;
 
 
     @Override
@@ -53,6 +54,9 @@ public class TwoDriver extends LinearOpMode {
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
         waitForStart();
+
+        runtime.reset();
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -126,38 +130,13 @@ public class TwoDriver extends LinearOpMode {
                     robot.armSubsystem.encoderPosition = Arm.position1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    atPos1 = false;
-                    atPos2 = false;
-                    atPos3 = false;
-                    atBottom = !atBottom;
+                    robot.armSubsystem.encoderPosition = Arm.position2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    atPos1 = false;
-                    atPos2 = !atPos2;
-                    atPos3 = false;
-                    atBottom = false;
+                    robot.armSubsystem.encoderPosition = Arm.position3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    atPos1 = false;
-                    atPos2 = false;
-                    atPos3 = !atPos3;
-                    atBottom = false;
-                }
-
-                if (atPos1) {
-                    robot.armSubsystem.armState = Arm.ArmState.POS1;
-                }
-                else if (atPos2) {
-                    robot.armSubsystem.armState = Arm.ArmState.POS2;
-                }
-                else if (atPos3) {
-                    robot.armSubsystem.armState = Arm.ArmState.POS3;
-                }
-                else if (atBottom) {
-                    robot.armSubsystem.armState = Arm.ArmState.BOTTOM;
-                }
-                else {
-                    robot.armSubsystem.armState = Arm.ArmState.AT_REST;
+                    robot.armSubsystem.encoderPosition = Arm.positionBottom;
                 }
 
                 // Manual "override" of PIDF control of arm
@@ -176,17 +155,30 @@ public class TwoDriver extends LinearOpMode {
                 if (overrideLeft) {
                     overrideLeftCounter++;
                     if (overrideLeftCounter == 1) {
-                        startingTime = runtime.seconds();
+                        startingTimeLeft = runtime.seconds();
                     }
-                    double difference = runtime.seconds() - startingTime;
+                    double difference = runtime.seconds() - startingTimeLeft;
                     if (difference % 0.05 == 0) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition++;
                     }
                 }else {
                     overrideLeftCounter = 0;
                 }
+                
+                if (overrideRight) {
+                    overrideRightCounter++;
+                    if (overrideRightCounter == 1) {
+                        startingTimeRight = runtime.seconds();
+                    }
+                    double difference = runtime.seconds() - startingTimeRight;
+                    if (difference % 0.05 == 0) {
+                        robot.armSubsystem.encoderPosition--;
+                    }
+                }else {
+                    overrideRightCounter = 0;
+                }
 
-                robot.armSubsystem.setArmPower(robot.armSubsystem.encoderPosition);
+                robot.armSubsystem.setArmEncoderPosition(robot.armSubsystem.encoderPosition);
 
                 /*
                 =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
