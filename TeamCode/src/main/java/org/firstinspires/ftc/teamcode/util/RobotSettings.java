@@ -29,11 +29,11 @@ public class RobotSettings {
     public static String CLAW_LEFT_SERVO_NAME = "ClawPieceLeftServo";
     public static String CLAW_RIGHT_SERVO_NAME = "ClawPieceRightServo";
     public static boolean CLAW_LEFT_REVERSED = false;
-    public static boolean CLAW_RIGHT_REVERSED = false;
+    public static boolean CLAW_RIGHT_REVERSED = true;
+    public static double CLAW_LEFT_CLOSE = 0.25;
     public static double CLAW_LEFT_OPEN = 0;
-    public static double CLAW_LEFT_CLOSED = 0;
+    public static double CLAW_RIGHT_CLOSE = 0.25;
     public static double CLAW_RIGHT_OPEN = 0;
-    public static double CLAW_RIGHT_CLOSED = 0;
 
     /*
     ================= ARM SETTINGS==============

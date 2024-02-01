@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -55,15 +54,15 @@ public class ClawTest extends LinearOpMode {
                 }
 
                 if (left) {
-                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
+                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSE);
                 }else {
-                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSED);
+                    robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
                 }
 
                 if (right) {
-                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
+                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSE);
                 }else {
-                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSED);
+                    robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
                 }
 
                 robot.update();

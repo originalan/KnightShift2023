@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
@@ -49,13 +47,13 @@ public class Claw extends Subsystem {
     }
 
     public void openClawBoth() {
-        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
-        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
+        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSE);
+        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSE);
     }
 
     public void closeClawBoth() {
-        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSED);
-        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSED);
+        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
+        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
     }
 
 }
