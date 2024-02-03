@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
+@Config
 @TeleOp (name = "TwoDriver", group = "Final")
 public class TwoDriver extends LinearOpMode {
 
@@ -26,11 +28,7 @@ public class TwoDriver extends LinearOpMode {
 
     private boolean switchDriveControls = false;
 
-    // ARMS
-    private boolean atPos1 = false;
-    private boolean atPos2 = false;
-    private boolean atPos3 = false;
-    private boolean atBottom = false;
+    // ARMS (override move arm left or right)
     private boolean overrideLeft= false;
     private int overrideLeftCounter = 0;
     private double startingTimeLeft = 0;
@@ -40,7 +38,7 @@ public class TwoDriver extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
         telemetry.update();
@@ -140,17 +138,9 @@ public class TwoDriver extends LinearOpMode {
                 }
 
                 // Manual "override" of PIDF control of arm
-                if (currentGamepad2.left_bumper) {
-                    overrideLeft = true;
-                }else {
-                    overrideLeft = false;
-                }
+                overrideLeft = currentGamepad2.left_bumper;
 
-                if (currentGamepad2.right_bumper) {
-                    overrideRight = true;
-                }else {
-                    overrideRight = false;
-                }
+                overrideRight = currentGamepad2.right_bumper;
 
                 if (overrideLeft) {
                     overrideLeftCounter++;
@@ -164,6 +154,7 @@ public class TwoDriver extends LinearOpMode {
                 }else {
                     overrideLeftCounter = 0;
                 }
+
                 
                 if (overrideRight) {
                     overrideRightCounter++;

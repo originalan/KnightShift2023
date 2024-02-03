@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.util.RobotSettings;
  * Calibration can be changed live in FTC Dashboard
  */
 @Config
-@TeleOp (name = "Intake Box Test", group = "Testing")
+@TeleOp (name = "Claw Test", group = "Testing")
 public class ClawTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
