@@ -45,11 +45,6 @@ public class RobotSettings {
     public static String ARM_MOTOR_RIGHT_NAME = "ArmMotorRight";
     public static boolean ARM_MOTOR_LEFT_REVERSED = false;
     public static boolean ARM_MOTOR_RIGHT_REVERSED = true;
-    public static double ARM_TOP_POSITION_DEGREES = 150.0;
-    public static double ARM_BOTTOM_POSITION_DEGREES = 0;
-    public static int ARM_ENCODER_TOP = (int)(ARM_TOP_POSITION_DEGREES / 360.0 * 537.6);
-    public static double ARM_OVERRIDE_POWER = 0.2;
-
 
     /*
     =================RIGGING SETTINGS==============
@@ -87,6 +82,5 @@ public class RobotSettings {
     public static String CAMERA_NAME = "Webcam 1";
     public static final RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
     public static final RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-    public static double AUTO_PURPLE_PIXEL_RELEASE = 8.0;
 
 }
