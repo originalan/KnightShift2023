@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.purepursuit.RobotMovement.followCurve;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.purepursuit.CurvePoint;
 import org.firstinspires.ftc.teamcode.purepursuit.RobotMovement;
 
+import java.util.ArrayList;
+
+@TeleOp (name = "Pure Pursuit", group = "Testing")
 public class PurePursuit extends LinearOpMode {
 
     @Override
@@ -14,8 +21,10 @@ public class PurePursuit extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                RobotMovement.goToPosition(358 / 2, 358 / 2, 0.3, Math.toRadians(90), 0.3); // should change 90 to 0
+                ArrayList<CurvePoint> allPoints = new ArrayList<>();
+                allPoints.add(new CurvePoint(0, 0, 1, 1, 50, Math.toRadians(50), 1.0));
 
+                followCurve(allPoints, Math.toRadians(90));
             }
         }
 

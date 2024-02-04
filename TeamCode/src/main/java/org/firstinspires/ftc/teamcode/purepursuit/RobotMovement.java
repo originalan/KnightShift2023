@@ -2,9 +2,58 @@ package org.firstinspires.ftc.teamcode.purepursuit;
 
 import com.qualcomm.robotcore.util.Range;
 
+import org.opencv.core.Point;
+
+import java.util.ArrayList;
+
 public class RobotMovement {
 
     private static double worldX = 50, worldY = 50, worldAngle_rad = Math.toRadians(180);
+
+    public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {
+
+
+
+        CurvePoint followMe = getFollowPointPath(allPoints, new Point(worldX, worldY),
+                allPoints.get(0).followDistance); // follow distance is best not consistent for best pure pursuit
+
+        goToPosition(followMe.x, followMe.y, followMe.moveSpeed, followAngle, followMe.turnSpeed);
+    }
+
+    /**
+     * CORE algorithm of pure pursuit, following the instantaneous vector / point
+     * @param pathPoints
+     * @param robotLocation location of robot (x,y)
+     * @param followRadius of robot
+     * @return
+     */
+    public static CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotLocation, double followRadius) {
+
+        // Default: go to first point in arraylist
+        CurvePoint followMe = new CurvePoint(pathPoints.get(0));
+
+        for (int i = 0; i < pathPoints.size() - 1; i++) {
+            CurvePoint startLine = pathPoints.get(i);
+            CurvePoint endLine = pathPoints.get(i+1);
+
+            ArrayList<Point> intersections = MathFunctions.lineCircleIntersection(robotLocation, followRadius,
+                    startLine.toPoint(), endLine.toPoint());
+
+            double closestAngle = 10000000;
+            for (Point thisIntersection : intersections) {
+                double angle = Math.atan2(thisIntersection.y - worldY, thisIntersection.x - worldX);
+                double deltaAngle = Math.abs(MathFunctions.angleWrap(angle - worldAngle_rad));
+
+                if (deltaAngle < closestAngle) {
+                    closestAngle = deltaAngle;
+                    followMe.setPoint(thisIntersection);
+                }
+            }
+
+        }
+        return followMe;
+
+    }
 
     /**
      *
