@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
  * AirplaneLauncher is a Subsystem representing all airplane launcher hardware movement
@@ -15,9 +16,8 @@ public class AirplaneLauncher extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    private ElapsedTime timer = new ElapsedTime();
-    private double currentTime = 0;
-    private int timerCounter = 1;
+    private ElapsedTime launcherTimer = new ElapsedTime();
+    public int counter = 0;
 
     public enum LauncherState {
         SETUP,
@@ -27,37 +27,40 @@ public class AirplaneLauncher extends Subsystem {
     }
     public LauncherState launcherState = LauncherState.AT_REST;
 
+    private LauncherState previousState = LauncherState.AT_REST;
+
     public AirplaneLauncher(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
+        launcherTimer.reset();
     }
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Airplane Launcher");
-        telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
-        telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
+        if (UseTelemetry.LAUNCHER) {
+            telemetry.addLine("Airplane Launcher");
+            telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
+            telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
+            telemetry.addData("    Times states switched", counter);
+        }
     }
 
     @Override
     public void update() {
+
+        if (previousState != launcherState) {
+            counter++;
+        }
+
         switch (launcherState) {
             case AT_REST:
                 restFireServo();
                 clampAdjustServo();
                 break;
             case ZONE_ONE_OR_BUST:
-                if (timerCounter == 1) {
-                    timer.reset();
-                    timerCounter++;
-                }
-                currentTime = timer.seconds();
                 unclampAdjustServo();
                 releaseFireServo();
-                if (currentTime > 2.0) { // unclamp, then wait 2 seconds before firing airplane
-
-                }
                 break;
             case SETUP:
                 restFireServo();
@@ -66,6 +69,7 @@ public class AirplaneLauncher extends Subsystem {
             case NOTHING:
                 break;
         }
+        previousState = launcherState;
     }
 
     @Override

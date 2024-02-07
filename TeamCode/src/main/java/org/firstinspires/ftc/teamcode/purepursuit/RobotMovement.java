@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class RobotMovement {
 
+    // These aren't correct, they need to be updated every loop
     private static double worldX = 50, worldY = 50, worldAngle_rad = Math.toRadians(180);
 
     public static void followCurve(ArrayList<CurvePoint> allPoints, double followAngle) {

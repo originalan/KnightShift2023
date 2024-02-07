@@ -40,9 +40,6 @@ public class TwoDriver extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
-        telemetry.update();
-
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
@@ -50,6 +47,9 @@ public class TwoDriver extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+
+        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
+        telemetry.update();
 
         waitForStart();
 
@@ -114,11 +114,11 @@ public class TwoDriver extends LinearOpMode {
                 }
 
                 if (launcherFired) {
+                    robot.launcherSubsystem.counter++;
                     robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
-                    telemetry.addLine("LAUNCHER FIRED");
                 }else {
+                    robot.launcherSubsystem.counter++;
                     robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
-                    telemetry.addLine("LAUNCHER AT REST");
                 }
 
                 /*
@@ -148,8 +148,9 @@ public class TwoDriver extends LinearOpMode {
                         startingTimeLeft = runtime.seconds();
                     }
                     double difference = runtime.seconds() - startingTimeLeft;
-                    if (difference % 0.05 == 0) { // 20 encoder ticks change per second
+                    if (difference > 0.05) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition++;
+                        runtime.reset();
                     }
                 }else {
                     overrideLeftCounter = 0;
@@ -161,9 +162,10 @@ public class TwoDriver extends LinearOpMode {
                     if (overrideRightCounter == 1) {
                         startingTimeRight = runtime.seconds();
                     }
-                    double difference = runtime.seconds() - startingTimeRight;
-                    if (difference % 0.05 == 0) {
+                    double difference2 = runtime.seconds() - startingTimeRight;
+                    if (difference2 > 0.05) {
                         robot.armSubsystem.encoderPosition--;
+                        runtime.reset();
                     }
                 }else {
                     overrideRightCounter = 0;
@@ -177,6 +179,9 @@ public class TwoDriver extends LinearOpMode {
                 if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
                     robot.drivetrainSubsystem.resetInitYaw();
                 }
+
+                telemetry.update();
+                robot.update();
 
             }
         }

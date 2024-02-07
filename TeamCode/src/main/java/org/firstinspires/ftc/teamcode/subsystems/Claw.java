@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
  * Intake is a Subsystem representing all intake hardware movement
@@ -28,9 +29,11 @@ public class Claw extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Intake");
-        telemetry.addData("   Servo Left Position", robot.clawLeftServo.getPosition());
-        telemetry.addData("   Servo Right Position", robot.clawRightServo.getPosition());
+        if (UseTelemetry.CLAW) {
+            telemetry.addLine("Intake");
+            telemetry.addData("   Servo Left Position", robot.clawLeftServo.getPosition());
+            telemetry.addData("   Servo Right Position", robot.clawRightServo.getPosition());
+        }
     }
 
     @Override

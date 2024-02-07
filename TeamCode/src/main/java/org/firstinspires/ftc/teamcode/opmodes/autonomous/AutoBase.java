@@ -44,10 +44,11 @@ public abstract class AutoBase extends LinearOpMode {
 
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
+//                .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
                 .setDrawAxes(true)
                 .setDrawTagOutline(true)
                 .setDrawCubeProjection(true)
+
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -66,10 +67,10 @@ public abstract class AutoBase extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        portal.setProcessorEnabled(aprilTagProcessor, false);
-        portal.setProcessorEnabled(propDetectionProcessor, true);
+        portal.setProcessorEnabled(propDetectionProcessor, false);
+        portal.setProcessorEnabled(aprilTagProcessor, true);
 
-        detectedSide = propDetectionProcessor.getDetectedSide();
+//        detectedSide = propDetectionProcessor.getDetectedSide();
 
     }
 

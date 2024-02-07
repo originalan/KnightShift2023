@@ -184,8 +184,8 @@ public class JVBoysSoccerRobot {
         armRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        clawPivotServo = hwMap.servo.get(RobotSettings.CLAW_PIVOT_SERVO_NAME);
-        clawPivotServo.setDirection(RobotSettings.CLAW_PIVOT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        clawPivotServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_SERVO_NAME);
+        clawPivotServo.setDirection(RobotSettings.ARM_PIVOT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
     
     public void initRiggingHardware() {

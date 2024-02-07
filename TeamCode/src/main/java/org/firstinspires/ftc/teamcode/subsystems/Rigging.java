@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
  * Rigging is a Subsystem representing all rigging/hanging hardware movement
@@ -29,9 +30,11 @@ public class Rigging extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Rigging");
-        telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.rigLeftServo.getPosition(), robot.rigRightServo.getPosition());
-        telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.rigLeftMotor.getCurrentPosition(), robot.rigRightMotor.getCurrentPosition());
+        if (UseTelemetry.RIGGING) {
+            telemetry.addLine("Rigging");
+            telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.rigLeftServo.getPosition(), robot.rigRightServo.getPosition());
+            telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.rigLeftMotor.getCurrentPosition(), robot.rigRightMotor.getCurrentPosition());
+        }
     }
 
     @Override

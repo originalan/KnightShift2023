@@ -65,7 +65,11 @@ public class ClawTest extends LinearOpMode {
                     robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
                 }
 
+
                 robot.update();
+
+                telemetry.addData("Left Servo Pos", robot.clawLeftServo.getPosition());
+                telemetry.addData("Right Servo Pos", robot.clawRightServo.getPosition());
 
                 telemetry.update();
             }

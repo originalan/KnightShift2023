@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
+import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
  * DeliveryArm is a Subsystem representing all delivery arm hardware movement
@@ -45,8 +46,10 @@ public class Arm extends Subsystem {
 
     @Override
     public void addTelemetry() {
-        telemetry.addLine("Delivery Arm");
-        telemetry.addData("   Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
+        if (UseTelemetry.ARM) {
+            telemetry.addLine("Arm");
+            telemetry.addData("   Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
+        }
     }
 
     @Override
