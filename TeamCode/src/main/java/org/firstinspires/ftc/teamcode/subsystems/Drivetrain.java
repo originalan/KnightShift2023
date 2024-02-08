@@ -90,7 +90,7 @@ public class Drivetrain extends Subsystem {
 
     /**
      * Moves robot based on joystick inputs and if it is field-centric or robot-centric drive
-     * @param x is the strafing (left-right) motion of the robot ; left joystick left-rightx
+     * @param x is the strafing (left-right) motion of the robot ; left joystick left-right
      * @param y is the vertical (forward-backward) motion of the robot ; left joystick up-down
      * @param r is the rotation of the robot CW or CCW ; right joystick left-right
      * @param isFieldOriented is true if field centric drive, false if robot centric drive
@@ -123,8 +123,8 @@ public class Drivetrain extends Subsystem {
             theta = Math.atan2(y, x);
         }
 
-        sin = Math.sin(theta - Math.PI / 4);
-        cos = Math.cos(theta - Math.PI / 4);
+        sin = Math.sin(theta - (Math.PI / 4));
+        cos = Math.cos(theta - (Math.PI / 4));
         max = Math.max(Math.abs(sin), Math.abs(cos));
 
         frontLeftPower = power * cos / max + r;
@@ -132,7 +132,7 @@ public class Drivetrain extends Subsystem {
         backLeftPower = power * sin / max + r;
         backRightPower = power * cos / max - r;
 
-        if ((power + Math.abs(r) > 1)) {
+        if (Math.abs(power) + Math.abs(r) > 1) {
             frontLeftPower /= power + Math.abs(r);
             frontRightPower /= power + Math.abs(r);
             backLeftPower /= power + Math.abs(r);

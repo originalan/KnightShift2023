@@ -48,7 +48,8 @@ public class TwoDriver extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
-        telemetry.addLine("WAIT FOR INITIALIZATION MESSAGE BEFORE PRESSING START");
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Elapsed time", runtime.toString());
         telemetry.update();
 
         waitForStart();
@@ -70,7 +71,7 @@ public class TwoDriver extends LinearOpMode {
                 /*
                 =================DRIVETRAIN CONTROLS==============
                  */
-                double x = gamepad1.left_stick_x;
+                double x = gamepad1.left_stick_x * 1.05;
                 double y = gamepad1.left_stick_y * -1;
                 double r = gamepad1.right_stick_x;
 
@@ -142,7 +143,7 @@ public class TwoDriver extends LinearOpMode {
 
                 overrideRight = currentGamepad2.right_bumper;
 
-                if (overrideLeft) {
+                if (overrideLeft && !overrideRight) {
                     overrideLeftCounter++;
                     if (overrideLeftCounter == 1) {
                         startingTimeLeft = runtime.seconds();
@@ -156,8 +157,8 @@ public class TwoDriver extends LinearOpMode {
                     overrideLeftCounter = 0;
                 }
 
-                
-                if (overrideRight) {
+
+                if (overrideRight && !overrideLeft) {
                     overrideRightCounter++;
                     if (overrideRightCounter == 1) {
                         startingTimeRight = runtime.seconds();

@@ -48,7 +48,7 @@ public class ForKids extends LinearOpMode {
                     switchDriveControls = !switchDriveControls;
                 }
 
-                robot.drivetrainSubsystem.moveXYR(x, y, r, false);
+                robot.drivetrainSubsystem.moveXYR(x, y, r, switchDriveControls);
 
                 telemetry.addLine("Use the joysticks to move the robot!");
                 telemetry.update();
