@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
  * Calibration can be changed live in FTC Dashboard
  */
 @Config
-@TeleOp (name = "Arm Test (Full State Feedback)", group = "Testing")
+@TeleOp (name = "Arm Test (Full State Feedback)", group = "Tuning")
 public class ArmTestFullState extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

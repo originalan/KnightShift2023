@@ -181,6 +181,7 @@ public class TwoDriver extends LinearOpMode {
                     robot.drivetrainSubsystem.resetInitYaw();
                 }
 
+                robot.addTelemetry();
                 telemetry.update();
                 robot.update();
 

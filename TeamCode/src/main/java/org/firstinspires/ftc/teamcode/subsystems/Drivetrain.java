@@ -9,8 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
-import com.qualcomm.robotcore.util.Range;
-
 /**
  * Drivetrain is a Subsystem representing all drivetrain hardware movement
  * Ex. Moving drivetrain based on Field-Centric or Robot-Centric Views during Teleop
@@ -21,7 +19,7 @@ public class Drivetrain extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    private Orientation lastAngles;
+    private Orientation lastAngle;
     private double initYaw;
 
     private double  frontLeftPower,
@@ -36,7 +34,7 @@ public class Drivetrain extends Subsystem {
         this.telemetry = telemetry;
         this.robot = robot;
 
-        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // We want robot to face 90 degrees (in pose2d graph and in radians)
         // insert some code here so that if robot ends up not facing this after auto, adjust initYaw to something that works
@@ -84,8 +82,8 @@ public class Drivetrain extends Subsystem {
      * You can rotate the robot in teleop, and then set the initial yaw as its current angle
      */
     public void resetInitYaw() {
-        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        initYaw = lastAngles.firstAngle;
+        lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        initYaw = lastAngle.firstAngle;
     }
 
     /**
@@ -97,10 +95,10 @@ public class Drivetrain extends Subsystem {
      */
     public void moveXYR(double x, double y, double r, boolean isFieldOriented) {
 
-        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         if (orientPerpendicular) {
-            if (Math.abs(lastAngles.firstAngle - 90) % 180 <= 1) { // if within 1 angle of perpendicular...
+            if (Math.abs(lastAngle.firstAngle - 90) % 180 <= 1) { // if within 1 angle of perpendicular...
                 r = 0; // don't rotate
             }
         }
@@ -112,15 +110,15 @@ public class Drivetrain extends Subsystem {
                 max;
 
         if (isFieldOriented) {
-            lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double zeroedYaw = (-1 * initYaw) + lastAngles.firstAngle;
+            lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double zeroedYaw = (-1 * initYaw) + lastAngle.firstAngle;
             double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
             theta = (360 - zeroedYaw) + thetaGamepad; // Real theta that robot must travel in degrees
             theta = theta * Math.PI / 180; // convert to radians
             power = Math.hypot(x, y);
         }else {
             power = Math.hypot(x, y);
-            theta = Math.atan2(y, x);
+            theta = Math.atan2(y, x); // -pi to pi
         }
 
         sin = Math.sin(theta - (Math.PI / 4));
@@ -188,9 +186,9 @@ public class Drivetrain extends Subsystem {
      * @param turn
      */
     public void goXYRIMU(double x, double y, double turn) {
-        lastAngles = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        double zerodYaw = (-1 * initYaw) + lastAngles.firstAngle;
+        double zerodYaw = (-1 * initYaw) + lastAngle.firstAngle;
 
         double theta = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
         double realTheta = (360 - zerodYaw) + theta; // Real theta of robot in degrees

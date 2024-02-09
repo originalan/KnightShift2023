@@ -57,10 +57,10 @@ public class RobotSettings {
     public static boolean RIGGING_LEFT_SERVO_REVERSED = true;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
     public static double RIGGING_MOTOR_SPEED = 0.6;
-    public static double RIGGING_LEFT_REST = 0;
+    public static double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT ARE INVERTED
     public static double RIGGING_RIGHT_REST = 0;
-    public static double RIGGING_LEFT_TOP = 1;
-    public static double RIGGING_RIGHT_TOP = 1;
+    public static double RIGGING_LEFT_TOP = 0.97;
+    public static double RIGGING_RIGHT_TOP = 0.89;
     public static double RIGGING_RESET_MOTOR_SPEED = 0.2;
 
     /*

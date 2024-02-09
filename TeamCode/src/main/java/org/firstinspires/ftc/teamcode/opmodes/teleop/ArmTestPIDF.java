@@ -18,15 +18,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
  * Calibration can be changed live in FTC Dashboard
  */
 @Config
-@TeleOp (name = "Arm Test (PIDF)", group = "Testing")
+@TeleOp (name = "Arm Test (PIDF)", group = "Tuning")
 public class ArmTestPIDF extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
-    private FullStateFeedback controller;
-    public static int degrees = 30;
-    public static int targetPos = (int)(degrees / 360.0 * 537.6 * 3);
+    public static int targetPos = 100;
 
     @Override
     public void runOpMode() {
@@ -37,7 +35,6 @@ public class ArmTestPIDF extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         pid = new PIDFControl();
-        controller = new FullStateFeedback(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -55,9 +52,6 @@ public class ArmTestPIDF extends LinearOpMode {
                 double ffPower = pid.feedForwardCalculate(armPos);
 
                 robot.armSubsystem.targetPower = pidPower + ffPower;
-
-//                double power = controller.calculate(targetPos, 0, armPos, robot.deliveryArmMotor.getVelocity());
-//                robot.deliveryArm.targetPower = power;
 
                 robot.update();
 

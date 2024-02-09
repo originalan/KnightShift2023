@@ -58,4 +58,11 @@ public class Rigging extends Subsystem {
         robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST);
     }
 
+    public void pullString(boolean isReversed) {
+        double reversed = isReversed ? -1.0 : 1.0;
+        //have u considered writing comments
+        robot.rigLeftMotor.setPower(reversed);
+        robot.rigRightMotor.setPower(reversed);
+    }
+
 }
