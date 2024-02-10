@@ -51,6 +51,7 @@ public class TwoDriver extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
+        telemetry.addLine("Make sure both gamepads are connected");
         telemetry.update();
 
         waitForStart();

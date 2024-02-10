@@ -88,23 +88,19 @@ public class CameraTest extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                if (currentGamepad1.x && !previousGamepad1.x) {
-
-                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD + 0.05;
-                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD + 0.05;
-
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                    PropDetectionProcessor.BLUE_THRESHOLD += 0.05;
+                    PropDetectionProcessor.RED_THRESHOLD += 0.05;
                 }
 
-                if (currentGamepad1.a && !previousGamepad1.a) {
-
-                    propDetectionProcessor.BLUE_THRESHOLD = propDetectionProcessor.BLUE_THRESHOLD - 0.05;
-                    propDetectionProcessor.RED_THRESHOLD = propDetectionProcessor.RED_THRESHOLD - 0.05;
-
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    PropDetectionProcessor.BLUE_THRESHOLD -= 0.05;
+                    PropDetectionProcessor.RED_THRESHOLD -= 0.05;
                 }
 
                 telemetry.addData("Prop Position", propDetectionProcessor.getDetectedSide());
-                telemetry.addData("Blue threshold", "%4.3f", propDetectionProcessor.BLUE_THRESHOLD);
-                telemetry.addData("Red Threshold", "%4.3f", propDetectionProcessor.RED_THRESHOLD);
+                telemetry.addData("Blue threshold", "%4.3f", PropDetectionProcessor.BLUE_THRESHOLD);
+                telemetry.addData("Red Threshold", "%4.3f", PropDetectionProcessor.RED_THRESHOLD);
                 telemetry.update();
 
             }

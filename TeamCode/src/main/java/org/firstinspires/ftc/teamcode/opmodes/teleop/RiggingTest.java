@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -13,18 +16,25 @@ import org.firstinspires.ftc.teamcode.util.RobotSettings;
 @TeleOp (name = "Rigging Test", group = "Testing")
 public class RiggingTest extends LinearOpMode {
 
+    private ElapsedTime runtime = new ElapsedTime();
+    private JVBoysSoccerRobot robot;
     private boolean isRigging = false;
     private boolean rigStringMove = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        JVBoysSoccerRobot robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
-
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
 
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Elapsed time", runtime.toString());
+        telemetry.addLine("Press X to bring arms up, x again to bring them down");
+        telemetry.addLine("No motor code yet");
+        telemetry.update();
 
         waitForStart();
         if (opModeIsActive()) {

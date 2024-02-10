@@ -43,6 +43,7 @@ public class PropDetectionProcessor implements VisionProcessor {
             new Point(235, 275)
     );
     public static Rect leftRectBlue = new Rect(
+            // top left corner
             new Point(50, 120),
             // bottom right corner
             new Point(235, 275)
@@ -93,11 +94,9 @@ public class PropDetectionProcessor implements VisionProcessor {
         RIGHT_RECTANGLE = (type == JVBoysSoccerRobot.AllianceType.RED) ? rightRectRed : rightRectBlue;
     }
 
-    private Detection detectedSide = Detection.LEFT;
+    private Detection detectedSide = Detection.RIGHT; // default is right
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
-
-    }
+    public void init(int width, int height, CameraCalibration calibration) {  }
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
@@ -143,7 +142,6 @@ public class PropDetectionProcessor implements VisionProcessor {
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
         Paint paint = new Paint();
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.STROKE);
@@ -155,7 +153,6 @@ public class PropDetectionProcessor implements VisionProcessor {
         paint.setColor(Color.BLUE);
         RectF rightRect = new RectF(RIGHT_RECTANGLE.x * scaleBmpPxToCanvasPx, RIGHT_RECTANGLE.y * scaleBmpPxToCanvasPx, (RIGHT_RECTANGLE.x + RIGHT_RECTANGLE.width) * scaleBmpPxToCanvasPx, (RIGHT_RECTANGLE.y + RIGHT_RECTANGLE.height) * scaleBmpPxToCanvasPx);
         canvas.drawRect(rightRect, paint);
-
     }
 
     public Detection getDetectedSide() {

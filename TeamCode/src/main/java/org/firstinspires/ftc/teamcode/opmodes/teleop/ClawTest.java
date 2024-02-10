@@ -36,6 +36,7 @@ public class ClawTest extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
+        telemetry.addLine("Use the bumpers to open and close the claw");
         telemetry.update();
 
         waitForStart();

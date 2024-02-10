@@ -29,6 +29,7 @@ public class DrivetrainTest extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
+        telemetry.addLine("Press X multiple times to cycle through different drivetrain codes");
         telemetry.update();
 
         waitForStart();
