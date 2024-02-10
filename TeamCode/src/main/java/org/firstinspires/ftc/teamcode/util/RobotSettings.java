@@ -22,6 +22,9 @@ public class RobotSettings {
     public static boolean DRIVETRAIN_FRONTLEFT_REVERSED = true;
     public static boolean DRIVETRAIN_FRONTRIGHT_REVERSED = false;
 
+    public static String DSENSOR_LEFT_NAME = "";
+    public static String DSENSOR_RIGHT_NAME = "";
+
     /*
     =================CLAW SETTINGS==============
     */
@@ -57,7 +60,7 @@ public class RobotSettings {
     public static boolean RIGGING_LEFT_SERVO_REVERSED = true;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
     public static double RIGGING_MOTOR_SPEED = 0.6;
-    public static double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT ARE INVERTED
+    public static double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT SERVOS ARE SWITCHED (by accident)
     public static double RIGGING_RIGHT_REST = 0;
     public static double RIGGING_LEFT_TOP = 0.97;
     public static double RIGGING_RIGHT_TOP = 0.89;

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -38,6 +39,7 @@ public class JVBoysSoccerRobot {
     // Hardware
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
+    public DistanceSensor dSensorLeft, dSensorRight;
     
     public Servo launcherFireServo;
     public Servo launcherAdjustServo;
@@ -45,7 +47,7 @@ public class JVBoysSoccerRobot {
     public DcMotorEx armLeftMotor;
     public DcMotorEx armRightMotor;
     
-    public Servo rigLeftServo;
+    public Servo rigLeftServo; // These are flipped on the actual robot
     public Servo rigRightServo;
     public DcMotorEx rigLeftMotor;
     public DcMotorEx rigRightMotor;
@@ -163,6 +165,9 @@ public class JVBoysSoccerRobot {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        dSensorLeft = hwMap.get(DistanceSensor.class, RobotSettings.DSENSOR_LEFT_NAME);
+        dSensorRight = hwMap.get(DistanceSensor.class, RobotSettings.DSENSOR_RIGHT_NAME);
     }
     
     public void initClawHardware() {

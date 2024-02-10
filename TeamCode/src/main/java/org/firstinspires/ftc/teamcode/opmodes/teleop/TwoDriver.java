@@ -23,6 +23,7 @@ public class TwoDriver extends LinearOpMode {
     // RIGGING
     private boolean isRigging = false;
     private boolean rigStringMove = false;
+    private double rigTime = 0;
     // AIRPLANE LAUNCHER
     private boolean launcherFired = false;
 
@@ -55,6 +56,7 @@ public class TwoDriver extends LinearOpMode {
         waitForStart();
 
         runtime.reset();
+        rigTime = runtime.seconds();
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -81,23 +83,39 @@ public class TwoDriver extends LinearOpMode {
 
                 robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
 
+                if (currentGamepad1.b && !previousGamepad1.b) {
+                    robot.drivetrainSubsystem.dSensorCheck();
+                }
+
                 /*
                 =================RIGGING CONTROLS==============
                 */
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     isRigging = !isRigging;
+                    rigTime = runtime.seconds();
                 }
 
                 if (!rigStringMove && isRigging) {
                     robot.riggingSubsystem.hang();
                     robot.rigRightServo.getController().pwmEnable();
                     robot.rigLeftServo.getController().pwmEnable();
-                }else {
+                }else if (!isRigging) {
+                    if (runtime.seconds() - rigTime < 1.5) {
+                        robot.riggingSubsystem.noHang();
+                        robot.rigRightServo.getController().pwmEnable();
+                        robot.rigLeftServo.getController().pwmEnable();
+                    }else {
+                        robot.rigRightServo.getController().pwmDisable();
+                        robot.rigLeftServo.getController().pwmDisable();
+                    }
+                }
+                if (isRigging && rigStringMove) {
                     robot.rigRightServo.getController().pwmDisable();
                     robot.rigLeftServo.getController().pwmDisable();
                 }
 
+                // If arms are up and motor power buttons are pressed...
                 if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
                     rigStringMove = true;
                     robot.rigRightMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);

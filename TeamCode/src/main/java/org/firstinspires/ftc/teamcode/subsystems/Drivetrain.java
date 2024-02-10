@@ -5,6 +5,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
@@ -216,7 +217,26 @@ public class Drivetrain extends Subsystem {
         robot.backRight.setPower(backRightPower);
         robot.frontLeft.setPower(frontLeftPower);
         robot.frontRight.setPower(frontRightPower);
+    }
 
+    public void dSensorCheck() {
+        double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
+        double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
+
+        if (left < 2.5 || right < 2.5) {
+            robot.backLeft.setPower(0);
+            robot.backRight.setPower(0);
+            robot.frontLeft.setPower(0);
+            robot.frontRight.setPower(0);
+        }
+        // or, we just make every power less
+//        double factor = 5.0;
+//        if (left < 2.5 || right < 2.5) {
+//            robot.backLeft.setPower( robot.backLeft.getPower() / factor );
+//            robot.backRight.setPower( robot.backRight.getPower() / factor );
+//            robot.frontLeft.setPower( robot.frontLeft.getPower() / factor );
+//            robot.frontRight.setPower( robot.frontRight.getPower() / factor );
+//        }
     }
 
 }
