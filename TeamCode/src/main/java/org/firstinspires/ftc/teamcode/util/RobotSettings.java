@@ -47,6 +47,7 @@ public class RobotSettings {
     public static String ARM_MOTOR_RIGHT_NAME = "ArmMotorRight";
     public static boolean ARM_MOTOR_LEFT_REVERSED = false;
     public static boolean ARM_MOTOR_RIGHT_REVERSED = true;
+    public static int ARM_BOTTOM_POSITION = 3;
 
     /*
     =================RIGGING SETTINGS==============

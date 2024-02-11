@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
@@ -29,7 +30,9 @@ public class Arm extends Subsystem {
 
     public enum ArmState {
         AT_REST, // no power
+        BOTTOM,
         GO_TO_POSITION,
+        AUTO_POS,
         NOTHING
     }
 
@@ -64,6 +67,14 @@ public class Arm extends Subsystem {
                 setArmPower(0);
                 break;
             case NOTHING:
+                break;
+            case BOTTOM:
+                robot.clawPivotServo.setPosition(RobotSettings.ARM_PIVOT_REST);
+                setArmEncoderPosition(RobotSettings.ARM_BOTTOM_POSITION);
+                break;
+            case AUTO_POS:
+                robot.clawPivotServo.setPosition(0.5);
+                setArmEncoderPosition( (int)(200.0 / 360.0 * 537.6) + RobotSettings.ARM_BOTTOM_POSITION);
                 break;
         }
     }

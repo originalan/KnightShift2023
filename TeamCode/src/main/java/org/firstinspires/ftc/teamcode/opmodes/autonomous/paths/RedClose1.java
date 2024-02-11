@@ -1,0 +1,176 @@
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.PoseStorage;
+
+public class RedClose1 extends AutoBase {
+
+    private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
+    private TrajectorySequence waitingTraj1, waitingTraj2;
+    private enum AutoState {
+
+        GO_TO_SPIKE_MARK,
+        PLACING_PURPLE_PIXEL,
+        MOVING_TO_BACKBOARD,
+        LIFT_ARM,
+        RELEASE_PIXEL,
+        PARKING,
+        IDLE
+    }
+
+    private AutoState state = AutoState.IDLE;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        // 17.7 x 17.25 inches
+        double x = 12;
+        double y = -54.3;
+        double heading = Math.toRadians(90);
+        startingPose = new Pose2d(x, y, heading);
+        PoseStorage.startingAutoPose = new Pose2d(x, y, heading); // to prevent shadowing
+
+        initialize(JVBoysSoccerRobot.AllianceType.RED);
+        PoseStorage.AUTO_SHIFT_DEGREES = 0;
+
+        drive.setPoseEstimate(startingPose);
+        detectedSide = propDetectionProcessor.getDetectedSide();
+        buildTrajectories();
+
+        while (opModeInInit()) {
+            detectedSide = propDetectionProcessor.getDetectedSide();
+            telemetry.addLine("Red, starting closer to backstage");
+            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
+            telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
+            telemetry.update();
+        }
+
+        waitForStart();
+
+        state = AutoState.GO_TO_SPIKE_MARK;
+        drive.followTrajectorySequenceAsync(detectionTraj);
+
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+                switch (state) {
+                    case GO_TO_SPIKE_MARK:
+                        // robot is moving to the purple pixel location
+                        robot.armSubsystem.armState = Arm.ArmState.BOTTOM;
+                        if (!drive.isBusy()) {
+                            state = AutoState.PLACING_PURPLE_PIXEL;
+                            drive.followTrajectorySequenceAsync(waitingTraj1);
+                        }
+                        break;
+                    case PLACING_PURPLE_PIXEL:
+                        // robot is releasing claw servo for purple pixel
+                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_OPEN;
+                        if (!drive.isBusy()) {
+                            state = AutoState.MOVING_TO_BACKBOARD;
+                            drive.followTrajectorySequenceAsync(backdropTraj);
+                        }
+                        break;
+                    case MOVING_TO_BACKBOARD:
+                        // robot is moving to backboard, arm and servo are moving too
+                        robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+                        robot.armSubsystem.armState = Arm.ArmState.AUTO_POS;
+                        if (!drive.isBusy()) {
+                            state = AutoState.LIFT_ARM;
+                            drive.followTrajectorySequenceAsync(waitingTraj2);
+                        }
+                        break;
+                    case LIFT_ARM:
+                        // give about 3 seconds for arm and servo to move in place
+                        if (!drive.isBusy()) {
+                            state = AutoState.RELEASE_PIXEL;
+                            drive.followTrajectorySequenceAsync(waitingTraj1);
+                        }
+                        break;
+                    case RELEASE_PIXEL:
+                        // 1.5 seconds for yellow pixel to release and fall
+                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_OPEN;
+                        if (!drive.isBusy()) {
+                            state = AutoState.PARKING;
+                            robot.armSubsystem.armState = Arm.ArmState.BOTTOM;
+                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+                            drive.followTrajectorySequenceAsync(parkingTraj);
+                        }
+                        break;
+                    case PARKING:
+                        if (!drive.isBusy()) {
+                            state = AutoState.IDLE;
+                        }
+                        break;
+                    case IDLE:
+                        break;
+                }
+
+                drive.update();
+                robot.armSubsystem.update();
+                robot.clawSubsystem.update();
+
+                robot.armSubsystem.addTelemetry();
+                robot.clawSubsystem.addTelemetry();
+                telemetry.update();
+
+                transferPose();
+            }
+        }
+    }
+
+    public void buildTrajectories() {
+        setGoalPose();
+
+        waitingTraj1 = drive.trajectorySequenceBuilder(detectionTraj.end())
+                .waitSeconds(1.5)
+                .build();
+        waitingTraj2 = drive.trajectorySequenceBuilder(detectionTraj.end())
+                .waitSeconds(3.0)
+                .build();
+        parkingTraj = drive.trajectorySequenceBuilder(backdropTraj.end())
+                .strafeTo(new Vector2d(60.75 - 34.25 - 0.25, -60))
+                .back(40)
+                .build();
+    }
+
+    public void setGoalPose() {
+        switch (detectedSide) {
+            case LEFT:
+                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
+                        .build();
+                backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .setReversed(true)
+                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725), Math.toRadians(0))
+                        .setReversed(false)
+                        .build();
+                break;
+            case MIDDLE:
+                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(15 - 1.725, -24.5 - 2.25), Math.toRadians(90))
+                        .build();
+                backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .setReversed(true)
+                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
+                        .setReversed(false)
+                        .build();
+                break;
+            case RIGHT:
+                detectionTraj = drive.trajectorySequenceBuilder(startingPose)
+                        .splineTo(new Vector2d(23 - 1.725, -36.0 - 2.25 + 1), Math.toRadians(90))
+                        .build();
+                backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .setReversed(true)
+                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725 - 12.0), Math.toRadians(0))
+                        .setReversed(false)
+                        .build();
+                break;
+        }
+    }
+}

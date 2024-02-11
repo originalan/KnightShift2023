@@ -70,7 +70,7 @@ public abstract class AutoBase extends LinearOpMode {
         portal.setProcessorEnabled(propDetectionProcessor, false);
         portal.setProcessorEnabled(aprilTagProcessor, true);
 
-//        detectedSide = propDetectionProcessor.getDetectedSide();
+        detectedSide = propDetectionProcessor.getDetectedSide();
 
     }
 

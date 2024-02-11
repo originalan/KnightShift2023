@@ -16,10 +16,14 @@ public class Claw extends Subsystem {
     private JVBoysSoccerRobot robot;
 
     public enum ClawState {
-        NA
+        NOTHING,
+        BOTH_CLOSED,
+        BOTH_OPEN,
+        LEFT_OPEN,
+        RIGHT_OPEN
     }
 
-    public ClawState clawState = ClawState.NA;
+    public ClawState clawState = ClawState.BOTH_CLOSED;
 
     public Claw(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -39,7 +43,21 @@ public class Claw extends Subsystem {
     @Override
     public void update() {
         switch (clawState) {
-            case NA:
+            case NOTHING:
+                break;
+            case BOTH_CLOSED:
+                closeClawBoth();
+                break;
+            case BOTH_OPEN:
+                openClawBoth();
+                break;
+            case LEFT_OPEN:
+                robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
+                robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSE);
+                break;
+            case RIGHT_OPEN:
+                robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSE);
+                robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
                 break;
         }
     }
