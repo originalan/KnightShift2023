@@ -32,22 +32,16 @@ public class RobotSettings {
     public static String CLAW_RIGHT_SERVO_NAME = "ClawPieceRightServo";
     public static boolean CLAW_LEFT_REVERSED = false;
     public static boolean CLAW_RIGHT_REVERSED = true;
-    public static double CLAW_LEFT_CLOSE = 0.265;
-    public static double CLAW_LEFT_OPEN = 0;
-    public static double CLAW_RIGHT_CLOSE = 0.265;
-    public static double CLAW_RIGHT_OPEN = 0;
 
     /*
     ================= ARM SETTINGS==============
     */
     public static String ARM_PIVOT_SERVO_NAME = "ClawPivotServo";
-    public static boolean ARM_PIVOT_REVERSED = false;
-    public static double ARM_PIVOT_REST = 0;
+    public static boolean ARM_PIVOT_SERVO_REVERSED = false;
     public static String ARM_MOTOR_LEFT_NAME = "ArmMotorLeft";
     public static String ARM_MOTOR_RIGHT_NAME = "ArmMotorRight";
     public static boolean ARM_MOTOR_LEFT_REVERSED = false;
     public static boolean ARM_MOTOR_RIGHT_REVERSED = true;
-    public static int ARM_BOTTOM_POSITION = 3;
 
     /*
     =================RIGGING SETTINGS==============

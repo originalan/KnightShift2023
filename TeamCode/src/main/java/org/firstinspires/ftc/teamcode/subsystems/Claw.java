@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
@@ -52,12 +53,12 @@ public class Claw extends Subsystem {
                 openClawBoth();
                 break;
             case LEFT_OPEN:
-                robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
-                robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSE);
+                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
+                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
                 break;
             case RIGHT_OPEN:
-                robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSE);
-                robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
+                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
+                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
                 break;
         }
     }
@@ -68,13 +69,13 @@ public class Claw extends Subsystem {
     }
 
     public void openClawBoth() {
-        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_CLOSE);
-        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_CLOSE);
+        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
+        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
     }
 
     public void closeClawBoth() {
-        robot.clawLeftServo.setPosition(RobotSettings.CLAW_LEFT_OPEN);
-        robot.clawRightServo.setPosition(RobotSettings.CLAW_RIGHT_OPEN);
+        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
+        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
     }
 
 }

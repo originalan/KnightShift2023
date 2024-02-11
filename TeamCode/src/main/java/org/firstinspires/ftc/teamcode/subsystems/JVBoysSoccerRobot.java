@@ -190,7 +190,7 @@ public class JVBoysSoccerRobot {
         armRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         clawPivotServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_SERVO_NAME);
-        clawPivotServo.setDirection(RobotSettings.ARM_PIVOT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        clawPivotServo.setDirection(RobotSettings.ARM_PIVOT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
     
     public void initRiggingHardware() {

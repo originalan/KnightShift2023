@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 @Config
@@ -145,16 +146,16 @@ public class TwoDriver extends LinearOpMode {
                 =================ARM CONTROLS==============
                 */
                 if (currentGamepad2.y && !previousGamepad2.y) {
-                    robot.armSubsystem.encoderPosition = Arm.position1;
+                    robot.armSubsystem.encoderPosition = ArmSettings.position1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.encoderPosition = Arm.position2;
+                    robot.armSubsystem.encoderPosition = ArmSettings.position2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    robot.armSubsystem.encoderPosition = Arm.position3;
+                    robot.armSubsystem.encoderPosition = ArmSettings.position3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    robot.armSubsystem.encoderPosition = Arm.positionBottom;
+                    robot.armSubsystem.encoderPosition = ArmSettings.positionBottom;
                 }
 
                 // Manual "override" of PIDF control of arm

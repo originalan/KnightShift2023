@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
@@ -23,20 +24,17 @@ public class Arm extends Subsystem {
     public double targetPower = 0; // used purely for GO_TO_POSITION arm state, PIDF test
     public int encoderPosition = 0;
 
-    public static int positionBottom = 0;
-    public static int position1 = 50;
-    public static int position2 = 100;
-    public static int position3 = 150;
-
     public enum ArmState {
         AT_REST, // no power
-        BOTTOM,
+        BOTTOM_CLAW_UP,
+        BOTTOM_CLAW_DOWN,
         GO_TO_POSITION,
-        AUTO_POS,
+        AUTO_YELLOW_POS,
+        AUTO_PIXEL_STACK_POS,
         NOTHING
     }
 
-    public ArmState armState = ArmState.NOTHING;
+    public ArmState armState = ArmState.BOTTOM_CLAW_UP;
 
     public Arm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -68,13 +66,21 @@ public class Arm extends Subsystem {
                 break;
             case NOTHING:
                 break;
-            case BOTTOM:
-                robot.clawPivotServo.setPosition(RobotSettings.ARM_PIVOT_REST);
-                setArmEncoderPosition(RobotSettings.ARM_BOTTOM_POSITION);
+            case BOTTOM_CLAW_UP:
+                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                setArmEncoderPosition(ArmSettings.positionBottom);
                 break;
-            case AUTO_POS:
-                robot.clawPivotServo.setPosition(0.5);
-                setArmEncoderPosition( (int)(200.0 / 360.0 * 537.6) + RobotSettings.ARM_BOTTOM_POSITION);
+            case BOTTOM_CLAW_DOWN:
+                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+                setArmEncoderPosition(ArmSettings.positionBottom);
+                break;
+            case AUTO_YELLOW_POS:
+                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
+                setArmEncoderPosition( ArmSettings.positionYellowPixel);
+                break;
+            case AUTO_PIXEL_STACK_POS:
+                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK);
+                setArmEncoderPosition( ArmSettings.positionPixelStack); // supposed to go up ~2.5 inches
                 break;
         }
     }
