@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -38,17 +40,17 @@ public abstract class AutoBase extends LinearOpMode {
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
         ALLIANCE_TYPE = allianceType;
         drive = new SampleMecanumDrive(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry, ALLIANCE_TYPE);
 
         PoseStorage.originalInitYaw = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
-//                .setLensIntrinsics(821.0, 821.0,330.0, 248.0) // HAVE TO SET THESE LATER
+                .setLensIntrinsics(829.841, 829.841,323.788, 251.973)
                 .setDrawAxes(true)
                 .setDrawTagOutline(true)
                 .setDrawCubeProjection(true)
-
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -67,8 +69,8 @@ public abstract class AutoBase extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        portal.setProcessorEnabled(propDetectionProcessor, false);
-        portal.setProcessorEnabled(aprilTagProcessor, true);
+        portal.setProcessorEnabled(aprilTagProcessor, false);
+        portal.setProcessorEnabled(propDetectionProcessor, true);
 
         detectedSide = propDetectionProcessor.getDetectedSide();
 

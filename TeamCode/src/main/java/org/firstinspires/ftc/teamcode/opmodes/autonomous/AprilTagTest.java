@@ -20,12 +20,15 @@ public class AprilTagTest extends AutoBase {
                 if (aprilTagProcessor.getDetections().size() > 0) {
                     AprilTagDetection tag = aprilTagProcessor.getDetections().get(0);
 
-                    telemetry.addData("Tag X", tag.ftcPose.x);
-                    telemetry.addData("Tag Y", tag.ftcPose.y);
-                    telemetry.addData("Tag Z", tag.ftcPose.z);
-                    telemetry.addData("Roll", tag.ftcPose.roll);
-                    telemetry.addData("Pitch", tag.ftcPose.pitch);
-                    telemetry.addData("Yaw", tag.ftcPose.yaw);
+                    telemetry.addData("Amount of Tags detected", aprilTagProcessor.getDetections().size());
+
+                    telemetry.addData("Tag ID", tag.id);
+                    telemetry.addData("Tag center point", "(%.3f, %.3f)", tag.center.x, tag.center.y);
+                    telemetry.addData("Tag X, Y, Z", "%.3f  %.3f  %.3f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z);
+                    telemetry.addData("Tag roll, pitch, yaw", "%.3f  %.3f  %.3f", tag.ftcPose.roll, tag.ftcPose.pitch, tag.ftcPose.yaw);
+                    telemetry.addData("Tag elevation", "%.3f",  tag.ftcPose.elevation);
+                    telemetry.addData("Tag bearing", "%.3f", tag.ftcPose.bearing);
+                    telemetry.addData("Tag range", "%.3f", tag.ftcPose.range);
                 }
 
                 telemetry.update();
