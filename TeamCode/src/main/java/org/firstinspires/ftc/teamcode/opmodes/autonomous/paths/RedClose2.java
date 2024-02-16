@@ -54,7 +54,7 @@ public class RedClose2 extends AutoBase {
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
             telemetry.addLine("Red, starting closer to backstage");
-            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
+            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, gets two white, places, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
             telemetry.update();
         }

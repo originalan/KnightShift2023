@@ -15,4 +15,12 @@ public class PoseStorage {
     public static double originalInitYaw = -1;
     public static double AUTO_SHIFT_DEGREES = 0;
 
+    // backdrop april tag locations
+    public static Pose2d blueLeftBackdrop = new Pose2d(60.75, 72 - 22.5 - 6.625);
+    public static Pose2d blueMiddleBackdrop = new Pose2d(60.75, 72 - 22.5 - 12.75);;
+    public static Pose2d blueRightBackdrop = new Pose2d(60.75, 72 - 22.5 - 18.75);;
+    public static Pose2d redLeftBackdrop = new Pose2d(60.75, 72 + 22.5 + 18.75);;
+    public static Pose2d redMiddleBackdrop = new Pose2d(60.75, 72 + 22.5 + 12.75);;
+    public static Pose2d redRightBackdrop = new Pose2d(60.75, 72 + 22.5 + 6.625);;
+
 }
