@@ -54,7 +54,8 @@ public class JVBoysSoccerRobot {
     
     public Servo clawLeftServo;
     public Servo clawRightServo;
-    public Servo clawPivotServo;
+    public Servo clawPivotLeftServo;
+    public Servo clawPivotRightServo;
 
     // Alliance Type
     public enum AllianceType {
@@ -189,8 +190,11 @@ public class JVBoysSoccerRobot {
         armRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        clawPivotServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_SERVO_NAME);
-        clawPivotServo.setDirection(RobotSettings.ARM_PIVOT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        clawPivotLeftServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_LEFT_SERVO_NAME);
+        clawPivotLeftServo.setDirection(RobotSettings.ARM_PIVOT_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+
+        clawPivotRightServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_RIGHT_SERVO_NAME);
+        clawPivotRightServo.setDirection(RobotSettings.ARM_PIVOT_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
     
     public void initRiggingHardware() {

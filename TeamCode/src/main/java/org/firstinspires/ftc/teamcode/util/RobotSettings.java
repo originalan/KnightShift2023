@@ -22,8 +22,8 @@ public class RobotSettings {
     public static boolean DRIVETRAIN_FRONTLEFT_REVERSED = true;
     public static boolean DRIVETRAIN_FRONTRIGHT_REVERSED = false;
 
-    public static String DSENSOR_LEFT_NAME = "";
-    public static String DSENSOR_RIGHT_NAME = "";
+    public static String DSENSOR_LEFT_NAME = "DSensorLeft";
+    public static String DSENSOR_RIGHT_NAME = "DSensorRight";
 
     /*
     =================CLAW SETTINGS==============
@@ -36,10 +36,12 @@ public class RobotSettings {
     /*
     ================= ARM SETTINGS==============
     */
-    public static String ARM_PIVOT_SERVO_NAME = "ClawPivotServo";
-    public static boolean ARM_PIVOT_SERVO_REVERSED = false;
-    public static String ARM_MOTOR_LEFT_NAME = "ArmMotorLeft";
-    public static String ARM_MOTOR_RIGHT_NAME = "ArmMotorRight";
+    public static String ARM_PIVOT_LEFT_SERVO_NAME = "ClawPivotLeftServo";
+    public static boolean ARM_PIVOT_LEFT_SERVO_REVERSED = false;
+    public static String ARM_PIVOT_RIGHT_SERVO_NAME = "ClawPivotRightServo";
+    public static boolean ARM_PIVOT_RIGHT_SERVO_REVERSED = true;
+    public static String ARM_MOTOR_LEFT_NAME = "ArmLeftMotor";
+    public static String ARM_MOTOR_RIGHT_NAME = "ArmRightMotor";
     public static boolean ARM_MOTOR_LEFT_REVERSED = false;
     public static boolean ARM_MOTOR_RIGHT_REVERSED = true;
 

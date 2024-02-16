@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
@@ -67,19 +66,19 @@ public class Arm extends Subsystem {
             case NOTHING:
                 break;
             case BOTTOM_CLAW_UP:
-                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
                 setArmEncoderPosition(ArmSettings.positionBottom);
                 break;
             case BOTTOM_CLAW_DOWN:
-                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
                 setArmEncoderPosition(ArmSettings.positionBottom);
                 break;
             case AUTO_YELLOW_POS:
-                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
                 setArmEncoderPosition( ArmSettings.positionYellowPixel);
                 break;
             case AUTO_PIXEL_STACK_POS:
-                robot.clawPivotServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK);
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK);
                 setArmEncoderPosition( ArmSettings.positionPixelStack); // supposed to go up ~2.5 inches
                 break;
         }
