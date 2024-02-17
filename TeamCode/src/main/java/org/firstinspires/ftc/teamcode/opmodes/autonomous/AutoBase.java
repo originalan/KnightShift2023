@@ -100,6 +100,25 @@ public abstract class AutoBase extends LinearOpMode {
 
     }
 
+    public void dSensorAdjust() {
+
+        double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
+        double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
+        // 9.4 inches
+
+        double t;
+
+        if (left - right > 0) {
+            t = Math.atan2(left - right, 9.4);
+            // robot needs to turn counterclockwise, positive turn value
+        }else {
+            t = Math.atan2(right - left, 9.4) * -1;
+            // robot needs to turn clockwise
+        }
+        drive.turn(t);
+
+    }
+
     @Override
     public abstract void runOpMode() throws InterruptedException;
 

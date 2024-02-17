@@ -13,11 +13,9 @@ import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 @Autonomous (name = "RedClose 2+0", group = "Testing")
 public class RedClose1 extends AutoBase {
-
     private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
     private TrajectorySequence waitingTraj1, waitingTraj2;
     private enum AutoState {
-
         GO_TO_SPIKE_MARK,
         PLACING_PURPLE_PIXEL,
         MOVING_TO_BACKBOARD,
@@ -26,9 +24,7 @@ public class RedClose1 extends AutoBase {
         PARKING,
         IDLE
     }
-
     private AutoState state = AutoState.IDLE;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -148,7 +144,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -158,7 +154,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -168,7 +164,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725 - 12.0), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725 - 12.0), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
