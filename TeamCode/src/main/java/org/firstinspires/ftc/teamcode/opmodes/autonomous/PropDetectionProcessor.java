@@ -135,7 +135,7 @@ public class PropDetectionProcessor implements VisionProcessor {
 
         // comment out during competition
         // Line should only be added in when you want to see your custom pipeline on the driver station stream
-        finalMat.copyTo(frame);
+//        finalMat.copyTo(frame);
 
         return null; // return null b/c you do not return the original mat anymore
     }

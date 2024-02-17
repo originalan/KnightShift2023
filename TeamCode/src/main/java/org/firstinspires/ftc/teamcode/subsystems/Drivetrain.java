@@ -37,18 +37,6 @@ public class Drivetrain extends Subsystem {
 
         lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        // We want robot to face 90 degrees (in pose2d graph and in radians)
-        // insert some code here so that if robot ends up not facing this after auto, adjust initYaw to something that works
-//        double goalHeading = PoseStorage.startingAutoPose.getHeading();
-//        goalHeading = Math.toDegrees(goalHeading);
-//
-//        double curHeading = PoseStorage.currentPose.getHeading();
-//        curHeading = Math.toDegrees(curHeading);
-//
-//        double diff = goalHeading - curHeading;
-//
-//        initYaw = lastAngles.firstAngle + diff;
-
         initYaw = PoseStorage.originalInitYaw + PoseStorage.AUTO_SHIFT_DEGREES; // b/c auto started with back facing front
     }
 

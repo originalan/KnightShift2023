@@ -32,15 +32,9 @@ public class RedClose1 extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // 17.7 x 17.25 inches
-        double x = 12;
-        double y = -54.3;
-        double heading = Math.toRadians(90);
-        startingPose = new Pose2d(x, y, heading);
-        PoseStorage.startingAutoPose = new Pose2d(x, y, heading); // to prevent shadowing
+        startingPose = new Pose2d(redCloseStart.getX(), redCloseStart.getY(), redCloseStart.getHeading());
 
         initialize(JVBoysSoccerRobot.AllianceType.RED);
-        PoseStorage.AUTO_SHIFT_DEGREES = 0;
 
         drive.setPoseEstimate(startingPose);
         detectedSide = propDetectionProcessor.getDetectedSide();
@@ -48,10 +42,15 @@ public class RedClose1 extends AutoBase {
 
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
+            buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
             telemetry.addLine("Red, starting closer to backstage");
             telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
             telemetry.update();
+//            if (runtime.seconds() > 1.0 && checkAgain) {
+//                checkAgain = false;
+//                buildTrajectories();
+//            }
         }
 
         waitForStart();

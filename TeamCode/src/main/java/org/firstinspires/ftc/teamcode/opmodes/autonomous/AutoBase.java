@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,7 +29,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
  * AutoBase is the base used for all autonomous opmodes
  * Streamlines the creation of multiple autonomous opmodes with different paths
  */
+@Config
 public abstract class AutoBase extends LinearOpMode {
+    public static double CLAW_MIDDLE_FROM_FRONT = 2.25;
+    public static double CLAW_MIDDLE_FROM_CENTERLINE = 1.725;
+
+    protected ElapsedTime runtime = new ElapsedTime();
+    protected boolean checkAgain = true;
     protected JVBoysSoccerRobot.AllianceType ALLIANCE_TYPE;
     protected PropDetectionProcessor propDetectionProcessor;
     protected AprilTagProcessor aprilTagProcessor;
@@ -36,6 +44,7 @@ public abstract class AutoBase extends LinearOpMode {
     protected PropDetectionProcessor.Detection detectedSide;
     protected JVBoysSoccerRobot robot;
     protected SampleMecanumDrive drive;
+    protected final Pose2d redCloseStart = new Pose2d(12, -54.3, Math.toRadians(90));
 
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
         ALLIANCE_TYPE = allianceType;
@@ -48,6 +57,8 @@ public abstract class AutoBase extends LinearOpMode {
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setLensIntrinsics(829.841, 829.841,323.788, 251.973)
+                // or focalLength="822.317f, 822.317f"
+                //            principalPoint="319.495f, 242.502f" (from default camera calibration in xml file)
                 .setDrawAxes(true)
                 .setDrawTagOutline(true)
                 .setDrawCubeProjection(true)
@@ -73,6 +84,9 @@ public abstract class AutoBase extends LinearOpMode {
         portal.setProcessorEnabled(propDetectionProcessor, true);
 
         detectedSide = propDetectionProcessor.getDetectedSide();
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Elapsed time", runtime.toString());
 
     }
 

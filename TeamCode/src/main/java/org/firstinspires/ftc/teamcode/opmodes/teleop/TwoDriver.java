@@ -20,6 +20,8 @@ public class TwoDriver extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime1 = new ElapsedTime();
+    private ElapsedTime runtime2 = new ElapsedTime();
 
     // RIGGING
     private boolean isRigging = false;
@@ -104,9 +106,9 @@ public class TwoDriver extends LinearOpMode {
                     robot.rigLeftServo.getController().pwmEnable();
                 }else if (!isRigging) {
                     if (runtime.seconds() - rigTime < 1.5) {
-                        robot.riggingSubsystem.noHang();
                         robot.rigRightServo.getController().pwmEnable();
                         robot.rigLeftServo.getController().pwmEnable();
+                        robot.riggingSubsystem.noHang();
                     }else {
                         robot.rigRightServo.getController().pwmDisable();
                         robot.rigLeftServo.getController().pwmDisable();
@@ -135,10 +137,10 @@ public class TwoDriver extends LinearOpMode {
                 }
 
                 if (launcherFired) {
-                    robot.launcherSubsystem.counter++;
+//                    robot.launcherSubsystem.counter++;
                     robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
                 }else {
-                    robot.launcherSubsystem.counter++;
+//                    robot.launcherSubsystem.counter++;
                     robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
                 }
 
@@ -166,12 +168,12 @@ public class TwoDriver extends LinearOpMode {
                 if (overrideLeft && !overrideRight) {
                     overrideLeftCounter++;
                     if (overrideLeftCounter == 1) {
-                        startingTimeLeft = runtime.seconds();
+                        startingTimeLeft = runtime1.seconds();
                     }
-                    double difference = runtime.seconds() - startingTimeLeft;
+                    double difference = runtime1.seconds() - startingTimeLeft;
                     if (difference > 0.05) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition++;
-                        runtime.reset();
+                        runtime1.reset();
                     }
                 }else {
                     overrideLeftCounter = 0;
@@ -181,12 +183,12 @@ public class TwoDriver extends LinearOpMode {
                 if (overrideRight && !overrideLeft) {
                     overrideRightCounter++;
                     if (overrideRightCounter == 1) {
-                        startingTimeRight = runtime.seconds();
+                        startingTimeRight = runtime2.seconds();
                     }
-                    double difference2 = runtime.seconds() - startingTimeRight;
+                    double difference2 = runtime2.seconds() - startingTimeRight;
                     if (difference2 > 0.05) {
                         robot.armSubsystem.encoderPosition--;
-                        runtime.reset();
+                        runtime2.reset();
                     }
                 }else {
                     overrideRightCounter = 0;

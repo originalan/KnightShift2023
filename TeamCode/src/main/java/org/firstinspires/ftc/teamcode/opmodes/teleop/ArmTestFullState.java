@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
  * ArmTestFullState is a test Teleop mode that is used to tune the movement of the Arm with a Full State Feedback controller
  * Calibration can be changed live in FTC Dashboard
  */
+@Disabled
 @Config
 @TeleOp (name = "Arm Test (Full State Feedback)", group = "Tuning")
 public class ArmTestFullState extends LinearOpMode {

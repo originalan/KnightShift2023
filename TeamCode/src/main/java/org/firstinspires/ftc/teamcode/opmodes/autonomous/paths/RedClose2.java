@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
-@Autonomous (name = "RedClose 2+2", group = "Testing")
+@Autonomous (name = "RedClose 2+2 (or 2+1 idk)", group = "Testing")
 public class RedClose2 extends AutoBase {
 
     private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
@@ -37,15 +37,9 @@ public class RedClose2 extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // 17.7 x 17.25 inches
-        double x = 12;
-        double y = -54.3;
-        double heading = Math.toRadians(90);
-        startingPose = new Pose2d(x, y, heading);
-        PoseStorage.startingAutoPose = new Pose2d(x, y, heading); // to prevent shadowing
+        startingPose = new Pose2d(redCloseStart.getX(), redCloseStart.getY(), redCloseStart.getHeading());
 
         initialize(JVBoysSoccerRobot.AllianceType.RED);
-        PoseStorage.AUTO_SHIFT_DEGREES = 0;
 
         drive.setPoseEstimate(startingPose);
         detectedSide = propDetectionProcessor.getDetectedSide();
@@ -53,10 +47,15 @@ public class RedClose2 extends AutoBase {
 
         while (opModeInInit()) {
             detectedSide = propDetectionProcessor.getDetectedSide();
+            buildTrajectories();
             telemetry.addLine("Red, starting closer to backstage");
             telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, gets two white, places, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
             telemetry.update();
+//            if (runtime.seconds() > 1.0 && checkAgain) {
+//                checkAgain = false;
+//                buildTrajectories();
+//            }
         }
 
         waitForStart();

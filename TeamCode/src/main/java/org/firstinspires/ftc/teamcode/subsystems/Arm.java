@@ -75,11 +75,11 @@ public class Arm extends Subsystem {
                 break;
             case AUTO_YELLOW_POS:
                 robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
-                setArmEncoderPosition( ArmSettings.positionYellowPixel);
+                setArmEncoderPosition( ArmSettings.positionYellowPixel );
                 break;
             case AUTO_PIXEL_STACK_POS:
                 robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK);
-                setArmEncoderPosition( ArmSettings.positionPixelStack); // supposed to go up ~2.5 inches
+                setArmEncoderPosition( ArmSettings.positionPixelStack ); // supposed to go up ~1.5 inches
                 break;
         }
     }
