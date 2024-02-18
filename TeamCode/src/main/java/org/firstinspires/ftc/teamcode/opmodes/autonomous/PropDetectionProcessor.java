@@ -159,4 +159,21 @@ public class PropDetectionProcessor implements VisionProcessor {
         return detectedSide;
     }
 
+    /**
+     * Prevents shadowing when you need a second detection variable
+     * @param detection
+     * @return
+     */
+    public Detection copyDetection(Detection detection) {
+
+        if (detection == Detection.LEFT) {
+            return Detection.LEFT;
+        }
+        if (detection == Detection.RIGHT) {
+            return Detection.RIGHT;
+        }
+        return Detection.MIDDLE;
+
+    }
+
 }

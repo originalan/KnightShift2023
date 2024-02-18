@@ -42,9 +42,11 @@ public abstract class AutoBase extends LinearOpMode {
     protected VisionPortal portal;
     protected Pose2d startingPose;
     protected PropDetectionProcessor.Detection detectedSide;
+    protected PropDetectionProcessor.Detection previousDetectedSide;
     protected JVBoysSoccerRobot robot;
     protected SampleMecanumDrive drive;
     protected final Pose2d redCloseStart = new Pose2d(12, -54.3, Math.toRadians(90));
+    protected final Pose2d redFarStart = new Pose2d(-36, -54.3, Math.toRadians(90));
 
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
         ALLIANCE_TYPE = allianceType;
@@ -84,6 +86,7 @@ public abstract class AutoBase extends LinearOpMode {
         portal.setProcessorEnabled(propDetectionProcessor, true);
 
         detectedSide = propDetectionProcessor.getDetectedSide();
+        previousDetectedSide = propDetectionProcessor.copyDetection(detectedSide);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());

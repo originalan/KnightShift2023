@@ -37,8 +37,11 @@ public class RedClose1 extends AutoBase {
         buildTrajectories();
 
         while (opModeInInit()) {
+            previousDetectedSide = propDetectionProcessor.copyDetection(detectedSide);
             detectedSide = propDetectionProcessor.getDetectedSide();
-            buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
+            if (previousDetectedSide != detectedSide) {
+                buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
+            }
             telemetry.addLine("Red, starting closer to backstage");
             telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
@@ -59,7 +62,7 @@ public class RedClose1 extends AutoBase {
                 switch (state) {
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
-                        robot.armSubsystem.armState = Arm.ArmState.BOTTOM_CLAW_UP;
+                        robot.armSubsystem.armState = Arm.ArmState.BOTTOM_CLAW_DOWN;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL;
                             drive.followTrajectorySequenceAsync(waitingTraj1);

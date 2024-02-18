@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
 
 @Autonomous (name = "RedClose 2+2 (or 2+1 idk)", group = "Testing")
 public class RedClose2 extends AutoBase {
@@ -46,8 +45,11 @@ public class RedClose2 extends AutoBase {
         buildTrajectories();
 
         while (opModeInInit()) {
+            previousDetectedSide = propDetectionProcessor.copyDetection(detectedSide);
             detectedSide = propDetectionProcessor.getDetectedSide();
-            buildTrajectories();
+            if (previousDetectedSide != detectedSide) {
+                buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
+            }
             telemetry.addLine("Red, starting closer to backstage");
             telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, gets two white, places, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
@@ -68,7 +70,7 @@ public class RedClose2 extends AutoBase {
                 switch (state) {
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
-                        robot.armSubsystem.armState = Arm.ArmState.BOTTOM_CLAW_UP;
+                        robot.armSubsystem.armState = Arm.ArmState.BOTTOM_CLAW_DOWN;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACE_PURPLE_PIXEL;
                             drive.followTrajectorySequenceAsync(waitingTraj1);
@@ -107,7 +109,7 @@ public class RedClose2 extends AutoBase {
                         }
                         break;
                     case GO_TO_STACK:
-                        robot.armSubsystem.armState = Arm.ArmState.AUTO_PIXEL_STACK_POS;
+                        robot.armSubsystem.armState = Arm.ArmState.AUTO_PIXEL_STACK_POS_1;
                         robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.INTAKE_STACK;

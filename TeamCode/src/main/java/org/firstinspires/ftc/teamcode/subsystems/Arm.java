@@ -29,7 +29,8 @@ public class Arm extends Subsystem {
         BOTTOM_CLAW_DOWN,
         GO_TO_POSITION,
         AUTO_YELLOW_POS,
-        AUTO_PIXEL_STACK_POS,
+        AUTO_PIXEL_STACK_POS_1,
+        AUTO_PIXEL_STACK_POS_2,
         NOTHING
     }
 
@@ -77,9 +78,13 @@ public class Arm extends Subsystem {
                 robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
                 setArmEncoderPosition( ArmSettings.positionYellowPixel );
                 break;
-            case AUTO_PIXEL_STACK_POS:
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK);
-                setArmEncoderPosition( ArmSettings.positionPixelStack ); // supposed to go up ~1.5 inches
+            case AUTO_PIXEL_STACK_POS_1: // for redclose1 and redclose 2
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK1);
+                setArmEncoderPosition( ArmSettings.positionPixelStack1); // supposed to go up ~1.5 inches
+                break;
+            case AUTO_PIXEL_STACK_POS_2: // for redfar1
+                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK2);
+                setArmEncoderPosition( ArmSettings.positionPixelStack2); // supposed to go up ~2.0 inches
                 break;
         }
     }
