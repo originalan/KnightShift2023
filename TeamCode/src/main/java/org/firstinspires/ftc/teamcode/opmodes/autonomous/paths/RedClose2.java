@@ -9,20 +9,24 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @Autonomous (name = "RedClose 2+2 (or 2+1 idk)", group = "Testing")
 public class RedClose2 extends AutoBase {
 
     private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
+    private TrajectorySequence aprilTagTraj;
     private TrajectorySequence goToStack, goBackFromStack;
     private TrajectorySequence waitingTraj1, waitingTraj2;
+    private boolean orientationReached = false;
     private enum AutoState {
-
         GO_TO_SPIKE_MARK,
         PLACE_PURPLE_PIXEL,
         MOVE_TO_BACKBOARD1,
         LIFT_ARM,
         PLACE_YELLOW_PIXEL,
+        GO_TO_APRILTAG,
+        CALCULATE_REORIENTATION,
         GO_TO_STACK,
         INTAKE_STACK,
         MOVE_TO_BACKBOARD2,
@@ -65,8 +69,33 @@ public class RedClose2 extends AutoBase {
         state = AutoState.GO_TO_SPIKE_MARK;
         drive.followTrajectorySequenceAsync(detectionTraj);
 
+        double x = aprilTagTraj.end().getX();
+        double y = aprilTagTraj.end().getY();
+        double heading = aprilTagTraj.end().getHeading();
+        double yaw = 0;
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                if (!orientationReached) {
+                    if (aprilTagProcessor.getDetections().size() > 0) {
+                        for (AprilTagDetection tag : aprilTagProcessor.getDetections()) {
+                            if (tag.id == 8) {
+                                double angle1 = tag.ftcPose.bearing - tag.ftcPose.yaw;
+                                heading = Math.toRadians(180 - tag.ftcPose.yaw);
+                                yaw = tag.ftcPose.yaw;
+                                x = -72.0 + (tag.ftcPose.range * Math.cos(Math.toRadians(angle1))) + (6.27 * Math.sin( Math.toRadians(tag.ftcPose.yaw) ));
+                                y = -36.0 + (tag.ftcPose.range * Math.sin(Math.toRadians(angle1))) + (6.27 * Math.cos( Math.toRadians(tag.ftcPose.yaw) ));
+//                                reorientTraj = drive.trajectorySequenceBuilder(new Pose2d(x, y, heading))
+//                                        .splineTo(new Vector2d(-60.0, -36.0 - 1.725), Math.toRadians(180))
+//                                        .forward(7)
+//                                        .build();
+//                                setBackdropTraj();
+                            }
+                        }
+                    }
+                }
+
                 switch (state) {
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
@@ -104,12 +133,25 @@ public class RedClose2 extends AutoBase {
                         // 1.0 seconds for yellow pixel to release and fall
                         robot.clawSubsystem.clawState = Claw.ClawState.LEFT_OPEN;
                         if (!drive.isBusy()) {
-                            state = AutoState.GO_TO_STACK;
-                            drive.followTrajectorySequenceAsync(goToStack);
+                            state = AutoState.GO_TO_APRILTAG;
+                            drive.followTrajectorySequenceAsync(aprilTagTraj);
                         }
                         break;
-                    case GO_TO_STACK:
+                    case GO_TO_APRILTAG:
                         robot.armSubsystem.armState = Arm.ArmState.AUTO_PIXEL_STACK_POS_1;
+                        if (!drive.isBusy()) {
+                            state = AutoState.CALCULATE_REORIENTATION;
+                        }
+                        break;
+                    case CALCULATE_REORIENTATION:
+                        orientationReached = true;
+                        goToStack = drive.trajectorySequenceBuilder(new Pose2d(x, y, heading))
+                                .splineTo(new Vector2d(-67.5, -12 + 1.725), Math.toRadians(180))
+                                .build();
+                        state = AutoState.GO_TO_STACK;
+                        drive.followTrajectorySequenceAsync(goToStack);
+                        break;
+                    case GO_TO_STACK:
                         robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.INTAKE_STACK;
@@ -127,7 +169,7 @@ public class RedClose2 extends AutoBase {
                     case MOVE_TO_BACKBOARD2:
                         // going back, lifts arm after crossing the truss
                         if (!drive.isBusy()) {
-                            state = AutoState.MOVE_TO_BACKBOARD2;
+                            state = AutoState.RELEASE_WHITE_PIXELS;
                             drive.followTrajectorySequenceAsync(waitingTraj1);
                         }
                         break;
@@ -172,9 +214,13 @@ public class RedClose2 extends AutoBase {
         waitingTraj2 = drive.trajectorySequenceBuilder(detectionTraj.end())
                 .waitSeconds(3.0)
                 .build();
-        goToStack = drive.trajectorySequenceBuilder(backdropTraj.end())
+
+        aprilTagTraj = drive.trajectorySequenceBuilder(backdropTraj.end())
                 .splineTo(new Vector2d(12, -12 + 1.725), Math.toRadians(180))
-                .forward(79.5)
+                .forward(69.5)
+                .build();
+        goToStack = drive.trajectorySequenceBuilder(aprilTagTraj.end())
+                .splineTo(new Vector2d(-67.5, -12 + 1.725), Math.toRadians(180))
                 .build();
         goBackFromStack = drive.trajectorySequenceBuilder(goToStack.end())
                 .UNSTABLE_addDisplacementMarkerOffset(72, () -> {

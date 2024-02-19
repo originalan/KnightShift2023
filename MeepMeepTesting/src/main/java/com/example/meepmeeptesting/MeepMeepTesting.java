@@ -11,7 +11,7 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(700);
 
         Pose2d startingPose;
-        double x = -36;
+        double x = 12;
         double y = -54.3;
         double heading = Math.toRadians(90);
         startingPose = new Pose2d(x, y, heading);
@@ -21,11 +21,20 @@ public class MeepMeepTesting {
                 .setConstraints(40, 40, Math.toRadians(130), Math.toRadians(130), 13.79)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startingPose)
-                                .splineTo(new Vector2d(-48 + 0.5 - 1.725, -36.0 - 2.25), Math.toRadians(90))
+                                .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(90))
+                                .setReversed(true)
+                                .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725), Math.toRadians(0))
+                                .setReversed(false)
                                 .waitSeconds(1)
-                                .splineTo(new Vector2d(-60.0, -36.0 - 1.725), Math.toRadians(180))
+                                .splineTo(new Vector2d(12, -12 + 1.725), Math.toRadians(180))
+                                .forward(79.5)
+                                .waitSeconds(1)
+                                .back(79.5)
+                                .setReversed(true)
+                                .splineTo(new Vector2d(60.75 - 34.25 - 0.25, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
+                                .setReversed(false)
+                                .strafeTo(new Vector2d(60.75 - 34.25 - 0.25, -60))
                                 .build()
                 );
 
