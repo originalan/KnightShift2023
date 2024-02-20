@@ -186,7 +186,7 @@ public class TwoDriver extends LinearOpMode {
                         startingTimeRight = runtime2.seconds();
                     }
                     double difference2 = runtime2.seconds() - startingTimeRight;
-                    if (difference2 > 0.05) {
+                    if (difference2 > 0.05) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition--;
                         runtime2.reset();
                     }

@@ -29,6 +29,11 @@ public class Drivetrain extends Subsystem {
                     backRightPower;
 
     public boolean orientPerpendicular = false;
+    private  double  power,
+            theta,
+            sin,
+            cos,
+            max;
 
     public Drivetrain(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -92,11 +97,11 @@ public class Drivetrain extends Subsystem {
             }
         }
 
-        double  power,
-                theta,
-                sin,
-                cos,
-                max;
+        power = 0;
+        theta = 0;
+        sin = 0;
+        cos = 0;
+        max = 0;
 
         if (isFieldOriented) {
             lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -211,12 +216,17 @@ public class Drivetrain extends Subsystem {
         double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
         double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
 
+        // IF robot is moving 'backward', set power to 0 (y component is > 0)
+        // else, let robot move
         if (left < 2.5 || right < 2.5) {
-            robot.backLeft.setPower(0);
-            robot.backRight.setPower(0);
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
+            if (theta > Math.PI && theta < 2 * Math.PI) {
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+            }
         }
+
         // or, we just make every power less
 //        double factor = 5.0;
 //        if (left < 2.5 || right < 2.5) {
