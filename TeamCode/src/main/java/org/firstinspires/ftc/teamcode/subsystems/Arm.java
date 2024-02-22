@@ -31,6 +31,7 @@ public class Arm extends Subsystem {
         AUTO_YELLOW_POS,
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
+        PIVOT_TEST,
         NOTHING
     }
 
@@ -50,6 +51,7 @@ public class Arm extends Subsystem {
         if (UseTelemetry.ARM) {
             telemetry.addLine("Arm");
             telemetry.addData("   Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
+            telemetry.addData("    Left/Right Pivot Servo Pos", "%.3f, %.3f", robot.clawPivotLeftServo.getPosition(), robot.clawPivotRightServo.getPosition());
         }
     }
 

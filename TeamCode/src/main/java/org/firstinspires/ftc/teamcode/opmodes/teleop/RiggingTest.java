@@ -20,6 +20,7 @@ public class RiggingTest extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private boolean isRigging = false;
     private boolean rigStringMove = false;
+    private double rigTime = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,39 +44,57 @@ public class RiggingTest extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
+//                if (currentGamepad1.x && !previousGamepad1.x) {
+//                    isRigging = !isRigging;
+//                }
+//
+//                if (isRigging) {
+//                    robot.riggingSubsystem.hang();
+//                }else {
+//                    robot.riggingSubsystem.noHang();
+//                }
+
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     isRigging = !isRigging;
+                    rigTime = runtime.seconds();
                 }
 
-                if (isRigging) {
+                if (!rigStringMove && isRigging) {
                     robot.riggingSubsystem.hang();
-                }else {
-                    robot.riggingSubsystem.noHang();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
+                }else if (!isRigging) {
+                    if (runtime.seconds() - rigTime < 1.5) {
+                        robot.rigRightServo.getController().pwmEnable();
+                        robot.rigLeftServo.getController().pwmEnable();
+                        robot.riggingSubsystem.noHang();
+                    }else {
+                        robot.rigRightServo.getController().pwmDisable();
+                        robot.rigLeftServo.getController().pwmDisable();
+                    }
                 }
-//
-//                if (!rigStringMove) {
-//                    if (isRigging) {
-//                        robot.rigRightServo.getController().pwmEnable();
-//                        robot.rigLeftServo.getController().pwmEnable();
-//                        robot.riggingSubsystem.hang();
-//                    }else {
-//                        robot.rigRightServo.getController().pwmDisable();
-//                        robot.rigLeftServo.getController().pwmDisable();
-//                    }
-//                }else {
-//                    robot.rigRightServo.getController().pwmDisable();
-//                    robot.rigLeftServo.getController().pwmDisable();
-//                }
-//
-//                if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
-//                    rigStringMove = true;
-//                    robot.rigRightMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
-//                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-//                }
-//                else {
-//                    robot.rigRightMotor.setPower(0);
-//                    robot.rigLeftMotor.setPower(0);
-//                }
+                if (isRigging && rigStringMove) {
+                    robot.rigRightServo.getController().pwmDisable();
+                    robot.rigLeftServo.getController().pwmDisable();
+                }
+
+                // If arms are up and motor power buttons are pressed...
+                if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
+                    rigStringMove = true;
+                    robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                }else {
+                    robot.rigRightMotor.setPower(0);
+                    robot.rigLeftMotor.setPower(0);
+                }
+
+                if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
+                    robot.rigRightMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigLeftMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                }else {
+                    robot.rigRightMotor.setPower(0);
+                    robot.rigLeftMotor.setPower(0);
+                }
 
                 robot.riggingSubsystem.addTelemetry();
                 robot.riggingSubsystem.update();

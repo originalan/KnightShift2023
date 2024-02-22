@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
  * IntakeTest is a test Teleop mode that is used to test the speed of the intake
@@ -55,23 +54,23 @@ public class ClawTest extends LinearOpMode {
                     right = !right;
                 }
 
-                if (left) {
-                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
-                }else {
-                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
-                }
-
                 if (right) {
                     robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
                 }else {
                     robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
                 }
 
+                if (left) {
+                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
+                }else {
+                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
+                }
 
-                robot.update();
 
-                telemetry.addData("Left Servo Pos", robot.clawLeftServo.getPosition());
-                telemetry.addData("Right Servo Pos", robot.clawRightServo.getPosition());
+//                robot.update();
+
+                telemetry.addData("Left Servo Pos", robot.clawRightServo.getPosition());
+                telemetry.addData("Right Servo Pos", robot.clawLeftServo.getPosition());
 
                 telemetry.update();
             }

@@ -52,8 +52,8 @@ public class JVBoysSoccerRobot {
     public DcMotorEx rigLeftMotor;
     public DcMotorEx rigRightMotor;
     
-    public Servo clawLeftServo;
     public Servo clawRightServo;
+    public Servo clawLeftServo;
     public Servo clawPivotLeftServo;
     public Servo clawPivotRightServo;
 
@@ -172,11 +172,11 @@ public class JVBoysSoccerRobot {
     }
     
     public void initClawHardware() {
-        clawLeftServo = hwMap.servo.get(RobotSettings.CLAW_LEFT_SERVO_NAME);
         clawRightServo = hwMap.servo.get(RobotSettings.CLAW_RIGHT_SERVO_NAME);
+        clawLeftServo = hwMap.servo.get(RobotSettings.CLAW_LEFT_SERVO_NAME);
 
-        clawLeftServo.setDirection(RobotSettings.CLAW_LEFT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
         clawRightServo.setDirection(RobotSettings.CLAW_RIGHT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        clawLeftServo.setDirection(RobotSettings.CLAW_LEFT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
     
     public void initArmHardware() {

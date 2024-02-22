@@ -28,10 +28,10 @@ public class RobotSettings {
     /*
     =================CLAW SETTINGS==============
     */
-    public static String CLAW_LEFT_SERVO_NAME = "ClawPieceLeftServo";
-    public static String CLAW_RIGHT_SERVO_NAME = "ClawPieceRightServo";
-    public static boolean CLAW_LEFT_REVERSED = false;
-    public static boolean CLAW_RIGHT_REVERSED = true;
+    public static String CLAW_RIGHT_SERVO_NAME = "ClawPieceLeftServo";
+    public static String CLAW_LEFT_SERVO_NAME = "ClawPieceRightServo"; // config names are flipped but variable names are accurate
+    public static boolean CLAW_RIGHT_REVERSED = false;
+    public static boolean CLAW_LEFT_REVERSED = true;
 
     /*
     ================= ARM SETTINGS==============
@@ -42,8 +42,8 @@ public class RobotSettings {
     public static boolean ARM_PIVOT_RIGHT_SERVO_REVERSED = true;
     public static String ARM_MOTOR_LEFT_NAME = "ArmLeftMotor";
     public static String ARM_MOTOR_RIGHT_NAME = "ArmRightMotor";
-    public static boolean ARM_MOTOR_LEFT_REVERSED = false;
-    public static boolean ARM_MOTOR_RIGHT_REVERSED = true;
+    public static boolean ARM_MOTOR_LEFT_REVERSED = true;
+    public static boolean ARM_MOTOR_RIGHT_REVERSED = false;
 
     /*
     =================RIGGING SETTINGS==============
@@ -56,7 +56,7 @@ public class RobotSettings {
     public static boolean RIGGING_RIGHT_MOTOR_REVERSED = false;
     public static boolean RIGGING_LEFT_SERVO_REVERSED = true;
     public static boolean RIGGING_RIGHT_SERVO_REVERSED = false;
-    public static double RIGGING_MOTOR_SPEED = 0.6;
+    public static double RIGGING_MOTOR_SPEED = 0.8;
     public static double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT SERVOS ARE SWITCHED (by accident)
     public static double RIGGING_RIGHT_REST = 0;
     public static double RIGGING_LEFT_TOP = 0.97;

@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
@@ -36,8 +35,8 @@ public class Claw extends Subsystem {
     public void addTelemetry() {
         if (UseTelemetry.CLAW) {
             telemetry.addLine("Intake");
-            telemetry.addData("   Servo Left Position", robot.clawLeftServo.getPosition());
-            telemetry.addData("   Servo Right Position", robot.clawRightServo.getPosition());
+            telemetry.addData("   Servo Left Position", robot.clawRightServo.getPosition());
+            telemetry.addData("   Servo Right Position", robot.clawLeftServo.getPosition());
         }
     }
 
@@ -53,12 +52,12 @@ public class Claw extends Subsystem {
                 openClawBoth();
                 break;
             case LEFT_OPEN:
-                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
-                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
+                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
+                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
                 break;
             case RIGHT_OPEN:
-                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
-                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
+                robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
+                robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
                 break;
         }
     }
@@ -69,13 +68,13 @@ public class Claw extends Subsystem {
     }
 
     public void openClawBoth() {
-        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
-        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
+        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
+        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
     }
 
     public void closeClawBoth() {
-        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
-        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
+        robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
+        robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
     }
 
 }

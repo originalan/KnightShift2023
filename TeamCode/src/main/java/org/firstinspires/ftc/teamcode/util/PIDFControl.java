@@ -17,13 +17,14 @@ public class PIDFControl {
     private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
-    public static double Kp = 0;
+    public static double Kp = 0.05;
     public static double Ki = 0;
-    public static double Kd = 0;
-    public static double Kf = 0;
-    public static double motorEncoderTicks = 537.6;
-    public static double ticksInDegrees = motorEncoderTicks / 360.0;
-    public static double lastError = 0;
+    public static double Kd = 0.0001;
+    public static double maxPower = 0.65;
+    private double Kf = 0;
+    private final double motorEncoderTicks = 1120;
+    private final double ticksInDegrees = motorEncoderTicks / 360.0;
+    private double lastError = 0;
 
     // Gain scheduling (if we have time)
     public static double Kp_at_150 = 0, Ki_at_150 = 0, Kd_at_150 = 0; // encoder tick = 672
@@ -45,13 +46,13 @@ public class PIDFControl {
 
     public void initGainScheduling() {
 
-        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Kp_at_30);
-        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Ki_at_30);
-        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 537.6 * 3), Kd_at_30);
+        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 1120), Kp_at_30);
+        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 1120), Ki_at_30);
+        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (30.0 / 360.0 * 1120), Kd_at_30);
 
-        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Kp_at_150);
-        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Ki_at_150);
-        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 537.6 * 3), Kd_at_150);
+        KpCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 1120), Kp_at_150);
+        KiCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 1120), Ki_at_150);
+        KdCoefficients.add(JVBoysSoccerRobot.initialArmPosition + (150.0 / 360.0 * 1120), Kd_at_150);
 
         KpCoefficients.createLUT();
         KiCoefficients.createLUT();
@@ -98,6 +99,10 @@ public class PIDFControl {
         timer.reset();
 
         double output = (error * p) + (derivative * d) + (integralSum * i);
+
+        if (output > maxPower) {
+            output = maxPower;
+        }
 
         return output;
     }

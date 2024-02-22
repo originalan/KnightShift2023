@@ -1,36 +1,30 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.util.FullStateFeedback;
-import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 
-/**
- * ArmTestPIDF is a test Teleop mode that is used to tune the movement of the Arm with a PIDF controller
- * Calibration can be changed live in FTC Dashboard
- */
-@Config
-@TeleOp (name = "Arm Test (PIDF)", group = "Tuning")
-public class ArmTestPIDF extends LinearOpMode {
+@TeleOp (name = "Arm Pivot Test", group = "Testing")
+public class ArmPivotTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
-    private boolean turnedOff = false;
-    private double maxOutputPower = 0;
-    public static int targetPos = 100;
-
+    private boolean move = false;
+    public static int targetPosition = 100;
+    private boolean turnedOff = true;
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -41,7 +35,7 @@ public class ArmTestPIDF extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
-        telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
+        telemetry.addLine("Use dpad to move pivot claw");
         telemetry.update();
 
         waitForStart();
@@ -52,6 +46,16 @@ public class ArmTestPIDF extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    move = !move;
+                }
+
+                if (move) {
+                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
+                }else {
+                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                }
+
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     turnedOff = !turnedOff;
                 }
@@ -60,14 +64,10 @@ public class ArmTestPIDF extends LinearOpMode {
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 int armPos = robot.armLeftMotor.getCurrentPosition();
 
-                double pidPower = pid.calculate(targetPos, armPos, false);
+                double pidPower = pid.calculate(targetPosition, armPos, false);
                 double ffPower = pid.feedForwardCalculate(armPos);
 
                 double power = pidPower + ffPower;
-
-                if (power > maxOutputPower) {
-                    maxOutputPower = power;
-                }
 
                 if (turnedOff) {
                     robot.armSubsystem.targetPower = 0;
@@ -75,18 +75,12 @@ public class ArmTestPIDF extends LinearOpMode {
                     robot.armSubsystem.targetPower = power;
                 }
 
-                robot.update();
-
-                telemetry.addData("Target Position", targetPos);
-                telemetry.addData("Arm actual position", armPos);
-                telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
-                telemetry.addData("Arm calculated power", pidPower + ffPower);
-                telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
-                telemetry.addData("Max power", maxOutputPower);
+                robot.clawSubsystem.addTelemetry();
+                robot.armSubsystem.addTelemetry();
                 telemetry.update();
+
             }
         }
 
     }
-
 }
