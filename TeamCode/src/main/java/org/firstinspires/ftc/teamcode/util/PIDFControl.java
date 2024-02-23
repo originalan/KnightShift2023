@@ -17,10 +17,10 @@ public class PIDFControl {
     private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
-    public static double Kp = 0.05;
-    public static double Ki = 0;
-    public static double Kd = 0.0001;
-    public static double maxPower = 0.65;
+    public static double Kp = 0.051;
+    public static double Ki = 0.0008;
+    public static double Kd = 0;
+    public static double maxPower = 0.55;
     private double Kf = 0;
     private final double motorEncoderTicks = 1120;
     private final double ticksInDegrees = motorEncoderTicks / 360.0;

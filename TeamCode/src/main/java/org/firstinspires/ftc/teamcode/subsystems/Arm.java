@@ -32,7 +32,8 @@ public class Arm extends Subsystem {
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
         PIVOT_TEST,
-        NOTHING
+        NOTHING,
+        PIVOT_SERVO_MOVE
     }
 
     public ArmState armState = ArmState.BOTTOM_CLAW_UP;
@@ -66,27 +67,36 @@ public class Arm extends Subsystem {
                 noEncoders();
                 setArmPower(0);
                 break;
-            case NOTHING:
-                break;
             case BOTTOM_CLAW_UP:
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
                 setArmEncoderPosition(ArmSettings.positionBottom);
                 break;
             case BOTTOM_CLAW_DOWN:
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
                 setArmEncoderPosition(ArmSettings.positionBottom);
                 break;
             case AUTO_YELLOW_POS:
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
                 setArmEncoderPosition( ArmSettings.positionYellowPixel );
                 break;
             case AUTO_PIXEL_STACK_POS_1: // for redclose1 and redclose2, pick up 2 white pixels
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK1);
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK1);
                 setArmEncoderPosition( ArmSettings.positionPixelStack1); // supposed to go up ~1.5 inches
                 break;
             case AUTO_PIXEL_STACK_POS_2: // for redfar1, pick up 1 white pixel
-                robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK2);
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK2);
                 setArmEncoderPosition( ArmSettings.positionPixelStack2); // supposed to go up ~2.0 inches
+                break;
+            case NOTHING:
+                break;
+            case PIVOT_SERVO_MOVE:
+                // NEED TO WRITE CODE
+                // 1.0 is 180 degrees
+                // 1120 is for 360 degrees
+                // 1120 / 2 is for 180 degrees
+                // 1120/2 / 180.0 = x / 1.0
+                // solve for x, x + initial servo pos = arm pivot servo pos
+                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST - (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 break;
         }
     }
@@ -105,6 +115,11 @@ public class Arm extends Subsystem {
         double pow = pid.calculate(encoderPos, robot.armLeftMotor.getCurrentPosition(), false);
         robot.armLeftMotor.setPower(pow);
         robot.armRightMotor.setPower(pow);
+    }
+
+    public void setPivotServoPosition(double position) {
+        robot.clawPivotLeftServo.setPosition(position);
+//        robot.clawPivotRightServo.setPosition(position);
     }
 
     public void noEncoders() {

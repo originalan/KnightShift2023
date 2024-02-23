@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.util.PIDFControl.maxPower;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -64,6 +66,10 @@ public class ArmTestPIDF extends LinearOpMode {
                 double ffPower = pid.feedForwardCalculate(armPos);
 
                 double power = pidPower + ffPower;
+
+                if (power > PIDFControl.maxPower) {
+                    power = PIDFControl.maxPower;
+                }
 
                 if (power > maxOutputPower) {
                     maxOutputPower = power;

@@ -58,7 +58,8 @@ public abstract class AutoBase extends LinearOpMode {
 
         propDetectionProcessor = new PropDetectionProcessor(ALLIANCE_TYPE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(829.841, 829.841,323.788, 251.973)
+//                .setLensIntrinsics(829.841, 829.841,323.788, 251.973)
+                .setLensIntrinsics(822.317f, 822.317f, 319.495f, 242.502f)
                 // or focalLength="822.317f, 822.317f"
                 //            principalPoint="319.495f, 242.502f" (from default camera calibration in xml file)
                 .setDrawAxes(true)
@@ -116,7 +117,7 @@ public abstract class AutoBase extends LinearOpMode {
 
         double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
         double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
-        // 9.4 inches
+        // distance of 9.4 inches between distance sensors
 
         double t;
 

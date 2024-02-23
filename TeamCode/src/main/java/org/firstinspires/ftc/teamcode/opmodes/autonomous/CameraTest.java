@@ -40,11 +40,11 @@ public class CameraTest extends LinearOpMode {
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
 
-        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.RED);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.BLUE);
 
-        propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.RED);
+        propDetectionProcessor = new PropDetectionProcessor(JVBoysSoccerRobot.AllianceType.BLUE);
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(821.0, 821.0, 330.0, 248.0) // HAVE TO SET THESE LATER
+//                .setLensIntrinsics(821.0, 821.0, 330.0, 248.0) // HAVE TO SET THESE LATER
                 .setDrawAxes(true)
                 .setDrawTagOutline(true)
                 .setDrawCubeProjection(true)
@@ -71,7 +71,7 @@ public class CameraTest extends LinearOpMode {
         portal.setProcessorEnabled(propDetectionProcessor, true);
 
         while (opModeInInit()) {
-            propDetectionProcessor.initRectangles(JVBoysSoccerRobot.AllianceType.RED);
+            propDetectionProcessor.initRectangles(JVBoysSoccerRobot.AllianceType.BLUE);
             detectionResult = propDetectionProcessor.getDetectedSide();
             telemetry.addData("Detected", detectionResult);
             telemetry.update();

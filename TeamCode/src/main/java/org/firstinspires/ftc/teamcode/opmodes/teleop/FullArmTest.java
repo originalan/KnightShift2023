@@ -115,9 +115,17 @@ public class FullArmTest extends LinearOpMode {
                     overrideRightCounter = 0;
                 }
 
+                robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                 robot.armSubsystem.setArmEncoderPosition(robot.armSubsystem.encoderPosition);
 
                 // ARM PIVOT SERVO
+
+//                if (robot.armLeftMotor.getCurrentPosition() > ArmSettings.THRESHOLD) {
+//                    robot.armSubsystem.armState = Arm.ArmState.PIVOT_SERVO_MOVE;
+//                }else {
+//                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+//                }
+
                 // NEED TO WRITE CODE
                 // 1.0 is 180 degrees
                 // 1120 is for 360 degrees
