@@ -21,7 +21,6 @@ public class ArmPivotTest extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
     private boolean move = false;
-    private boolean useBothServos = false;
     public static int targetPosition = 100;
     private boolean turnedOff = true;
     private boolean servosOff = false;
@@ -38,7 +37,6 @@ public class ArmPivotTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Use dpad down to move pivot claw (left)");
-        telemetry.addLine("Use dpad up to activate second pivot claw servo (right)");
         telemetry.addLine("Press X to move the actual arm to 'targetPosition'");
         telemetry.addLine("Press left or right bumper to release/activate servo tension");
         telemetry.update();
@@ -55,10 +53,6 @@ public class ArmPivotTest extends LinearOpMode {
                     move = !move;
                 }
 
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    useBothServos = !useBothServos;
-                }
-
                 if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
                     servosOff = !servosOff;
                 }
@@ -67,23 +61,17 @@ public class ArmPivotTest extends LinearOpMode {
                 }
 
                 if (servosOff) {
-                    robot.rigRightServo.getController().pwmDisable();
-                    robot.rigLeftServo.getController().pwmDisable();
+                    robot.clawPivotRightServo.getController().pwmDisable();
+                    robot.clawPivotLeftServo.getController().pwmDisable();
                 }else {
-                    robot.rigRightServo.getController().pwmEnable();
-                    robot.rigLeftServo.getController().pwmEnable();
+                    robot.clawPivotRightServo.getController().pwmEnable();
+                    robot.clawPivotLeftServo.getController().pwmEnable();
                 }
 
                 if (move) {
                     robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
-                    if (useBothServos) {
-                        robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
-                    }
                 }else {
                     robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-                    if (useBothServos) {
-                        robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-                    }
                 }
 
                 if (currentGamepad1.x && !previousGamepad1.x) {

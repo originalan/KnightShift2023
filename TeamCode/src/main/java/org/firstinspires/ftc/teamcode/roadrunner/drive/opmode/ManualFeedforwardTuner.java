@@ -78,7 +78,12 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry.update();
         telemetry.clearAll();
 
+        telemetry.addLine("Press Y for driver mode, B for tuning mode");
+        telemetry.update();
+
         waitForStart();
+
+        telemetry.clearAll();
 
         if (isStopRequested()) return;
 

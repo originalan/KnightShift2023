@@ -25,6 +25,7 @@ public class FullArmTest extends LinearOpMode {
     private boolean overrideLeft = false, overrideRight = false;
     private int overrideLeftCounter = 0, overrideRightCounter = 0;
     private double startingTimeLeft = 0, startingTimeRight = 0;
+    private boolean autoPivotServo = false;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -38,6 +39,7 @@ public class FullArmTest extends LinearOpMode {
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Use bumpers to move claw pieces");
         telemetry.addLine("Use triggers to override set arm positions");
+        telemetry.addLine("Press X to turn on automatic pivot servo positioning");
         telemetry.update();
 
         waitForStart();
@@ -120,11 +122,15 @@ public class FullArmTest extends LinearOpMode {
 
                 // ARM PIVOT SERVO
 
-//                if (robot.armLeftMotor.getCurrentPosition() > ArmSettings.THRESHOLD) {
-//                    robot.armSubsystem.armState = Arm.ArmState.PIVOT_SERVO_MOVE;
-//                }else {
-//                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-//                }
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    autoPivotServo = !autoPivotServo;
+                }
+
+                if (autoPivotServo) {
+                    robot.armSubsystem.armState = Arm.ArmState.PIVOT_SERVO_MOVE;
+                }else {
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                }
 
                 // NEED TO WRITE CODE
                 // 1.0 is 180 degrees

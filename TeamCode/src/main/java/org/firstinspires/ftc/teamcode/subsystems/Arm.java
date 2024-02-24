@@ -24,14 +24,12 @@ public class Arm extends Subsystem {
     public int encoderPosition = 0;
 
     public enum ArmState {
-        AT_REST, // no power
         BOTTOM_CLAW_UP,
         BOTTOM_CLAW_DOWN,
         GO_TO_POSITION,
         AUTO_YELLOW_POS,
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
-        PIVOT_TEST,
         NOTHING,
         PIVOT_SERVO_MOVE
     }
@@ -43,6 +41,8 @@ public class Arm extends Subsystem {
         this.telemetry = telemetry;
         this.robot = robot;
         this.pid = new PIDFControl();
+
+        noEncoders();
 
         JVBoysSoccerRobot.initialArmPosition = robot.armLeftMotor.getCurrentPosition();
     }
@@ -62,10 +62,6 @@ public class Arm extends Subsystem {
             case GO_TO_POSITION:
                 noEncoders();
                 setArmPower(targetPower);
-                break;
-            case AT_REST:
-                noEncoders();
-                setArmPower(0);
                 break;
             case BOTTOM_CLAW_UP:
                 setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
