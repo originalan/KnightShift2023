@@ -22,9 +22,14 @@ public class LocalizationTest extends LinearOpMode {
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         while (!isStopRequested()) {
+            drive.raiseArm(); // added for our specific robot
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,

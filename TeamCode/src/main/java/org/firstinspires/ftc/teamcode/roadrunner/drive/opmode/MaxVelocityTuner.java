@@ -50,15 +50,22 @@ public class MaxVelocityTuner extends LinearOpMode {
         telemetry.addLine("Press start when ready.");
         telemetry.update();
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         telemetry.clearAll();
         telemetry.update();
 
+        drive.raiseArm(); // added for our specific robot
+
         drive.setDrivePower(new Pose2d(1, 0, 0));
         timer = new ElapsedTime();
 
         while (!isStopRequested() && timer.seconds() < RUNTIME) {
+            drive.raiseArm(); // added for our specific robot
             drive.updatePoseEstimate();
 
             Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
@@ -71,11 +78,14 @@ public class MaxVelocityTuner extends LinearOpMode {
         double effectiveKf = DriveConstants.getMotorVelocityF(veloInchesToTicks(maxVelocity));
 
         telemetry.addData("Max Velocity", maxVelocity);
-        telemetry.addData("Max Recommended Velocity", maxVelocity * 0.8);
+        telemetry.addData("Max Recommended Velocity (80%)", maxVelocity * 0.8);
         telemetry.addData("Voltage Compensated kF", effectiveKf * batteryVoltageSensor.getVoltage() / 12);
         telemetry.update();
 
-        while (!isStopRequested() && opModeIsActive()) idle();
+        while (!isStopRequested() && opModeIsActive()) {
+//            idle();
+            drive.raiseArm(); // added for our specific robot
+        }
     }
 
     private double veloInchesToTicks(double inchesPerSec) {

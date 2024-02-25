@@ -44,15 +44,22 @@ public class MaxAngularVeloTuner extends LinearOpMode {
         telemetry.addLine("Press start when ready.");
         telemetry.update();
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         telemetry.clearAll();
         telemetry.update();
 
+        drive.raiseArm(); // added for our specific robot
+
         drive.setDrivePower(new Pose2d(0, 0, 1));
         timer = new ElapsedTime();
 
         while (!isStopRequested() && timer.seconds() < RUNTIME) {
+            drive.raiseArm(); // added for our specific robot
             drive.updatePoseEstimate();
 
             Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
@@ -64,8 +71,8 @@ public class MaxAngularVeloTuner extends LinearOpMode {
 
         telemetry.addData("Max Angular Velocity (rad)", maxAngVelocity);
         telemetry.addData("Max Angular Velocity (deg)", Math.toDegrees(maxAngVelocity));
-        telemetry.addData("Max Recommended Angular Velocity (rad)", maxAngVelocity * 0.8);
-        telemetry.addData("Max Recommended Angular Velocity (deg)", Math.toDegrees(maxAngVelocity * 0.8));
+        telemetry.addData("Max Recommended Angular Velocity (80% rad)", maxAngVelocity * 0.8);
+        telemetry.addData("Max Recommended Angular Velocity (80% deg)", Math.toDegrees(maxAngVelocity * 0.8));
         telemetry.update();
 
         while (!isStopRequested()) idle();

@@ -29,18 +29,25 @@ public class StraightTest extends LinearOpMode {
                 .forward(DISTANCE)
                 .build();
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         if (isStopRequested()) return;
 
-        drive.followTrajectory(trajectory);
+        drive.followTrajectoryAsync(trajectory);
+        while (opModeIsActive() && !isStopRequested()) {
+            drive.raiseArm(); // added for our specific robot
+            drive.update();
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("finalX", poseEstimate.getX());
+            telemetry.addData("finalY", poseEstimate.getY());
+            telemetry.addData("finalHeading", poseEstimate.getHeading());
+            telemetry.update();
+        }
 
-        while (!isStopRequested() && opModeIsActive()) ;
     }
 }

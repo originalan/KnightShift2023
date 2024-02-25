@@ -34,22 +34,30 @@ public class FollowerPIDTuner extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .build();
-            drive.followTrajectorySequence(trajSeq);
+            drive.raiseArm(); // added for our specific robot
+            if (!drive.isBusy()) {
+                TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .forward(DISTANCE)
+                        .turn(Math.toRadians(90))
+                        .build();
+                drive.followTrajectorySequenceAsync(trajSeq);
+            }
+            drive.update();
         }
     }
 }

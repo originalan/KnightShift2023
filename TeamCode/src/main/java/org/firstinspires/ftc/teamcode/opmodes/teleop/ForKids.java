@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
  * It is used for outreach events where others can control the robot themselves.
  * Functionality is limited only to drivetrain movement
  */
+@Disabled
 @TeleOp (name = "4 Kidz", group = "Testing")
 public class ForKids extends LinearOpMode {
 

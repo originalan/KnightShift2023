@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -32,6 +33,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 import java.util.ArrayList;
@@ -69,6 +73,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+
+    public DcMotorEx armLeftMotor;
+    public DcMotorEx armRightMotor;
+    public Servo clawPivotLeftServo;
+    public Servo clawPivotRightServo;
+    public PIDFControl pidArm;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -125,6 +135,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+
+        initArmHardware(hardwareMap);
+
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -299,4 +312,34 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
+    public void raiseArm() {
+
+        clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+        double pow = pidArm.calculate(ArmSettings.positionBottom, armLeftMotor.getCurrentPosition(), false);
+        armLeftMotor.setPower(pow);
+        armRightMotor.setPower(pow);
+
+    }
+    public void initArmHardware(HardwareMap hwMap) {
+
+        pidArm = new PIDFControl();
+
+        armLeftMotor = hwMap.get(DcMotorEx.class, RobotSettings.ARM_MOTOR_LEFT_NAME);
+        armLeftMotor.setDirection(RobotSettings.ARM_MOTOR_LEFT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        armLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        armRightMotor = hwMap.get(DcMotorEx.class, RobotSettings.ARM_MOTOR_RIGHT_NAME);
+        armRightMotor.setDirection(RobotSettings.ARM_MOTOR_RIGHT_REVERSED ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        armRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        clawPivotLeftServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_LEFT_SERVO_NAME);
+        clawPivotLeftServo.setDirection(RobotSettings.ARM_PIVOT_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+
+        clawPivotRightServo = hwMap.servo.get(RobotSettings.ARM_PIVOT_RIGHT_SERVO_NAME);
+        clawPivotRightServo.setDirection(RobotSettings.ARM_PIVOT_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+    }
+
 }

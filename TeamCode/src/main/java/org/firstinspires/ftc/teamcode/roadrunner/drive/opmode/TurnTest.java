@@ -18,10 +18,18 @@ public class TurnTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         if (isStopRequested()) return;
 
-        drive.turn(Math.toRadians(ANGLE));
+        drive.turnAsync(Math.toRadians(ANGLE));
+        while (opModeIsActive() && !isStopRequested()) {
+            drive.raiseArm(); // added for our specific robot
+            drive.update();
+        }
     }
 }

@@ -81,6 +81,10 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         telemetry.addLine("Press Y for driver mode, B for tuning mode");
         telemetry.update();
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         telemetry.clearAll();
@@ -93,6 +97,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
 
         while (!isStopRequested()) {
+            drive.raiseArm(); // added for our specific robot
             telemetry.addData("mode", mode);
 
             switch (mode) {

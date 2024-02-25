@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -42,11 +43,23 @@ public class BackAndForth extends LinearOpMode {
                 .back(DISTANCE)
                 .build();
 
+        TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(DISTANCE)
+                .back(DISTANCE)
+                .build();
+
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            drive.followTrajectory(trajectoryForward);
-            drive.followTrajectory(trajectoryBackward);
+            if (!drive.isBusy()) {
+                drive.followTrajectorySequenceAsync(traj);
+            }
+            drive.raiseArm(); // added for our specific robot
+            drive.update();
         }
     }
 }

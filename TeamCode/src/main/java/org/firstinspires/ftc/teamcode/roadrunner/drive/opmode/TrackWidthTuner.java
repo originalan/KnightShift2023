@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.arcrobotics.ftclib.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 /*
  * This routine determines the effective track width. The procedure works by executing a point turn
@@ -42,6 +44,10 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");
         telemetry.update();
 
+        while (opModeInInit()) {
+            drive.raiseArm(); // added for our specific robot
+        }
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -52,6 +58,7 @@ public class TrackWidthTuner extends LinearOpMode {
 
         MovingStatistics trackWidthStats = new MovingStatistics(NUM_TRIALS);
         for (int i = 0; i < NUM_TRIALS; i++) {
+            drive.raiseArm(); // added for our specific robot
             drive.setPoseEstimate(new Pose2d());
 
             // it is important to handle heading wraparounds
@@ -61,6 +68,7 @@ public class TrackWidthTuner extends LinearOpMode {
             drive.turnAsync(Math.toRadians(ANGLE));
 
             while (!isStopRequested() && drive.isBusy()) {
+                drive.raiseArm(); // added for our specific robot
                 double heading = drive.getPoseEstimate().getHeading();
                 headingAccumulator += Angle.normDelta(heading - lastHeading);
                 lastHeading = heading;
@@ -68,12 +76,16 @@ public class TrackWidthTuner extends LinearOpMode {
                 drive.update();
             }
 
+            drive.raiseArm(); // added for our specific robot
             double trackWidth = DriveConstants.TRACK_WIDTH * Math.toRadians(ANGLE) / headingAccumulator;
             trackWidthStats.add(trackWidth);
 
-            sleep(DELAY);
+//            sleep(DELAY);
+
+            waitDelay(drive);
         }
 
+        drive.raiseArm(); // added for our specific robot
         telemetry.clearAll();
         telemetry.addLine("Tuning complete");
         telemetry.addLine(Misc.formatInvariant("Effective track width = %.2f (SE = %.3f)",
@@ -82,7 +94,22 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.update();
 
         while (!isStopRequested()) {
-            idle();
+//            idle();
+            drive.raiseArm(); // added for our specific robot
+        }
+    }
+
+    public void waitDelay(SampleMecanumDrive drive) {
+        TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d())
+                .waitSeconds(DELAY / 1000.0)
+                .build();
+        drive.followTrajectorySequenceAsync(traj);
+        while (true) {
+            drive.update();
+            drive.raiseArm(); // added for our specific robot
+            if (!drive.isBusy()) {
+                return;
+            }
         }
     }
 }
