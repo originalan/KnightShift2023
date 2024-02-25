@@ -48,6 +48,7 @@ public class RedFar1 extends AutoBase {
             if (previousDetectedSide != detectedSide) {
                 buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
             }
+            telemetry.addData("LOCATION: ", detectedSide);
             telemetry.addLine("Red, starting far to backstage");
             telemetry.addLine("Puts purple pixel in place, gets 1 white pixel, drops both on backdrop, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");

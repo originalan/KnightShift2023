@@ -89,9 +89,6 @@ public abstract class AutoBase extends LinearOpMode {
                 .addProcessors(aprilTagProcessor, propDetectionProcessor)
                 .build();
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
         portal.setProcessorEnabled(aprilTagProcessor, false);
         portal.setProcessorEnabled(propDetectionProcessor, true);
 

@@ -42,6 +42,7 @@ public class RedClose1 extends AutoBase {
             if (previousDetectedSide != detectedSide) {
                 buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
             }
+            telemetry.addData("LOCATION: ", detectedSide);
             telemetry.addLine("Red, starting closer to backstage");
             telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
             telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
