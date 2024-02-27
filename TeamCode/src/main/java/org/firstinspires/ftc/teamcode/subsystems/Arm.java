@@ -108,7 +108,7 @@ public class Arm extends Subsystem {
     }
 
     public void setArmEncoderPosition(int encoderPos) {
-        double pow = pid.calculate(encoderPos, robot.armLeftMotor.getCurrentPosition(), false);
+        double pow = pid.calculatePID(encoderPos, robot.armLeftMotor.getCurrentPosition(), false);
         robot.armLeftMotor.setPower(pow);
         robot.armRightMotor.setPower(pow);
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.UseTelemetry;
  * Drivetrain is a Subsystem representing all drivetrain hardware movement
  * Ex. Moving drivetrain based on Field-Centric or Robot-Centric Views during Teleop
  */
+@Config
 public class Drivetrain extends Subsystem {
 
     private HardwareMap hwMap;
@@ -22,6 +24,9 @@ public class Drivetrain extends Subsystem {
 
     private Orientation lastAngle;
     private double initYaw;
+    public static double distanceThreshold = 5.0;
+    public double factor = 1.0;
+    public static double dSensorFactor = 5.0;
 
     private double  frontLeftPower,
                     frontRightPower,
@@ -131,10 +136,10 @@ public class Drivetrain extends Subsystem {
             backRightPower /= power + Math.abs(r);
         }
 
-        robot.backLeft.setPower(backLeftPower);
-        robot.backRight.setPower(backRightPower);
-        robot.frontLeft.setPower(frontLeftPower);
-        robot.frontRight.setPower(frontRightPower);
+        robot.backLeft.setPower(backLeftPower / factor);
+        robot.backRight.setPower(backRightPower / factor);
+        robot.frontLeft.setPower(frontLeftPower / factor);
+        robot.frontRight.setPower(frontRightPower / factor);
 
     }
 
@@ -215,26 +220,23 @@ public class Drivetrain extends Subsystem {
     public void dSensorCheck() {
         double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
         double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
+        telemetry.addData("dsensors are ON: ", "%.3f, %.3f", left, right);
 
-        // IF robot is moving 'backward', set power to 0 (y component is > 0)
-        // else, let robot move
-        if (left < 2.5 || right < 2.5) {
-            if (theta > Math.PI && theta < 2 * Math.PI) {
-                robot.backLeft.setPower(0);
-                robot.backRight.setPower(0);
-                robot.frontLeft.setPower(0);
-                robot.frontRight.setPower(0);
-            }
-        }
+//        // IF robot is moving 'backward', set power to 0 (y component is > 0)
+//        // else, let robot move
+//        if (left < 2.5 || right < 2.5) {
+//            if (theta > Math.PI && theta < 2 * Math.PI) {
+//                robot.backLeft.setPower(0);
+//                robot.backRight.setPower(0);
+//                robot.frontLeft.setPower(0);
+//                robot.frontRight.setPower(0);
+//            }
+//        }
 
         // or, we just make every power less
-//        double factor = 5.0;
-//        if (left < 2.5 || right < 2.5) {
-//            robot.backLeft.setPower( robot.backLeft.getPower() / factor );
-//            robot.backRight.setPower( robot.backRight.getPower() / factor );
-//            robot.frontLeft.setPower( robot.frontLeft.getPower() / factor );
-//            robot.frontRight.setPower( robot.frontRight.getPower() / factor );
-//        }
+        if (left < distanceThreshold || right < distanceThreshold) {
+            factor = dSensorFactor;
+        }
     }
 
 }

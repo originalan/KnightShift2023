@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -39,6 +40,7 @@ public class TwoDriver extends LinearOpMode {
     private boolean overrideRight = false;
     private int overrideRightCounter = 0;
     private double startingTimeRight = 0;
+    public static int ENCODER_TICKS_PER_SECOND = 20;
 
 
     @Override
@@ -55,6 +57,13 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Make sure both gamepads are connected");
+        telemetry.addLine("Gamepad2: x, y, a, b = arm preset positions");
+        telemetry.addLine("    right/left bumpers = override arm position");
+        telemetry.addLine("    dpad down to reset yaw for field-oriented drive");
+        telemetry.addLine("Gamepad1: drivetrain movement using joysticks");
+        telemetry.addLine("    x to rig, left/right dpad to move string");
+        telemetry.addLine("    dpad down to fire airplane");
+        telemetry.addLine("    b to use distance sensor backdrop thing");
         telemetry.update();
 
         waitForStart();
@@ -81,15 +90,17 @@ public class TwoDriver extends LinearOpMode {
                 double y = gamepad1.left_stick_y * -1;
                 double r = gamepad1.right_stick_x;
 
+                robot.drivetrainSubsystem.factor = 1.0;
+
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     switchDriveControls = !switchDriveControls;
                 }
 
-                robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
-
-                if (currentGamepad1.b && !previousGamepad1.b) {
+                if (currentGamepad1.b) {
                     robot.drivetrainSubsystem.dSensorCheck();
                 }
+
+                robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
 
                 /*
                 =================RIGGING CONTROLS==============
@@ -171,7 +182,7 @@ public class TwoDriver extends LinearOpMode {
                         startingTimeLeft = runtime1.seconds();
                     }
                     double difference = runtime1.seconds() - startingTimeLeft;
-                    if (difference > 0.05) { // 20 encoder ticks change per second
+                    if (difference > 1.0 / ENCODER_TICKS_PER_SECOND) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition++;
                         runtime1.reset();
                     }
@@ -186,7 +197,7 @@ public class TwoDriver extends LinearOpMode {
                         startingTimeRight = runtime2.seconds();
                     }
                     double difference2 = runtime2.seconds() - startingTimeRight;
-                    if (difference2 > 0.05) { // 20 encoder ticks change per second
+                    if (difference2 > 1.0 / ENCODER_TICKS_PER_SECOND) { // 20 encoder ticks change per second
                         robot.armSubsystem.encoderPosition--;
                         runtime2.reset();
                     }

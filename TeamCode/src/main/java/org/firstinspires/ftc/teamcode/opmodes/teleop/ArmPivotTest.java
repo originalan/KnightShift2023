@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
@@ -82,8 +81,8 @@ public class ArmPivotTest extends LinearOpMode {
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 int armPos = robot.armLeftMotor.getCurrentPosition();
 
-                double pidPower = pid.calculate(targetPosition, armPos, false);
-                double ffPower = pid.feedForwardCalculate(armPos);
+                double pidPower = pid.calculatePID(targetPosition, armPos, false);
+                double ffPower = pid.calculateFeedforward(armPos);
 
                 double power = pidPower + ffPower;
 

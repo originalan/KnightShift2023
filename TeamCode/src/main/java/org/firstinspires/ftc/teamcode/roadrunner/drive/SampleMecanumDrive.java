@@ -33,7 +33,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
@@ -49,10 +48,10 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.*;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.25, 0, 0.0001);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.25, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.75;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -316,7 +315,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void raiseArm() {
 
         clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-        double pow = pidArm.calculate(ArmSettings.positionBottom, armLeftMotor.getCurrentPosition(), false);
+        double pow = pidArm.calculatePID(ArmSettings.positionBottom, armLeftMotor.getCurrentPosition(), false);
+        pow = 0;
         armLeftMotor.setPower(pow);
         armRightMotor.setPower(pow);
 

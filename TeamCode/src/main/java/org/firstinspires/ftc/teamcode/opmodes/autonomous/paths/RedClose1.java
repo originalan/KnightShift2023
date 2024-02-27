@@ -135,8 +135,8 @@ public class RedClose1 extends AutoBase {
                 .waitSeconds(3.0)
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(backdropTraj.end())
-                .strafeTo(new Vector2d(backdropTraj.end().getX(), -60))
-                .back(40)
+                .strafeTo(new Vector2d(backdropTraj.end().getX(), -45))
+                .back(20)
                 .build();
     }
 
@@ -148,7 +148,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 10, -49.5 + 20.25 + 1.725), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -158,7 +158,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 10, -49.5 + 20.25 + 1.725 - 6.0), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -168,7 +168,7 @@ public class RedClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25, -49.5 + 20.25 + 1.725 - 12.0), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 10, -49.5 + 20.25 + 1.725 - 12.0), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

@@ -18,17 +18,18 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
  * Calibration can be changed live in FTC Dashboard
  */
 @Config
-@TeleOp (name = "Arm Test (PIDF)", group = "Tuning")
-public class ArmTestPIDF extends LinearOpMode {
+@TeleOp (name = "Arm Test (Motion Profile)", group = "Tuning")
+public class ArmTestMotionProfile extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
     private boolean turnedOff = false;
-    private boolean gainSchedule = false;
     private double maxOutputPower = 0;
     private double maxVelocity = 0;
     public static int targetPos = 100;
+    public static double maxV = 10;
+    public static double maxA = 5;
 
     @Override
     public void runOpMode() {
@@ -47,6 +48,11 @@ public class ArmTestPIDF extends LinearOpMode {
 
         waitForStart();
 
+        runtime.reset();
+        double instantTargetPos = robot.armLeftMotor.getCurrentPosition();
+        double distance = 0;
+        int armPosMP = robot.armLeftMotor.getCurrentPosition();
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
@@ -56,24 +62,29 @@ public class ArmTestPIDF extends LinearOpMode {
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     turnedOff = !turnedOff;
                 }
-                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    gainSchedule = !gainSchedule;
-                }
 
                 robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 int armPos = robot.armLeftMotor.getCurrentPosition();
 
-                double pidPower;
-                if (gainSchedule) {
-                    pidPower = pid.calculatePID(targetPos, armPos, false, true);
-                }else {
-                    pidPower = pid.calculatePID(targetPos, armPos, false);
+                // USE DPAD DOWN TO SET A NEW TARGET POS
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    distance = targetPos - armPos;
+                    armPosMP = armPos;
+                    runtime.reset();
                 }
-//                double ffPower = pid.feedForwardCalculate(targetPos);
-                double ffPower = pid.calculateFeedforward(targetPos, true);
 
-                double power = pidPower + ffPower;
+                if (distance < 0) {
+                    instantTargetPos = pid.motionProfile(-1 * maxA, -1 * maxV, distance, runtime.seconds()) + armPosMP;
+                }else {
+                    instantTargetPos = pid.motionProfile(maxA, maxV, distance, runtime.seconds()) + armPosMP;
+                }
+
+                double pidPower = pid.calculatePID(instantTargetPos, armPos, false);
+//                pidPower = pid.calculateP(instantTargetPos, armPos);
+                double ffPower = pid.calculateFeedforward(armPos, true);
+
+                double power = pidPower;
 
                 if (power > PIDFControl.maxPower) {
                     power = PIDFControl.maxPower;
@@ -95,15 +106,13 @@ public class ArmTestPIDF extends LinearOpMode {
                     maxVelocity = robot.armLeftMotor.getVelocity();
                 }
 
-                telemetry.addData("PID IS GAIN SCHEDULING?", gainSchedule);
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
                 telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
-                telemetry.addData("Arm calculated power", pidPower + ffPower);
+                telemetry.addData("Arm calculated power", pidPower);
                 telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
                 telemetry.addData("Max power", maxOutputPower);
                 telemetry.addData("Max velocity", maxVelocity);
-//                telemetry.addData("kF right now", pid.KfCoefficients.get(targetPos));
                 telemetry.update();
             }
         }
