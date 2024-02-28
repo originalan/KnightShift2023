@@ -25,6 +25,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
     private boolean turnedOff = false;
+    private boolean gainScheduling = false;
     private double maxOutputPower = 0;
     private double maxVelocity = 0;
     public static int targetPos = 100;
@@ -44,6 +45,8 @@ public class ArmTestMotionProfile extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
+        telemetry.addLine("Use dpad down to set a new targetPos after changing it in dashboard");
+        telemetry.addLine("Use dpad up to change gain scheduling");
         telemetry.update();
 
         waitForStart();
@@ -61,6 +64,9 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     turnedOff = !turnedOff;
+                }
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                    gainScheduling = !gainScheduling;
                 }
 
                 robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
@@ -80,11 +86,16 @@ public class ArmTestMotionProfile extends LinearOpMode {
                     instantTargetPos = pid.motionProfile(maxA, maxV, distance, runtime.seconds()) + armPosMP;
                 }
 
-                double pidPower = pid.calculatePID(instantTargetPos, armPos, false);
+                double pidPower;
+                if (gainScheduling) {
+                    pidPower = pid.calculatePID(instantTargetPos, armPos, false, true);
+                }else {
+                    pidPower = pid.calculatePID(instantTargetPos, armPos, false);
+                }
 //                pidPower = pid.calculateP(instantTargetPos, armPos);
                 double ffPower = pid.calculateFeedforward(armPos, true);
 
-                double power = pidPower;
+                double power = pidPower + ffPower;
 
                 if (power > PIDFControl.maxPower) {
                     power = PIDFControl.maxPower;
@@ -106,6 +117,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
                     maxVelocity = robot.armLeftMotor.getVelocity();
                 }
 
+                telemetry.addData("PID IS GAIN SCHEDULING?", gainScheduling);
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
                 telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
