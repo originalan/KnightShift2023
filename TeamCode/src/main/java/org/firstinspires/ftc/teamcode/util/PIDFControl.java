@@ -15,29 +15,47 @@ public class PIDFControl {
     private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
-    public static double Kp = 0; // 0.07
-    public static double Ki = 0; // 0.00065
-    public static double Kd = 0; // 0.0004
+    public static double Kp_fightingGravity = 0.057; // 0.07
+    public static double Ki_fightingGravity = 0; // 0.00065
+    public static double Kd_fightingGravity = 0; // 0.0004
+    public static double Kp_withGravity = 0.008; // 0.07
+    public static double Ki_withGravity = 0; // 0.00065
+    public static double Kd_withGravity = 0; // 0.0004
     public static double maxPower = 0.45;
     public static double Kf = 0;
     private final double motorEncoderTicks = 1120;
     private final double ticksInDegrees = motorEncoderTicks / 360.0;
     private double lastError = 0;
 
-    // K_pid values (gain scheduling)
-    private double Kp_at_10 = 0.02, Ki_at_10 = 0, Kd_at_10 = 0;
-    private double Kp_at_50 = 0.055, Ki_at_50 = 0, Kd_at_50 = 0.00005;
-    private double Kp_at_110 = 0.06, Ki_at_110 = 0, Kd_at_110 = 0.00015; // encoder tick = 110
+    // K_pid values (gain scheduling) (gravity)
+    private double Kp_at_10 = 0.05, Ki_at_10 = 0, Kd_at_10 = 0;
+    private double Kp_at_50 = 0.055, Ki_at_50 = 0, Kd_at_50 = 0; // 0.00005
+    private double Kp_at_110 = 0.06, Ki_at_110 = 0, Kd_at_110 = 0.00005; // 0.00015
     private double Kp_at_250 = 0.06, Ki_at_250 = 0, Kd_at_250 = 0.0003; // encoder tick = 375 + 110
     private double Kp_at_375 = 0, Ki_at_375 = 0, Kd_at_375 = 0; // encoder tick = 375 + 110
+
+    // K values are less because with gravity
+    private double Kp_at_10_lesser = 0.005, Ki_at_10_lesser = 0, Kd_at_10_lesser = 0;
+    private double Kp_at_110_lesser = 0.01, Ki_at_110_lesser = 0, Kd_at_110_lesser = 0;
+    private double Kp_at_300_lesser = 0.015, Ki_at_300_lesser = 0, Kd_at_300_lesser = 0;
+    private double Kp_at_375_lesser = 0.02, Ki_at_375_lesser = 0, Kd_at_375_lesser = 0;
 
     // K_feedforward values (gain scheduling)
     private double Kf_at_110 = 0.003, Kf_at_top = 0, Kf_at_640 = -0.00045; // top = 375 encoder ticks
     private double Kf_at_500 = -0.0005, Kf_at_250 = 0.0014, Kf_at_0 = 0.0018;
-    public InterpLUT KpCoefficients = new InterpLUT(),
-    KiCoefficients = new InterpLUT(),
-            KdCoefficients = new InterpLUT(),
-            KfCoefficients = new InterpLUT();
+    public InterpLUT KpCoefficients1 = new InterpLUT(),
+            KiCoefficients1 = new InterpLUT(),
+            KdCoefficients1 = new InterpLUT();
+    public InterpLUT KpCoefficients2 = new InterpLUT(),
+            KiCoefficients2 = new InterpLUT(),
+            KdCoefficients2 = new InterpLUT();
+    public InterpLUT KpCoefficientsLess1 = new InterpLUT(),
+            KiCoefficientsLess1 = new InterpLUT(),
+            KdCoefficientsLess1 = new InterpLUT();
+    public InterpLUT KpCoefficientsLess2 = new InterpLUT(),
+            KiCoefficientsLess2 = new InterpLUT(),
+            KdCoefficientsLess2 = new InterpLUT();
+    public InterpLUT KfCoefficients = new InterpLUT();
 
     private HardwareMap hwMap;
 
@@ -52,33 +70,69 @@ public class PIDFControl {
 
     public void initGainScheduling() {
 
-        KpCoefficients.add(10, Kp_at_10);
-        KiCoefficients.add(10, Ki_at_10);
-        KdCoefficients.add(10, Kd_at_10);
-        
-        KpCoefficients.add(50, Kp_at_50);
-        KiCoefficients.add(50, Ki_at_50);
-        KdCoefficients.add(50, Kd_at_50);
+//        KpCoefficients1.add(10, Kp_at_10);
+//        KiCoefficients1.add(10, Ki_at_10);
+//        KdCoefficients1.add(10, Kd_at_10);
+//
+//        KpCoefficients1.add(50, Kp_at_50);
+//        KiCoefficients1.add(50, Ki_at_50);
+//        KdCoefficients1.add(50, Kd_at_50);
+//
+//        KpCoefficients1.add(110, Kp_at_110);
+//        KiCoefficients1.add(110, Ki_at_110);
+//        KdCoefficients1.add(110, Kd_at_110);
+//
+//        KpCoefficients1.add(250, Kp_at_250);
+//        KiCoefficients1.add(250, Ki_at_250);
+//        KdCoefficients1.add(250, Kd_at_250);
+//
+//        KpCoefficients1.add(375, Kp_at_375);
+//        KiCoefficients1.add(375, Ki_at_375);
+//        KdCoefficients1.add(375, Kd_at_375);
+//
+//        KpCoefficients2.add(375, Kp_at_375);
+//        KiCoefficients2.add(375, Ki_at_375);
+//        KdCoefficients2.add(375, Kd_at_375);
+//
+//        KpCoefficients2.add(500, Kp_at_250);
+//        KiCoefficients2.add(500, Ki_at_250);
+//        KdCoefficients2.add(500, Kd_at_250);
+//
+//        KpCoefficients2.add(640, Kp_at_110);
+//        KiCoefficients2.add(640, Ki_at_110);
+//        KdCoefficients2.add(640, Kd_at_110);
 
-        KpCoefficients.add(110, Kp_at_110);
-        KiCoefficients.add(110, Ki_at_110);
-        KdCoefficients.add(110, Kd_at_110);
+        KpCoefficientsLess1.add(10, Kp_at_10_lesser);
+        KiCoefficientsLess1.add(10, Ki_at_10_lesser);
+        KdCoefficientsLess1.add(10, Kd_at_10_lesser);
 
-        KpCoefficients.add(250, Kp_at_250);
-        KiCoefficients.add(250, Ki_at_250);
-        KdCoefficients.add(250, Kd_at_250);
+        KpCoefficientsLess1.add(110, Kp_at_110_lesser);
+        KiCoefficientsLess1.add(110, Ki_at_110_lesser);
+        KdCoefficientsLess1.add(110, Kd_at_110_lesser);
 
-        KpCoefficients.add(375, Kp_at_375);
-        KiCoefficients.add(375, Ki_at_375);
-        KdCoefficients.add(375, Kd_at_375);
+        KpCoefficientsLess1.add(300, Kp_at_300_lesser);
+        KiCoefficientsLess1.add(300, Ki_at_300_lesser);
+        KdCoefficientsLess1.add(300, Kd_at_300_lesser);
 
-        KpCoefficients.add(500, Kp_at_250);
-        KiCoefficients.add(500, Ki_at_250);
-        KdCoefficients.add(500, Kd_at_250);
+        KpCoefficientsLess1.add(375, Kp_at_375_lesser);
+        KiCoefficientsLess1.add(375, Ki_at_375_lesser);
+        KdCoefficientsLess1.add(375, Kd_at_375_lesser);
 
-        KpCoefficients.add(640, Kp_at_110);
-        KiCoefficients.add(640, Ki_at_110);
-        KdCoefficients.add(640, Kd_at_110);
+        KpCoefficientsLess2.add(375, Kp_at_375_lesser);
+        KiCoefficientsLess2.add(375, Ki_at_375_lesser);
+        KdCoefficientsLess2.add(375, Kd_at_375_lesser);
+
+        KpCoefficientsLess2.add(450, Kp_at_300_lesser);
+        KiCoefficientsLess2.add(450, Ki_at_300_lesser);
+        KdCoefficientsLess2.add(450, Kd_at_300_lesser);
+
+        KpCoefficientsLess2.add(640, Kp_at_110_lesser);
+        KiCoefficientsLess2.add(640, Ki_at_110_lesser);
+        KdCoefficientsLess2.add(640, Kd_at_110_lesser);
+
+        KpCoefficientsLess2.add(740, Kp_at_10_lesser);
+        KiCoefficientsLess2.add(740, Ki_at_10_lesser);
+        KdCoefficientsLess2.add(740, Kd_at_10_lesser);
 
         KfCoefficients.add(0, Kf_at_0);
         KfCoefficients.add(110, Kf_at_110);
@@ -86,10 +140,22 @@ public class PIDFControl {
         KfCoefficients.add(375, Kf_at_top);
         KfCoefficients.add(640, Kf_at_500);
 
+//        KpCoefficients1.createLUT();
+//        KiCoefficients1.createLUT();
+//        KdCoefficients1.createLUT();
+//
+//        KpCoefficients2.createLUT();
+//        KiCoefficients2.createLUT();
+//        KdCoefficients2.createLUT();
 
-        KpCoefficients.createLUT();
-        KiCoefficients.createLUT();
-        KdCoefficients.createLUT();
+        KpCoefficientsLess1.createLUT();
+        KiCoefficientsLess1.createLUT();
+        KdCoefficientsLess1.createLUT();
+
+        KpCoefficientsLess2.createLUT();
+        KiCoefficientsLess2.createLUT();
+        KdCoefficientsLess2.createLUT();
+
         KfCoefficients.createLUT();
 
     }
@@ -109,20 +175,74 @@ public class PIDFControl {
 
         timer.reset();
 
-        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        boolean fightingGravity;
+        double distance = reference - state;
+        if (distance > 0) {
+            fightingGravity = reference <= 375;
+        }else {
+            fightingGravity = !(reference <= 375);
+        }
+
+        double p = Kp_fightingGravity;
+        double i = Ki_fightingGravity;
+        double d = Kd_fightingGravity;
+
+        if (!fightingGravity) {
+            p = Kp_withGravity;
+            i = Ki_withGravity;
+            d = Kd_withGravity;
+        }
+
+        double output = (error * p) + (derivative * d) + (integralSum * i);
+
+        if (output > maxPower) {
+            output = maxPower;
+        }
 
         return output;
     }
 
     public double calculatePID(double reference, double state, boolean isAngle, boolean gainScheduling) {
-        double p = Kp;
-        double i = Ki;
-        double d = Kd;
+        boolean fightingGravity;
+        double distance = reference - state;
+        if (distance > 0) {
+            fightingGravity = reference <= 375;
+        }else {
+            fightingGravity = !(reference <= 375);
+        }
+
+        double p = Kp_fightingGravity;
+        double i = Ki_fightingGravity;
+        double d = Kd_fightingGravity;
+
+        if (!fightingGravity) {
+            p = Kp_withGravity;
+            i = Ki_withGravity;
+            d = Kd_withGravity;
+        }
 
         if (gainScheduling) {
-            p = KpCoefficients.get(state);
-            i = KiCoefficients.get(state);
-            d = KdCoefficients.get(state);
+//                if (state >= 375) {
+//                    if (state >= 640) {
+//                        p = KpCoefficients2.get(639);
+//                        i = KiCoefficients2.get(639);
+//                        d = KdCoefficients2.get(639);
+//                    }else {
+//                        p = KpCoefficients2.get(state);
+//                        i = KiCoefficients2.get(state);
+//                        d = KdCoefficients2.get(state);
+//                    }
+//                }else {
+//                    if (state <= 10) {
+//                        p = KpCoefficients1.get(11);
+//                        i = KiCoefficients1.get(11);
+//                        d = KdCoefficients1.get(11);
+//                    }else {
+//                        p = KpCoefficients1.get(state);
+//                        i = KiCoefficients1.get(state);
+//                        d = KdCoefficients1.get(state);
+//                    }
+//                }
         }
 
         double error = isAngle ? angleWrap(reference - state) : (reference - state);
@@ -144,7 +264,11 @@ public class PIDFControl {
     public double calculateP(double reference, double state) {
         double error = reference - state;
 
-        double output = (error * Kp);
+        double output = (error * Kp_fightingGravity);
+
+        if (output > maxPower) {
+            output = maxPower;
+        }
 
         return output;
     }
@@ -154,12 +278,17 @@ public class PIDFControl {
         
         double kPValue;
         if (gainSchedule) {
-            kPValue = KpCoefficients.get(state);
+//            kPValue = KpCoefficients1.get(state);
+            kPValue = Kp_fightingGravity;
         }else {
-            kPValue = Kp;
+            kPValue = Kp_fightingGravity;
         }
 
         double output = (error * kPValue);
+
+        if (output > maxPower) {
+            output = maxPower;
+        }
 
         return output;
     }
@@ -171,6 +300,10 @@ public class PIDFControl {
 
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
             return 0;
+        }
+        if (distance < 0) {
+            max_acceleration *= -1;
+            max_velocity *= -1;
         }
 
         // Calculate the time it takes to accelerate to max velocity
@@ -239,7 +372,7 @@ public class PIDFControl {
             target = 1;
         }
         if (target >= 640) {
-            target = 640;
+            target = 639;
         }
 
         double kfValue;

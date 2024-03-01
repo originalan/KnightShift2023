@@ -29,8 +29,8 @@ public class ArmTestMotionProfile extends LinearOpMode {
     private double maxOutputPower = 0;
     private double maxVelocity = 0;
     public static int targetPos = 100;
-    public static double maxV = 10;
-    public static double maxA = 5;
+    public static double maxV = 100;
+    public static double maxA = 25;
 
     @Override
     public void runOpMode() {
@@ -80,11 +80,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
                     runtime.reset();
                 }
 
-                if (distance < 0) {
-                    instantTargetPos = pid.motionProfile(-1 * maxA, -1 * maxV, distance, runtime.seconds()) + armPosMP;
-                }else {
-                    instantTargetPos = pid.motionProfile(maxA, maxV, distance, runtime.seconds()) + armPosMP;
-                }
+                instantTargetPos = pid.motionProfile(maxA, maxV, distance, runtime.seconds()) + armPosMP;
 
                 double pidPower;
                 if (gainScheduling) {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
@@ -21,7 +22,14 @@ public class Arm extends Subsystem {
     private PIDFControl pid;
 
     public double targetPower = 0; // used purely for GO_TO_POSITION arm state, PIDF test
-    public int encoderPosition = 0;
+    public int encoderGoalPosition = 0;
+    public int goalDistance = 0;
+    public ElapsedTime motionProfileTime = new ElapsedTime();
+    public int armPositionMP = 0;
+    private double instantTargetPos = 0;
+    public static double MAX_A = 200; // in encoder ticks / second^2
+    public static double MAX_V = 300; // in encoder ticks / second
+    private double maxVelocity = 0;
 
     public enum ArmState {
         BOTTOM_CLAW_UP,
@@ -31,10 +39,19 @@ public class Arm extends Subsystem {
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
         NOTHING,
-        PIVOT_SERVO_MOVE
+        PIVOT_SERVO_MOVE,
+        MOTION_PROFILE
+    }
+
+    public enum PivotState {
+        NOTHING,
+        REST,
+        GROUND,
+        AUTO_CALIBRATE
     }
 
     public ArmState armState = ArmState.BOTTOM_CLAW_UP;
+    public PivotState pivotState = PivotState.NOTHING;
 
     public Arm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -51,13 +68,21 @@ public class Arm extends Subsystem {
     public void addTelemetry() {
         if (UseTelemetry.ARM) {
             telemetry.addLine("Arm");
-            telemetry.addData("   Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
+            telemetry.addData("    Arm Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
+            telemetry.addData("    Arm Motor Power", robot.armLeftMotor.getPower());
+            telemetry.addData("    Max velocity", maxVelocity);
             telemetry.addData("    Left/Right Pivot Servo Pos", "%.3f, %.3f", robot.clawPivotLeftServo.getPosition(), robot.clawPivotRightServo.getPosition());
         }
     }
 
     @Override
     public void update() {
+        if (Math.abs(robot.armLeftMotor.getVelocity()) > maxVelocity) {
+            maxVelocity = robot.armLeftMotor.getVelocity();
+        }
+        if (encoderGoalPosition < 0) {
+            encoderGoalPosition = 0;
+        }
         switch (armState) {
             case GO_TO_POSITION:
                 noEncoders();
@@ -94,6 +119,27 @@ public class Arm extends Subsystem {
                 // solve for x, x + initial servo pos = arm pivot servo pos
                 setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST - (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 break;
+            case MOTION_PROFILE:
+                instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
+                double power = pid.calculatePID(instantTargetPos, robot.armLeftMotor.getCurrentPosition(), false);
+                double ff = pid.calculateFeedforward(instantTargetPos, true);
+                setArmPower(power + ff);
+                break;
+        }
+        switch (pivotState) {
+            case NOTHING:
+                break;
+            case REST:
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                break;
+            case GROUND:
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+                break;
+            case AUTO_CALIBRATE:
+                if (robot.armLeftMotor.getCurrentPosition() > 375) {
+                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST - (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                }
+                break;
         }
     }
 
@@ -121,6 +167,14 @@ public class Arm extends Subsystem {
     public void noEncoders() {
         robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.armRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void setMotionProfile() {
+
+        goalDistance = (int)encoderGoalPosition - robot.armLeftMotor.getCurrentPosition();
+        armPositionMP = robot.armLeftMotor.getCurrentPosition();
+        motionProfileTime.reset();
+
     }
 
 }
