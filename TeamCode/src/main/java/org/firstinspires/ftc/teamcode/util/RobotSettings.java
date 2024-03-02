@@ -70,8 +70,8 @@ public class RobotSettings {
     public static boolean LAUNCHER_FIRE_SERVO_REVERSED = false;
     public static final String LAUNCHER_ADJUST_SERVO_NAME = "AirplaneLauncherAdjustServo";
     public static boolean LAUNCHER_ADJUST_SERVO_REVERSED = false;
-    public static double LAUNCHER_FIRE_POSITION_REST = 0.8;
-    public static double LAUNCHER_FIRE_POSITION_FIRE = 0.2;
+    public static double LAUNCHER_FIRE_POSITION_REST = 0.6;
+    public static double LAUNCHER_FIRE_POSITION_FIRE = 0.1;
     public static double LAUNCHER_ADJUST_POSITION_UNCLAMPED = 0.9;
     public static double LAUNCHER_ADJUST_POSITION_CLAMPED = 0.9;
 

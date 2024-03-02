@@ -65,10 +65,10 @@ public class PropDetectionProcessor implements VisionProcessor {
     private final Scalar HIGH_HSV_RED_UPPER = new Scalar(180, 255, 255);
 
     // Blue constants
-    public static double BLUE_THRESHOLD = 0.3;
-    private final Scalar LOW_HSV_BLUE_LOWER = new Scalar(100, 100, 20);
+    public static double BLUE_THRESHOLD = 0.15;
+    private final Scalar LOW_HSV_BLUE_LOWER = new Scalar(100, 80, 20);
     private final Scalar LOW_HSV_BLUE_UPPER = new Scalar(130, 255, 255);
-    private final Scalar HIGH_HSV_BLUE_LOWER = new Scalar(220, 100, 20);
+    private final Scalar HIGH_HSV_BLUE_LOWER = new Scalar(220, 80, 20);
     private final Scalar HIGH_HSV_BLUE_UPPER = new Scalar(250, 255, 255);
 
     public enum Detection {

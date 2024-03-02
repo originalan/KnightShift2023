@@ -101,7 +101,7 @@ public class RedFar1 extends AutoBase {
                         break;
                     case PLACING_PURPLE_PIXEL:
                         // robot is releasing claw servo for purple pixel
-                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_OPEN;
+                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.ORIENT_PIXEL_STACK;
                             drive.followTrajectorySequenceAsync(orientPixelStackTraj);

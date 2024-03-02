@@ -68,10 +68,10 @@ public class FullArmTest extends LinearOpMode {
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 }
                 if (left && !right) {
-                    robot.clawSubsystem.clawState = Claw.ClawState.LEFT_OPEN;
+                    robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
                 }
                 if (right && !left) {
-                    robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_OPEN;
+                    robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
                 }
                 if (!right && !left) {
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;

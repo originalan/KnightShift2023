@@ -19,8 +19,8 @@ public class Claw extends Subsystem {
         NOTHING,
         BOTH_CLOSED,
         BOTH_OPEN,
-        LEFT_OPEN,
-        RIGHT_OPEN
+        RIGHT_CLAW_OPEN,
+        LEFT_CLAW_OPEN
     }
 
     public ClawState clawState = ClawState.BOTH_CLOSED;
@@ -51,11 +51,11 @@ public class Claw extends Subsystem {
             case BOTH_OPEN:
                 openClawBoth();
                 break;
-            case LEFT_OPEN:
+            case RIGHT_CLAW_OPEN:
                 robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
                 robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
                 break;
-            case RIGHT_OPEN:
+            case LEFT_CLAW_OPEN:
                 robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
                 robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
                 break;

@@ -27,8 +27,8 @@ public class Arm extends Subsystem {
     public ElapsedTime motionProfileTime = new ElapsedTime();
     public int armPositionMP = 0;
     private double instantTargetPos = 0;
-    public static double MAX_A = 200; // in encoder ticks / second^2
-    public static double MAX_V = 300; // in encoder ticks / second
+    public static double MAX_A = 175; // in encoder ticks / second^2
+    public static double MAX_V = 250; // in encoder ticks / second
     private double maxVelocity = 0;
 
     public enum ArmState {
@@ -50,7 +50,7 @@ public class Arm extends Subsystem {
         AUTO_CALIBRATE
     }
 
-    public ArmState armState = ArmState.BOTTOM_CLAW_UP;
+    public ArmState armState = ArmState.NOTHING;
     public PivotState pivotState = PivotState.NOTHING;
 
     public Arm(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
@@ -117,7 +117,7 @@ public class Arm extends Subsystem {
                 // 1120 / 2 is for 180 degrees
                 // 1120/2 / 180.0 = x / 1.0
                 // solve for x, x + initial servo pos = arm pivot servo pos
-                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST - (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 break;
             case MOTION_PROFILE:
                 instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;

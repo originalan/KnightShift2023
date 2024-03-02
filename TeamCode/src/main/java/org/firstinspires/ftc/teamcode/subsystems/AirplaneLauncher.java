@@ -25,9 +25,9 @@ public class AirplaneLauncher extends Subsystem {
         ZONE_ONE_OR_BUST,
         NOTHING
     }
-    public LauncherState launcherState = LauncherState.AT_REST;
+    public LauncherState launcherState = LauncherState.NOTHING;
 
-    private LauncherState previousState = LauncherState.AT_REST;
+    private LauncherState previousState = LauncherState.NOTHING;
 
     public AirplaneLauncher(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
@@ -39,37 +39,37 @@ public class AirplaneLauncher extends Subsystem {
     @Override
     public void addTelemetry() {
         if (UseTelemetry.LAUNCHER) {
-            telemetry.addLine("Airplane Launcher");
-            telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
-            telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
-            telemetry.addData("    Times states switched", counter);
+//            telemetry.addLine("Airplane Launcher");
+//            telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
+//            telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
+//            telemetry.addData("    Times states switched", counter);
         }
     }
 
     @Override
     public void update() {
 
-        if (previousState != launcherState) {
-            counter++;
-        }
-
-        switch (launcherState) {
-            case AT_REST:
-                restFireServo();
-                clampAdjustServo();
-                break;
-            case ZONE_ONE_OR_BUST:
-                unclampAdjustServo();
-                releaseFireServo();
-                break;
-            case SETUP:
-                restFireServo();
-                unclampAdjustServo();
-                break;
-            case NOTHING:
-                break;
-        }
-        previousState = launcherState;
+//        if (previousState != launcherState) {
+//            counter++;
+//        }
+//
+//        switch (launcherState) {
+//            case AT_REST:
+//                restFireServo();
+//                clampAdjustServo();
+//                break;
+//            case ZONE_ONE_OR_BUST:
+//                unclampAdjustServo();
+//                releaseFireServo();
+//                break;
+//            case SETUP:
+//                restFireServo();
+//                unclampAdjustServo();
+//                break;
+//            case NOTHING:
+//                break;
+//        }
+//        previousState = launcherState;
     }
 
     @Override

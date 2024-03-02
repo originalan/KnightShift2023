@@ -26,7 +26,7 @@ public class Drivetrain extends Subsystem {
     private double initYaw;
     public static double distanceThreshold = 5.0;
     public double factor = 1.0;
-    public static double dSensorFactor = 5.0;
+    public static double dSensorFactor = 3.0;
 
     private double  frontLeftPower,
                     frontRightPower,

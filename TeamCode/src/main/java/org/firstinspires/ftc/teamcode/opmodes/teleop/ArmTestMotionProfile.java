@@ -29,8 +29,8 @@ public class ArmTestMotionProfile extends LinearOpMode {
     private double maxOutputPower = 0;
     private double maxVelocity = 0;
     public static int targetPos = 100;
-    public static double maxV = 100;
-    public static double maxA = 25;
+    public static double maxV = 300;
+    public static double maxA = 200;
 
     @Override
     public void runOpMode() {
@@ -53,8 +53,10 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
         runtime.reset();
         double instantTargetPos = robot.armLeftMotor.getCurrentPosition();
-        double distance = 0;
+        double goalDistance = 0;
         int armPosMP = robot.armLeftMotor.getCurrentPosition();
+
+        robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -75,12 +77,12 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
                 // USE DPAD DOWN TO SET A NEW TARGET POS
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    distance = targetPos - armPos;
+                    goalDistance = targetPos - armPos;
                     armPosMP = armPos;
                     runtime.reset();
                 }
 
-                instantTargetPos = pid.motionProfile(maxA, maxV, distance, runtime.seconds()) + armPosMP;
+                instantTargetPos = pid.motionProfile(maxA, maxV, goalDistance, runtime.seconds()) + armPosMP;
 
                 double pidPower;
                 if (gainScheduling) {

@@ -75,10 +75,10 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addLine("    dpad down = auto orient pivot claw");
         telemetry.addLine("    dpad up to switch field-oriented drive to robot-oriented drive");
         telemetry.addLine("Gamepad1: drivetrain movement using joysticks");
-        telemetry.addLine("    x to rig, left/right dpad to move string");
+        telemetry.addLine("    x to rig, left/right bumpers to move string");
         telemetry.addLine("    dpad down to fire airplane");
         telemetry.addLine("    dpad up to reset yaw for field-oriented drive");
-        telemetry.addLine("    b to use distance sensor backdrop thing");
+        telemetry.addLine("    left/right triggers to use distance sensor backdrop thing");
         telemetry.update();
 
         waitForStart();
@@ -159,7 +159,7 @@ public class TwoDriver extends LinearOpMode {
             switchDriveControls = !switchDriveControls;
         }
 
-        if (currentGamepad1.b) {
+        if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
             robot.drivetrainSubsystem.dSensorCheck();
         }
 
@@ -192,9 +192,9 @@ public class TwoDriver extends LinearOpMode {
         }
 
         // If arms are up and motor power buttons are pressed...
-        if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
+        if (isRigging && (currentGamepad1.left_bumper || currentGamepad1.right_bumper)) {
             rigStringMove = true;
-            robot.rigRightMotor.setPower(-1 * RobotSettings.RIGGING_MOTOR_SPEED);
+            robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
             robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
         }else {
             robot.rigRightMotor.setPower(0);
@@ -209,10 +209,10 @@ public class TwoDriver extends LinearOpMode {
 
         if (launcherFired) {
 //                    robot.launcherSubsystem.counter++;
-            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+            robot.launcherSubsystem.releaseFireServo();
         }else {
 //                    robot.launcherSubsystem.counter++;
-            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+            robot.launcherSubsystem.restFireServo();
         }
     }
 
@@ -275,59 +275,74 @@ public class TwoDriver extends LinearOpMode {
     }
 
     public void armMotionProfileControls() {
-        robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-        if (currentGamepad1.y && !previousGamepad1.y) {
+        if (currentGamepad2.y && !previousGamepad2.y) {
             robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
+            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
             robot.armSubsystem.setMotionProfile();
         }
-        if (currentGamepad1.a && !previousGamepad1.a) {
+        if (currentGamepad2.a && !previousGamepad2.a) {
             robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
+            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
             robot.armSubsystem.setMotionProfile();
         }
-        if (currentGamepad1.b && !previousGamepad1.b) {
+        if (currentGamepad2.b && !previousGamepad2.b) {
             robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
+            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
             robot.armSubsystem.setMotionProfile();
         }
-        if (currentGamepad1.x && !previousGamepad1.x) {
+        if (currentGamepad2.x && !previousGamepad2.x) {
             robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
+            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
             robot.armSubsystem.setMotionProfile();
             resetZeroTimer.reset();
             counter = 2;
         }
 
-        // If timer is 4 seconds, run once (with the counter), and the goal position is still 0
+        // If timer is 4 seconds, run once (done with the counter variable), and the goal position is still 0
         if (resetZeroTimer.seconds() > 4.0 && counter == 2 && robot.armSubsystem.encoderGoalPosition == ArmSettings.positionBottom) {
             robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             counter = 1;
         }
 
         // Manual "override" of PIDF control of arm
-        overrideLeft = currentGamepad2.left_trigger > 0.05;
+//        overrideLeft = currentGamepad2.left_trigger > 0.01 && !(previousGamepad2.left_trigger > 0.01);
+//
+//        overrideRight = currentGamepad2.right_trigger > 0.01 && !(previousGamepad2.right_trigger > 0.01);;
+//
+//        if (overrideLeft || overrideRight) {
+//            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+//            robot.armSubsystem.setArmEncoderPosition(robot.armSubsystem.encoderGoalPosition);
+//        }
+//
+//        // Increase encoder ticks
+//        if (overrideRight && !overrideLeft) {
+//            startingTimeRight++;
+//            if (startingTimeRight == 1) {
+//                overrideRightCounter = robot.armSubsystem.encoderGoalPosition;
+//                runtime1.reset();
+//            }
+//            robot.armSubsystem.encoderGoalPosition = overrideRightCounter + (int)(runtime1.seconds() * 20);
+//        }else {
+//            startingTimeRight = 0;
+//        }
+//
+//        // Decrease encoder ticks
+//        if (overrideLeft && !overrideRight) {
+//            startingTimeLeft++;
+//            if (startingTimeLeft == 1) {
+//                overrideLeftCounter = robot.armSubsystem.encoderGoalPosition;
+//                runtime2.reset();
+//            }
+//            robot.armSubsystem.encoderGoalPosition = overrideLeftCounter - (int)(runtime2.seconds() * 20);
+//        }else {
+//            overrideLeftCounter = 0;
+//        }
 
-        overrideRight = currentGamepad2.right_trigger > 0.05;
-
-        // Increase encoder ticks
-        if (overrideRight && !overrideLeft) {
-            startingTimeRight++;
-            if (startingTimeRight == 1) {
-                overrideRightCounter = robot.armSubsystem.encoderGoalPosition;
-                runtime1.reset();
-            }
-            robot.armSubsystem.encoderGoalPosition = overrideRightCounter + (int)(runtime1.seconds() * 50);
-        }else {
-            overrideRightCounter = 0;
+        if (overrideLeft) {
+            robot.armSubsystem.encoderGoalPosition += 10;
         }
-
-        // Decrease encoder ticks
-        if (overrideLeft && !overrideRight) {
-            startingTimeLeft++;
-            if (startingTimeLeft == 1) {
-                overrideLeftCounter = robot.armSubsystem.encoderGoalPosition;
-                runtime2.reset();
-            }
-            robot.armSubsystem.encoderGoalPosition = overrideLeftCounter - (int)(runtime2.seconds() * 50);
-        }else {
-            overrideLeftCounter = 0;
+        if (overrideRight) {
+            robot.armSubsystem.encoderGoalPosition -= 10;
         }
 
     }
@@ -345,10 +360,10 @@ public class TwoDriver extends LinearOpMode {
     }
 
     public void clawSidePieceControls() {
-        if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
+        if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
             left = !left;
         }
-        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+        if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
             right = !right;
         }
 
@@ -356,10 +371,10 @@ public class TwoDriver extends LinearOpMode {
             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
         }
         if (left && !right) {
-            robot.clawSubsystem.clawState = Claw.ClawState.LEFT_OPEN;
+            robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
         }
         if (right && !left) {
-            robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_OPEN;
+            robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
         }
         if (!right && !left) {
             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;

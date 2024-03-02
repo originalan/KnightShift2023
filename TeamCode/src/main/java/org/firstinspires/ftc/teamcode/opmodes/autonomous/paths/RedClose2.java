@@ -108,7 +108,7 @@ public class RedClose2 extends AutoBase {
                         break;
                     case PLACE_PURPLE_PIXEL:
                         // robot is releasing claw servo for purple pixel
-                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_OPEN;
+                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.MOVE_TO_BACKBOARD1;
                             drive.followTrajectorySequenceAsync(backdropTraj);
@@ -132,7 +132,7 @@ public class RedClose2 extends AutoBase {
                         break;
                     case PLACE_YELLOW_PIXEL:
                         // 1.0 seconds for yellow pixel to release and fall
-                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_OPEN;
+                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.GO_TO_APRILTAG;
                             drive.followTrajectorySequenceAsync(aprilTagTraj);

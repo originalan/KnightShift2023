@@ -47,6 +47,8 @@ public abstract class AutoBase extends LinearOpMode {
     protected SampleMecanumDrive drive;
     protected final Pose2d redCloseStart = new Pose2d(12, -54.3, Math.toRadians(90));
     protected final Pose2d redFarStart = new Pose2d(-36, -54.3, Math.toRadians(90));
+    protected final Pose2d blueCloseStart = new Pose2d(12, 54.3, Math.toRadians(270));
+    protected final Pose2d blueFarStart = new Pose2d(-36, 54.3, Math.toRadians(270));
 
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
         ALLIANCE_TYPE = allianceType;

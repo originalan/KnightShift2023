@@ -85,7 +85,7 @@ public class JVBoysSoccerRobot {
         riggingSubsystem = new Rigging(hwMap, telemetry, this);
         launcherSubsystem = new AirplaneLauncher(hwMap, telemetry, this);
 
-        subsystems = Arrays.asList(drivetrainSubsystem, clawSubsystem, armSubsystem, riggingSubsystem, launcherSubsystem);
+        subsystems = Arrays.asList(drivetrainSubsystem, clawSubsystem, armSubsystem, riggingSubsystem);
     }
 
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry, AllianceType allianceType) {
