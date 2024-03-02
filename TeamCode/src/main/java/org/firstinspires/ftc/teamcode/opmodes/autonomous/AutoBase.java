@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,8 +50,12 @@ public abstract class AutoBase extends LinearOpMode {
     protected final Pose2d redFarStart = new Pose2d(-36, -54.3, Math.toRadians(90));
     protected final Pose2d blueCloseStart = new Pose2d(12, 54.3, Math.toRadians(270));
     protected final Pose2d blueFarStart = new Pose2d(-36, 54.3, Math.toRadians(270));
+    protected Gamepad currentGamepad = new Gamepad();
+    protected Gamepad previousGamepad = new Gamepad();
 
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
+
+
         ALLIANCE_TYPE = allianceType;
         drive = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

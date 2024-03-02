@@ -11,12 +11,15 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
 
-@Autonomous (name = "RedFar 2+0", group = "Testing")
-public class RedFar2 extends AutoBase {
+@Autonomous (name = "BlueFar 2+0", group = "Testing")
+public class BlueFar1 extends AutoBase {
     private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
     private TrajectorySequence moveBackLittle;
     private TrajectorySequence waitingOneAndHalfSeconds, waitingThreeSeconds, waitingHalfSecond;
+    private TrajectorySequence waitingTime;
+    private double waitTime = 0;
     private enum AutoState {
+        WAITING_TIME,
         GO_TO_SPIKE_MARK,
         PLACING_PURPLE_PIXEL,
         PLACING_PURPLE_PIXEL2,
@@ -33,9 +36,9 @@ public class RedFar2 extends AutoBase {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        startingPose = new Pose2d(redFarStart.getX(), redFarStart.getY(), redFarStart.getHeading());
+        startingPose = new Pose2d(blueFarStart.getX(), blueFarStart.getY(), blueFarStart.getHeading());
 
-        initialize(JVBoysSoccerRobot.AllianceType.RED);
+        initialize(JVBoysSoccerRobot.AllianceType.BLUE);
 
         drive.setPoseEstimate(startingPose);
         detectedSide = propDetectionProcessor.getDetectedSide();
@@ -48,10 +51,20 @@ public class RedFar2 extends AutoBase {
                 buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
             }
             telemetry.addData("LOCATION: ", detectedSide);
-            telemetry.addLine("Red, starting far to backstage");
-            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
-            telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
+            telemetry.addLine("Blue, starting far to backstage");
+            telemetry.addLine("purple pixel in LEFT claw!!!!!");
             telemetry.update();
+
+            if (currentGamepad.left_bumper && !previousGamepad.left_bumper) {
+                waitTime--;
+            }
+            if (currentGamepad.right_bumper && !previousGamepad.right_bumper) {
+                waitTime++;
+            }
+            if (waitTime < 0) {
+                waitTime = 0;
+            }
+
 //            if (runtime.seconds() > 1.0 && checkAgain) {
 //                checkAgain = false;
 //                buildTrajectories();
@@ -60,12 +73,23 @@ public class RedFar2 extends AutoBase {
 
         waitForStart();
 
-        state = AutoState.GO_TO_SPIKE_MARK;
-        drive.followTrajectorySequenceAsync(detectionTraj);
+        waitingTime = drive.trajectorySequenceBuilder(new Pose2d())
+                .waitSeconds(waitTime)
+                .build();
+
+        state = AutoState.WAITING_TIME;
+        drive.followTrajectorySequenceAsync(waitingTime);
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 switch (state) {
+                    case WAITING_TIME:
+                        // robot is waiting a certain amount of time
+                        if (!drive.isBusy()) {
+                            state = AutoState.GO_TO_SPIKE_MARK;
+                            drive.followTrajectorySequenceAsync(detectionTraj);
+                        }
+                        break;
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
                         robot.armSubsystem.pivotState = Arm.PivotState.REST;
@@ -84,7 +108,7 @@ public class RedFar2 extends AutoBase {
                         break;
                     case PLACING_PURPLE_PIXEL2:
                         // robot drops pixel for 0.5 secnods
-                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
+                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL3;
                             drive.followTrajectorySequenceAsync(waitingHalfSecond);
@@ -129,7 +153,7 @@ public class RedFar2 extends AutoBase {
                         break;
                     case RELEASE_PIXEL:
                         // 1.5 seconds for yellow pixel to release and fall
-                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
+                        robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.ARM_BACK_DOWN;
 
@@ -145,6 +169,7 @@ public class RedFar2 extends AutoBase {
                         // robot is bringing arm back down for 1.5 seconds
                         if (!drive.isBusy()) {
                             state = AutoState.PARKING;
+                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }
@@ -197,42 +222,48 @@ public class RedFar2 extends AutoBase {
         switch (detectedSide) {
             case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-//                        .splineTo(new Vector2d(-48 + 0.5 - 1.725, -36.0 - 2.25 + 1), Math.toRadians(90))
-//                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
-                        .lineTo(new Vector2d(startingPose.getX(), -36.0 - 1.725 + 0.5 + 10))
+                        .lineTo(new Vector2d(startingPose.getX(), (-36.0 - 1.725 + 0.5 + 12) * -1))
                         .turn(Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .turn(-1 * Math.toRadians(90))
+                        .splineTo(new Vector2d(-36, (-3) * -1), Math.toRadians(180))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 + 8) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case MIDDLE:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(-39 - 1.725, -24 - 0.5 - 2.25), Math.toRadians(90))
+                        .splineTo(new Vector2d(-39 - 1.725, (-24 - 0.5 - 2.25) * -1), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .back(1)
-                        .turn(Math.toRadians(90))
+                        .turn(-1 * Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 6.0 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 - 6.0 + 8) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case RIGHT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .lineTo(new Vector2d(startingPose.getX(), -36.0 - 1.725 + 0.5 + 12))
+//                        .splineTo(new Vector2d(-48 + 0.5 - 1.725, -36.0 - 2.25 + 1), Math.toRadians(90))
+//                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
+                        .lineTo(new Vector2d(startingPose.getX(), (-36.0 - 1.725 + 0.5 + 10) * -1))
                         .turn(-1 * Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+//                        .turn(Math.toRadians(90))
+//                        .splineTo(new Vector2d(-36, -3), Math.toRadians(180))
+//                        .forward(-48)
                         .turn(Math.toRadians(90))
-                        .splineTo(new Vector2d(-36, -3), Math.toRadians(180))
+                        .lineTo(new Vector2d(detectionTraj.end().getX(), (-3) * -1))
+                        .turn(-1 * Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 12.0 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 - 12.0 + 8) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

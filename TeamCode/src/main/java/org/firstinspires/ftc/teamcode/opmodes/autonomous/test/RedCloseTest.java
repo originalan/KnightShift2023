@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -11,8 +12,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+@Disabled
 @Autonomous (name = "RedClose 2+2 (or 2+1 idk)", group = "Testing")
-public class RedClose2 extends AutoBase {
+public class RedCloseTest extends AutoBase {
 
     private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
     private TrajectorySequence aprilTagTraj;
@@ -20,6 +22,7 @@ public class RedClose2 extends AutoBase {
     private TrajectorySequence waitingTraj1, waitingTraj2;
     private boolean orientationReached = false;
     private enum AutoState {
+        WAITING_TIME,
         GO_TO_SPIKE_MARK,
         PLACE_PURPLE_PIXEL,
         MOVE_TO_BACKBOARD1,

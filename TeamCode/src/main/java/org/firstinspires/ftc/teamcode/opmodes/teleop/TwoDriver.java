@@ -51,6 +51,9 @@ public class TwoDriver extends LinearOpMode {
     private int overrideRightCounter = 0;
     private double startingTimeRight = 0;
 
+    private boolean pivotDown = false;
+    private boolean pivotAuto = false;
+
     private boolean left = true, right = true;
 
 
@@ -155,12 +158,18 @@ public class TwoDriver extends LinearOpMode {
 
         robot.drivetrainSubsystem.factor = 1.0;
 
-        if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-            switchDriveControls = !switchDriveControls;
-        }
+//        if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
+//            switchDriveControls = !switchDriveControls;
+//        }
+
+//        if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
+//            robot.drivetrainSubsystem.dSensorCheck();
+//        }
 
         if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
-            robot.drivetrainSubsystem.dSensorCheck();
+            x /= 3;
+            y /= 3;
+            r /= 3;
         }
 
         robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
@@ -209,10 +218,12 @@ public class TwoDriver extends LinearOpMode {
 
         if (launcherFired) {
 //                    robot.launcherSubsystem.counter++;
-            robot.launcherSubsystem.releaseFireServo();
+//            robot.launcherSubsystem.releaseFireServo();
+            robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
         }else {
 //                    robot.launcherSubsystem.counter++;
-            robot.launcherSubsystem.restFireServo();
+//            robot.launcherSubsystem.restFireServo();
+            robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
         }
     }
 
@@ -300,8 +311,12 @@ public class TwoDriver extends LinearOpMode {
 
         // If timer is 4 seconds, run once (done with the counter variable), and the goal position is still 0
         if (resetZeroTimer.seconds() > 4.0 && counter == 2 && robot.armSubsystem.encoderGoalPosition == ArmSettings.positionBottom) {
-            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
             counter = 1;
+        }
+
+        if (currentGamepad2.left_trigger > 0.01 || currentGamepad2.right_trigger > 0.01) {
+            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
         }
 
         // Manual "override" of PIDF control of arm
@@ -338,25 +353,38 @@ public class TwoDriver extends LinearOpMode {
 //            overrideLeftCounter = 0;
 //        }
 
-        if (overrideLeft) {
-            robot.armSubsystem.encoderGoalPosition += 10;
-        }
-        if (overrideRight) {
-            robot.armSubsystem.encoderGoalPosition -= 10;
-        }
+
+//        if (overrideLeft) {
+//            robot.armSubsystem.encoderGoalPosition += 10;
+//        }
+//        if (overrideRight) {
+//            robot.armSubsystem.encoderGoalPosition -= 10;
+//        }
 
     }
 
     public void pivotClawControls() {
+
         if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
-            robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+            pivotDown = !pivotDown;
         }
         if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right) {
-            robot.armSubsystem.pivotState = Arm.PivotState.REST;
+            pivotDown = !pivotDown;
         }
         if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
+            pivotAuto = !pivotAuto;
         }
+
+        if (pivotAuto) {
+            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
+        }else {
+            if (pivotDown) {
+                robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+            } else {
+                robot.armSubsystem.pivotState = Arm.PivotState.REST;
+            }
+        }
+
     }
 
     public void clawSidePieceControls() {

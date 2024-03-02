@@ -120,6 +120,7 @@ public class Arm extends Subsystem {
                 setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 break;
             case MOTION_PROFILE:
+                noEncoders();
                 instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
                 double power = pid.calculatePID(instantTargetPos, robot.armLeftMotor.getCurrentPosition(), false);
                 double ff = pid.calculateFeedforward(instantTargetPos, true);
@@ -137,7 +138,7 @@ public class Arm extends Subsystem {
                 break;
             case AUTO_CALIBRATE:
                 if (robot.armLeftMotor.getCurrentPosition() > 375) {
-                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST - (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) - 0.05 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 }
                 break;
         }

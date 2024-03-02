@@ -15,8 +15,11 @@ import org.firstinspires.ftc.teamcode.util.ArmSettings;
 public class RedClose1 extends AutoBase {
     private TrajectorySequence detectionTraj, backdropTraj,parkingTraj;
     private TrajectorySequence moveBackLittle;
-    private TrajectorySequence waitingTraj1, waitingTraj2, waitingTraj3;
+    private TrajectorySequence waitingOneHalfSeconds, waitingThreeSeconds, waitingHalfSeconds;
+    private TrajectorySequence waitingTime;
+    private double waitTime = 0;
     private enum AutoState {
+        WAITING_TIME,
         GO_TO_SPIKE_MARK,
         PLACING_PURPLE_PIXEL,
         PLACING_PURPLE_PIXEL2,
@@ -42,16 +45,29 @@ public class RedClose1 extends AutoBase {
         buildTrajectories();
 
         while (opModeInInit()) {
+            previousGamepad.copy(currentGamepad);
+            currentGamepad.copy(gamepad1);
+
             previousDetectedSide = propDetectionProcessor.copyDetection(detectedSide);
             detectedSide = propDetectionProcessor.getDetectedSide();
             if (previousDetectedSide != detectedSide) {
                 buildTrajectories(); // gonna kill the battery, but we gotta do it cuz they move team prop x seconds after init
             }
             telemetry.addData("LOCATION: ", detectedSide);
+            telemetry.addData("Waiting Time", waitTime);
             telemetry.addLine("Red, starting closer to backstage");
-            telemetry.addLine("Puts purple pixel in place, drops yellow on backdrop, parks");
-            telemetry.addLine("PURPLE PIXEL IN RIGHT CLAW!!!!!");
+            telemetry.addLine("purple pixel in RIGHT claw!!!!!");
             telemetry.update();
+
+            if (currentGamepad.left_bumper && !previousGamepad.left_bumper) {
+                waitTime--;
+            }
+            if (currentGamepad.right_bumper && !previousGamepad.right_bumper) {
+                waitTime++;
+            }
+            if (waitTime < 0) {
+                waitTime = 0;
+            }
 //            if (runtime.seconds() > 1.0 && checkAgain) {
 //                checkAgain = false;
 //                buildTrajectories();
@@ -60,18 +76,29 @@ public class RedClose1 extends AutoBase {
 
         waitForStart();
 
-        state = AutoState.GO_TO_SPIKE_MARK;
-        drive.followTrajectorySequenceAsync(detectionTraj);
+        waitingTime = drive.trajectorySequenceBuilder(new Pose2d())
+                .waitSeconds(waitTime)
+                .build();
+
+        state = AutoState.WAITING_TIME;
+        drive.followTrajectorySequenceAsync(waitingTime);
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 switch (state) {
+                    case WAITING_TIME:
+                        // robot is waiting a certain amount of time
+                        if (!drive.isBusy()) {
+                            state = AutoState.GO_TO_SPIKE_MARK;
+                            drive.followTrajectorySequenceAsync(detectionTraj);
+                        }
+                        break;
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
                         robot.armSubsystem.pivotState = Arm.PivotState.REST;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL;
-                            drive.followTrajectorySequenceAsync(waitingTraj3);
+                            drive.followTrajectorySequenceAsync(waitingHalfSeconds);
                         }
                         break;
                     case PLACING_PURPLE_PIXEL:
@@ -79,7 +106,7 @@ public class RedClose1 extends AutoBase {
                         robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL2;
-                            drive.followTrajectorySequenceAsync(waitingTraj3);
+                            drive.followTrajectorySequenceAsync(waitingHalfSeconds);
                         }
                         break;
                     case PLACING_PURPLE_PIXEL2:
@@ -87,7 +114,7 @@ public class RedClose1 extends AutoBase {
                         robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL3;
-                            drive.followTrajectorySequenceAsync(waitingTraj3);
+                            drive.followTrajectorySequenceAsync(waitingHalfSeconds);
                         }
                         break;
                     case PLACING_PURPLE_PIXEL3:
@@ -111,11 +138,11 @@ public class RedClose1 extends AutoBase {
 
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
-                            drive.followTrajectorySequenceAsync(waitingTraj1);
+                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                         }
                         break;
                     case LIFT_ARM:
-                        // give about 1.5 seconds for arm and servo to move in place
+                        // give about 3.0 seconds for arm and servo to move in place
                         if (!drive.isBusy()) {
                             state = AutoState.MOVE_FORWARD;
                             drive.followTrajectorySequenceAsync(moveBackLittle);
@@ -125,7 +152,7 @@ public class RedClose1 extends AutoBase {
                         // robot is moving back into the backdrop a little bit
                         if (!drive.isBusy()) {
                             state = AutoState.RELEASE_PIXEL;
-                            drive.followTrajectorySequenceAsync(waitingTraj3);
+                            drive.followTrajectorySequenceAsync(waitingHalfSeconds);
                         }
                         break;
                     case RELEASE_PIXEL:
@@ -139,13 +166,14 @@ public class RedClose1 extends AutoBase {
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
 
                             robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                            drive.followTrajectorySequenceAsync(waitingTraj1);
+                            drive.followTrajectorySequenceAsync(waitingOneHalfSeconds);
                         }
                         break;
                     case ARM_BACK_DOWN:
                         // robot is bringing arm back down for 1.5 seconds
                         if (!drive.isBusy()) {
                             state = AutoState.PARKING;
+                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }
@@ -175,13 +203,13 @@ public class RedClose1 extends AutoBase {
     public void buildTrajectories() {
         setGoalPose();
 
-        waitingTraj1 = drive.trajectorySequenceBuilder(detectionTraj.end())
+        waitingOneHalfSeconds = drive.trajectorySequenceBuilder(detectionTraj.end())
                 .waitSeconds(1.5)
                 .build();
-        waitingTraj2 = drive.trajectorySequenceBuilder(detectionTraj.end())
+        waitingThreeSeconds = drive.trajectorySequenceBuilder(detectionTraj.end())
                 .waitSeconds(3.0)
                 .build();
-        waitingTraj3 = drive.trajectorySequenceBuilder(detectionTraj.end())
+        waitingHalfSeconds = drive.trajectorySequenceBuilder(detectionTraj.end())
                 .waitSeconds(0.5)
                 .build();
         moveBackLittle = drive.trajectorySequenceBuilder(backdropTraj.end())

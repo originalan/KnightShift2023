@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
 /**
  * AirplaneLauncherTest is a test Teleop mode that is used purely to test the airplane launcher.
@@ -47,11 +48,13 @@ public class AirplaneLauncherTest extends LinearOpMode {
                 }
 
                 if (launchPlane) {
-                    robot.launcherSubsystem.releaseFireServo();
+//                    robot.launcherSubsystem.releaseFireServo();
 //                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                    robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
                 }else {
-                    robot.launcherSubsystem.restFireServo();
+//                    robot.launcherSubsystem.restFireServo();
 //                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+                    robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
                 }
 
                 robot.launcherSubsystem.addTelemetry();
