@@ -152,7 +152,7 @@ public class BlueFar1 extends AutoBase {
                         }
                         break;
                     case RELEASE_PIXEL:
-                        // 1.5 seconds for yellow pixel to release and fall
+                        // 0.5 seconds for yellow pixel to release and fall
                         robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
                         if (!drive.isBusy()) {
                             state = AutoState.ARM_BACK_DOWN;
@@ -162,11 +162,11 @@ public class BlueFar1 extends AutoBase {
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
 
                             robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                            drive.followTrajectorySequenceAsync(waitingOneAndHalfSeconds);
+                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                         }
                         break;
                     case ARM_BACK_DOWN:
-                        // robot is bringing arm back down for 1.5 seconds
+                        // robot is bringing arm back down for 3.0 seconds
                         if (!drive.isBusy()) {
                             state = AutoState.PARKING;
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;

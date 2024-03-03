@@ -138,7 +138,7 @@ public class Arm extends Subsystem {
                 break;
             case AUTO_CALIBRATE:
                 if (robot.armLeftMotor.getCurrentPosition() > 375) {
-                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) - 0.05 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
                 }
                 break;
         }
@@ -161,8 +161,8 @@ public class Arm extends Subsystem {
     }
 
     public void setPivotServoPosition(double position) {
-        robot.clawPivotLeftServo.setPosition(position);
-//        robot.clawPivotRightServo.setPosition(position);
+//        robot.clawPivotLeftServo.setPosition(position);
+        robot.clawPivotRightServo.setPosition(position);
     }
 
     public void noEncoders() {

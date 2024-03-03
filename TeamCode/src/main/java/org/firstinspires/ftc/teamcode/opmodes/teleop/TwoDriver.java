@@ -72,7 +72,7 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Make sure both gamepads are connected");
         telemetry.addLine("Gamepad2: x, y, a, b = arm preset positions");
-        telemetry.addLine("    right/left triggers = override arm position");
+        telemetry.addLine("    right/left triggers = reset arm encoder");
         telemetry.addLine("    right/left bumpers = open / close claw");
         telemetry.addLine("    right/left dpads = pivot up, pivot ground");
         telemetry.addLine("    dpad down = auto orient pivot claw");
@@ -81,7 +81,7 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addLine("    x to rig, left/right bumpers to move string");
         telemetry.addLine("    dpad down to fire airplane");
         telemetry.addLine("    dpad up to reset yaw for field-oriented drive");
-        telemetry.addLine("    left/right triggers to use distance sensor backdrop thing");
+        telemetry.addLine("    left/right triggers to slow down drivetrain by factor of 3.0");
         telemetry.update();
 
         waitForStart();
@@ -315,8 +315,9 @@ public class TwoDriver extends LinearOpMode {
             counter = 1;
         }
 
-        if (currentGamepad2.left_trigger > 0.01 || currentGamepad2.right_trigger > 0.01) {
+        if (currentGamepad2.left_trigger > 0.01 && currentGamepad2.right_trigger > 0.01) {
             robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
+            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
         }
 
         // Manual "override" of PIDF control of arm
@@ -366,24 +367,31 @@ public class TwoDriver extends LinearOpMode {
     public void pivotClawControls() {
 
         if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
-            pivotDown = !pivotDown;
+//            pivotDown = !pivotDown;
+//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
         }
         if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right) {
-            pivotDown = !pivotDown;
+//            pivotDown = !pivotDown;
+//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
         }
         if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-            pivotAuto = !pivotAuto;
+//            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
+//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+//            robot.armSubsystem.setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ));
         }
+//
+//        if (pivotDown) {
+//            robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+//        } else {
+//            robot.armSubsystem.pivotState = Arm.PivotState.REST;
+//        }
 
-        if (pivotAuto) {
-            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-        }else {
-            if (pivotDown) {
-                robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
-            } else {
-                robot.armSubsystem.pivotState = Arm.PivotState.REST;
-            }
-        }
+//        if (pivotAuto && robot.armLeftMotor.getCurrentPosition() > 375) {
+//            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
+//        }
 
     }
 

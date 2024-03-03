@@ -68,9 +68,9 @@ public class ArmPivotTest extends LinearOpMode {
                 }
 
                 if (move) {
-                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
+                    robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
                 }else {
-                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                    robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
                 }
 
                 if (currentGamepad1.x && !previousGamepad1.x) {

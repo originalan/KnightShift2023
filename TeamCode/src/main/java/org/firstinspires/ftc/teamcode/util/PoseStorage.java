@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 @Config
 public class PoseStorage {
     public static Pose2d currentPose = new Pose2d();
-    public static double originalInitYaw = -1;
+    public static double originalInitYaw = 0;
     public static double AUTO_SHIFT_DEGREES = 0;
 
     // backdrop april tag locations

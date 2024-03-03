@@ -79,7 +79,7 @@ public class RiggingTest extends LinearOpMode {
                 }
 
                 // If arms are up and motor power buttons are pressed...
-                if (isRigging && (currentGamepad1.dpad_right || currentGamepad1.dpad_left)) {
+                if (isRigging && (currentGamepad1.left_bumper || currentGamepad1.right_bumper)) {
                     rigStringMove = true;
                     robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
                     robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
@@ -88,12 +88,16 @@ public class RiggingTest extends LinearOpMode {
                     robot.rigLeftMotor.setPower(0);
                 }
 
-                if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
-                    robot.rigRightMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                if (currentGamepad1.dpad_left) {
                     robot.rigLeftMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
-                    robot.rigRightMotor.setPower(0);
                     robot.rigLeftMotor.setPower(0);
+                }
+
+                if (currentGamepad1.dpad_right) {
+                    robot.rigRightMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                }else {
+                    robot.rigRightMotor.setPower(0);
                 }
 
                 robot.riggingSubsystem.addTelemetry();

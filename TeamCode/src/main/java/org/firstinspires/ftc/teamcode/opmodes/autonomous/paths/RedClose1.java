@@ -166,11 +166,11 @@ public class RedClose1 extends AutoBase {
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
 
                             robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                            drive.followTrajectorySequenceAsync(waitingOneHalfSeconds);
+                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                         }
                         break;
                     case ARM_BACK_DOWN:
-                        // robot is bringing arm back down for 1.5 seconds
+                        // robot is bringing arm back down for 3.0 seconds
                         if (!drive.isBusy()) {
                             state = AutoState.PARKING;
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
@@ -216,7 +216,7 @@ public class RedClose1 extends AutoBase {
                 .back(5.5)
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
-                .strafeTo(new Vector2d(backdropTraj.end().getX(), -44))
+                .strafeTo(new Vector2d(backdropTraj.end().getX(), -46))
                 .back(17)
                 .build();
     }

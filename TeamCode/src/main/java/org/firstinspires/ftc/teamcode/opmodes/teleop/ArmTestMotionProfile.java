@@ -28,9 +28,9 @@ public class ArmTestMotionProfile extends LinearOpMode {
     private boolean gainScheduling = false;
     private double maxOutputPower = 0;
     private double maxVelocity = 0;
-    public static int targetPos = 100;
-    public static double maxV = 300;
-    public static double maxA = 200;
+    public static int targetPos = 500;
+    public static double maxV = 250;
+    public static double maxA = 175;
 
     @Override
     public void runOpMode() {
