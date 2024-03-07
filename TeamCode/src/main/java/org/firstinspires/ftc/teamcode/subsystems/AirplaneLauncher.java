@@ -41,7 +41,8 @@ public class AirplaneLauncher extends Subsystem {
         if (UseTelemetry.LAUNCHER) {
 //            telemetry.addLine("Airplane Launcher");
 //            telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
-//            telemetry.addData("   Launcher Adjust Servo Current Position", "%4.2f", robot.launcherAdjustServo.getPosition());
+//            telemetry.addData("   Launcher Adjust Servo Current Position
+//            ", "%4.2f", robot.launcherAdjustServo.getPosition());
 //            telemetry.addData("    Times states switched", counter);
         }
     }

@@ -314,11 +314,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void raiseArm() {
 
-        clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-        double pow = pidArm.calculatePID(ArmSettings.positionBottom, armLeftMotor.getCurrentPosition(), false);
-        pow = 0;
-        armLeftMotor.setPower(pow);
-        armRightMotor.setPower(pow);
+//        clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+//        double pow = pidArm.calculatePID(ArmSettings.positionBottom, armLeftMotor.getCurrentPosition(), false);
+//        pow = 0;
+//        armLeftMotor.setPower(pow);
+//        armRightMotor.setPower(pow);
 
     }
     public void initArmHardware(HardwareMap hwMap) {

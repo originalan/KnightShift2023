@@ -85,6 +85,9 @@ public class RedClose1 extends AutoBase {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
+
                 switch (state) {
                     case WAITING_TIME:
                         // robot is waiting a certain amount of time

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
 /**
@@ -35,8 +36,8 @@ public class Claw extends Subsystem {
     public void addTelemetry() {
         if (UseTelemetry.CLAW) {
             telemetry.addLine("Intake");
-            telemetry.addData("   Servo Left Position", robot.clawRightServo.getPosition());
-            telemetry.addData("   Servo Right Position", robot.clawLeftServo.getPosition());
+            telemetry.addData("   Servo Left Position", BulkReading.pClawLeftServo);
+            telemetry.addData("   Servo Right Position", BulkReading.pClawRightServo);
         }
     }
 

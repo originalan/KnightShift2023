@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
@@ -32,8 +33,8 @@ public class Rigging extends Subsystem {
     public void addTelemetry() {
         if (UseTelemetry.RIGGING) {
             telemetry.addLine("Rigging");
-            telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", robot.rigLeftServo.getPosition(), robot.rigRightServo.getPosition());
-            telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.rigLeftMotor.getCurrentPosition(), robot.rigRightMotor.getCurrentPosition());
+            telemetry.addData("   Left/Right Servo Position", "%4.2f, %4.2f", BulkReading.pRigLeftServo, BulkReading.pRigRightServo);
+//            telemetry.addData("   Left/Right Motor Position", "%d, %d", robot.rigLeftMotor.getCurrentPosition(), robot.rigRightMotor.getCurrentPosition());
         }
     }
 

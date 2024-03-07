@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.UseTelemetry;
 
@@ -61,24 +62,23 @@ public class Arm extends Subsystem {
 
         noEncoders();
 
-        JVBoysSoccerRobot.initialArmPosition = robot.armLeftMotor.getCurrentPosition();
+        JVBoysSoccerRobot.initialArmPosition = BulkReading.pArmLeftMotor;
     }
 
     @Override
     public void addTelemetry() {
         if (UseTelemetry.ARM) {
             telemetry.addLine("Arm");
-            telemetry.addData("    Arm Motor Position Encoder Value", "%d", robot.armLeftMotor.getCurrentPosition());
-            telemetry.addData("    Arm Motor Power", robot.armLeftMotor.getPower());
+            telemetry.addData("    Arm Motor Position Encoder Value", "%d", BulkReading.pArmLeftMotor);
             telemetry.addData("    Max velocity", maxVelocity);
-            telemetry.addData("    Left/Right Pivot Servo Pos", "%.3f, %.3f", robot.clawPivotLeftServo.getPosition(), robot.clawPivotRightServo.getPosition());
+            telemetry.addData("    Left/Right Pivot Servo Pos", "%.3f, %.3f", BulkReading.pClawPivotLeftServo, BulkReading.pClawPivotRightServo);
         }
     }
 
     @Override
     public void update() {
-        if (Math.abs(robot.armLeftMotor.getVelocity()) > maxVelocity) {
-            maxVelocity = robot.armLeftMotor.getVelocity();
+        if (Math.abs(BulkReading.vArmLeftMotor) > maxVelocity) {
+            maxVelocity = BulkReading.vArmLeftMotor;
         }
         if (encoderGoalPosition < 0) {
             encoderGoalPosition = 0;
@@ -117,12 +117,12 @@ public class Arm extends Subsystem {
                 // 1120 / 2 is for 180 degrees
                 // 1120/2 / 180.0 = x / 1.0
                 // solve for x, x + initial servo pos = arm pivot servo pos
-                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + ( BulkReading.pArmLeftMotor / 1120.0 ) );
                 break;
             case MOTION_PROFILE:
                 noEncoders();
                 instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
-                double power = pid.calculatePID(instantTargetPos, robot.armLeftMotor.getCurrentPosition(), false);
+                double power = pid.calculatePID(instantTargetPos, BulkReading.pArmLeftMotor, false);
                 double ff = pid.calculateFeedforward(instantTargetPos, true);
                 setArmPower(power + ff);
                 break;
@@ -137,8 +137,8 @@ public class Arm extends Subsystem {
                 setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
                 break;
             case AUTO_CALIBRATE:
-                if (robot.armLeftMotor.getCurrentPosition() > 375) {
-                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
+                if (BulkReading.pArmLeftMotor > 375) {
+                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( BulkReading.pArmLeftMotor / 1120.0 ) );
                 }
                 break;
         }
@@ -155,7 +155,7 @@ public class Arm extends Subsystem {
     }
 
     public void setArmEncoderPosition(int encoderPos) {
-        double pow = pid.calculatePID(encoderPos, robot.armLeftMotor.getCurrentPosition(), false);
+        double pow = pid.calculatePID(encoderPos, BulkReading.pArmLeftMotor, false);
         robot.armLeftMotor.setPower(pow);
         robot.armRightMotor.setPower(pow);
     }
@@ -172,8 +172,8 @@ public class Arm extends Subsystem {
 
     public void setMotionProfile() {
 
-        goalDistance = (int)encoderGoalPosition - robot.armLeftMotor.getCurrentPosition();
-        armPositionMP = robot.armLeftMotor.getCurrentPosition();
+        goalDistance = (int)encoderGoalPosition - BulkReading.pArmLeftMotor;
+        armPositionMP = BulkReading.pArmLeftMotor;
         motionProfileTime.reset();
 
     }

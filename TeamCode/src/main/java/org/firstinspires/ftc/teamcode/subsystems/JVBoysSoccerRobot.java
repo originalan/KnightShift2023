@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 
@@ -74,7 +75,8 @@ public class JVBoysSoccerRobot {
         // Configuring Hubs to auto mode for bulk reads
         allHubs = hwMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+//            hub.setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
         initIMU();

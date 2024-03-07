@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.RobotSettings;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -45,6 +46,7 @@ public abstract class AutoBase extends LinearOpMode {
     protected PropDetectionProcessor.Detection detectedSide;
     protected PropDetectionProcessor.Detection previousDetectedSide;
     protected JVBoysSoccerRobot robot;
+    protected BulkReading bulkReading;
     protected SampleMecanumDrive drive;
     protected final Pose2d redCloseStart = new Pose2d(12, -54.3, Math.toRadians(90));
     protected final Pose2d redFarStart = new Pose2d(-36, -54.3, Math.toRadians(90));
@@ -60,6 +62,7 @@ public abstract class AutoBase extends LinearOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry, ALLIANCE_TYPE);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         PoseStorage.originalInitYaw = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 

@@ -366,6 +366,7 @@ public class PIDFControl {
         return (target / ticksInDegrees) * Kf;
     }
 
+
     public double calculateFeedforward(double target, boolean gainSchedule) {
 
         if (target <= 0) {

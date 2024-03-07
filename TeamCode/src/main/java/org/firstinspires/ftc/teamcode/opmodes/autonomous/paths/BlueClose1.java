@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 
 @Autonomous (name = "BlueClose 2+0", group = "Testing")
 public class BlueClose1 extends AutoBase {
@@ -85,6 +86,9 @@ public class BlueClose1 extends AutoBase {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
+
                 switch (state) {
                     case WAITING_TIME:
                         // robot is waiting a certain amount of time
