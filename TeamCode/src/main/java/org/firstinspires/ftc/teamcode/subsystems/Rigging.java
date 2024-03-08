@@ -18,7 +18,8 @@ public class Rigging extends Subsystem {
 
     public enum RiggingState {
         NO_RIG,
-        RIG
+        RIG,
+        NOTHING
     }
 
     public RiggingState riggingState = RiggingState.NO_RIG;
@@ -40,7 +41,16 @@ public class Rigging extends Subsystem {
 
     @Override
     public void update() {
-
+        switch (riggingState) {
+            case NO_RIG:
+                noHang();
+                break;
+            case RIG:
+                hang();
+                break;
+            case NOTHING:
+                break;
+        }
     }
 
     @Override

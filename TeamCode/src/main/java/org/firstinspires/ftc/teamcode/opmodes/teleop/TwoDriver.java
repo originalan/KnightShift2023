@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.util.ArmSettings.ENCODER_TICKS_PER_SECOND;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -25,9 +23,7 @@ public class TwoDriver extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
     private ElapsedTime runtime = new ElapsedTime();
-    private ElapsedTime runtime1 = new ElapsedTime();
-    private ElapsedTime runtime2 = new ElapsedTime();
-    private ElapsedTime resetZeroTimer = new ElapsedTime();
+    private double rigWaitTime = 0;
     private int counter = 1;
 
     private Gamepad currentGamepad1;
@@ -44,17 +40,6 @@ public class TwoDriver extends LinearOpMode {
 
     private boolean switchDriveControls = false;
 
-    // ARMS (override move arm left or right)
-    private boolean overrideLeft= false;
-    private int overrideLeftCounter = 0;
-    private double startingTimeLeft = 0;
-    private boolean overrideRight = false;
-    private int overrideRightCounter = 0;
-    private double startingTimeRight = 0;
-
-    private boolean pivotDown = false;
-    private boolean pivotAuto = false;
-
     private boolean left = true, right = true;
 
     public enum IntakeControlsState {
@@ -65,9 +50,17 @@ public class TwoDriver extends LinearOpMode {
         DROP_POS_3, // past first set line
         DROP_POS_4, // seventh level of pixels ??
         RESET, // reset arm encoder and brings claw to closed position
-        OVERRIDE, // idk yet
+        NOTHING, // idk yet
+    }
+    public enum RiggingControlsState {
+        DOWN_WAIT,
+        DOWN,
+        UP,
+        HANGING,
+        NOTHING
     }
     public IntakeControlsState intakeState = IntakeControlsState.CLOSED;
+    public RiggingControlsState hangState = RiggingControlsState.DOWN;
 
     @Override
     public void runOpMode() {
@@ -126,7 +119,8 @@ public class TwoDriver extends LinearOpMode {
                 =================RIGGING CONTROLS==============
                 */
 
-                riggingControls();
+//                riggingControls();
+                rigControls();
 
                 /*
                 =================AIRPLANE CONTROLS==============
@@ -142,10 +136,12 @@ public class TwoDriver extends LinearOpMode {
                 =================CLAW CONTROLS==============
                 */
 
+                intakeControls();
+
 //                armControls();
-                armMotionProfileControls();
-                pivotClawControls();
-                clawSidePieceControls();
+//                armMotionProfileControls();
+//                pivotClawControls();
+//                clawSidePieceControls();
 
                 /*
                 =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
@@ -224,6 +220,57 @@ public class TwoDriver extends LinearOpMode {
         }
     }
 
+    public void rigControls() {
+        switch (hangState) {
+            case UP:
+                robot.riggingSubsystem.hang();
+                if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
+                    hangState = RiggingControlsState.HANGING;
+                    robot.rigRightServo.getController().pwmDisable();
+                    robot.rigLeftServo.getController().pwmDisable();
+                }
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    rigWaitTime = runtime.seconds();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
+                    hangState = RiggingControlsState.DOWN_WAIT;
+                }
+                break;
+            case DOWN:
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
+                    hangState = RiggingControlsState.UP;
+                }
+                break;
+            case DOWN_WAIT:
+                robot.riggingSubsystem.noHang();
+                if (runtime.seconds() - rigWaitTime > 1.0) {
+                    robot.rigRightServo.getController().pwmDisable();
+                    robot.rigLeftServo.getController().pwmDisable();
+                    hangState = RiggingControlsState.DOWN;
+                }
+                break;
+            case HANGING:
+                if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
+                    robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                }else {
+                    robot.rigRightMotor.setPower(0);
+                    robot.rigLeftMotor.setPower(0);
+                }
+                if (currentGamepad1.x && !previousGamepad1.x) {
+                    rigWaitTime = runtime.seconds();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
+                    hangState = RiggingControlsState.DOWN_WAIT;
+                }
+                break;
+            case NOTHING:
+                break;
+        }
+    }
+
     public void launcherControls() {
         if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
             launcherFired = !launcherFired;
@@ -260,15 +307,15 @@ public class TwoDriver extends LinearOpMode {
             robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
             robot.armSubsystem.setMotionProfile();
-            resetZeroTimer.reset();
-            counter = 2;
+//            resetZeroTimer.reset();
+//            counter = 2;
         }
 
         // If timer is 4 seconds, run once (done with the counter variable), and the goal position is still 0
-        if (resetZeroTimer.seconds() > 4.0 && counter == 2 && robot.armSubsystem.encoderGoalPosition == ArmSettings.positionBottom) {
-            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
-            counter = 1;
-        }
+//        if (resetZeroTimer.seconds() > 4.0 && counter == 2 && robot.armSubsystem.encoderGoalPosition == ArmSettings.positionBottom) {
+//            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
+//            counter = 1;
+//        }
 
         if (currentGamepad2.left_trigger > 0.01 && currentGamepad2.right_trigger > 0.01) {
             robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
@@ -320,15 +367,6 @@ public class TwoDriver extends LinearOpMode {
     }
 
     public void pivotClawControls() {
-
-        switch (intakeState) {
-            case CLOSED:
-                break;
-            case INTAKING:
-                break;
-            case OVERRIDE:
-                break;
-        }
 
         if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
 //            pivotDown = !pivotDown;
@@ -482,7 +520,7 @@ public class TwoDriver extends LinearOpMode {
                 robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 intakeState = IntakeControlsState.CLOSED;
                 break;
-            case OVERRIDE:
+            case NOTHING:
                 break;
         }
 
