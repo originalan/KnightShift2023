@@ -22,8 +22,9 @@ public class SuperController {
     public static double Ki_withGravity = 0; // 0.00065
     public static double Kd_withGravity = 0; // 0.0004
     public static double Kg = 0.102;
-    public static double Kv = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
-    public static double Ka = 0;
+    private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
+    private double K_a = 0;
+    public static double Kp = 0, Kv = 0;
 
     public SuperController() {
         initGainScheduling();
@@ -94,7 +95,21 @@ public class SuperController {
      * @return
      */
     public double kvkaFeedforward(double targetVelocity, double targetAcceleration) {
-        return (Kv / 1000 * targetVelocity) + (Ka / 1000 * targetAcceleration);
+        return (K_v / 1000 * targetVelocity) + (K_a / 1000 * targetAcceleration);
+    }
+
+    /**
+     * Calculate state feedback for position and velocity of our system.
+     * Math: Take the dot product of error and k values
+     *          Error values are stored in a vector, same with k values, allowing us to take dot product
+     */
+    public double fullstateCalculate(double targetPosition, double targetVelocity, double robotPosition, double robotVelocity) {
+
+        double positionError = targetPosition - robotPosition;
+        double velocityError = targetVelocity - robotVelocity;
+        double u = (positionError * Kp) + (velocityError * Kv);
+        return u;
+
     }
 
 }

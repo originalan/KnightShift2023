@@ -1,44 +1,36 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class MotionProfile {
+    private double startingTime = 0;
 
-    private Telemetry telemetry;
-    private ElapsedTime runtime = new ElapsedTime();
-    private double currentTime = 0;
+    public static int MAX_VELOCITY = 250; // enocder ticks per second
+    public static int MAX_ACCELERATION = 175; // encoder ticks per second
 
-    public static int MAX_VELOCITY = 250;
-    public static int MAX_ACCELERATION = 175;
+    private double instantPos = 0;
+    private double instantVel = 0;
+    private double instantAcl = 0;
 
-    public MotionProfile() {
+    public double profileTime = 100; // seconds
 
-    }
-
-    public void setTime(double time) {
-        currentTime = time;
-    }
-
-    /**
-     * Returns current reference position based on given distance and current time
-     * @param distance
-     * @param elapsed_time
-     * @return
-     */
-    public double motionProfile(double distance, double elapsed_time) {
-        /*
-        Return the current reference position based on the given motion profile times, maximum acceleration, velocity, and current time.
-        */
+    public MotionProfile() { }
+    public void setProfile(double start, double end, double currentTime) {
+        double timeElapsed = currentTime - startingTime;
+        double distance = end - start;
         double max_acceleration = MAX_ACCELERATION;
         double max_velocity = MAX_VELOCITY;
 
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
-            return 0;
+            instantPos = end;
+            instantVel = 0;
+            instantAcl = 0;
+            return;
         }
+
         if (distance < 0) {
             max_acceleration *= -1;
             max_velocity *= -1;
@@ -70,57 +62,63 @@ public class MotionProfile {
 
         // check if we're still in the motion profile
         double entire_dt = acceleration_dt + cruise_dt + deceleration_dt;
-        if (elapsed_time > entire_dt) {
-            return distance;
+        profileTime = entire_dt; // + 5.0; // 5 seconds for arm to settle
+        if (timeElapsed > entire_dt) {
+            instantPos = end;
+            instantVel = 0;
+            instantAcl = 0;
+            return;
         }
 
         // if we're accelerating
-        if (elapsed_time < acceleration_dt) {
+        if (timeElapsed < acceleration_dt) {
             // use the kinematic equation for acceleration
-            return 0.5 * max_acceleration * Math.pow(elapsed_time, 2);
+            instantPos = 0.5 * max_acceleration * Math.pow(timeElapsed, 2);
+            instantPos += start;
+            instantVel = max_acceleration * timeElapsed;
+            instantAcl = max_acceleration;
+            return;
         }
 
         // if we're cruising
-        else if (elapsed_time < deceleration_time) {
+        else if (timeElapsed < deceleration_time) {
             acceleration_distance = 0.5 * max_acceleration * Math.pow(acceleration_dt, 2);
-            double cruise_current_dt = elapsed_time - acceleration_dt;
+            double cruise_current_dt = timeElapsed - acceleration_dt;
 
             // use the kinematic equation for constant velocity
-            return acceleration_distance + max_velocity * cruise_current_dt;
+            instantPos = acceleration_distance + max_velocity * cruise_current_dt;
+            instantPos += start;
+            instantVel = max_velocity;
+            instantAcl = 0;
+            return;
         }
 
         // if we're decelerating
         else {
             acceleration_distance = 0.5 * max_acceleration * Math.pow(acceleration_dt, 2);
             cruise_distance = max_velocity * cruise_dt;
-            deceleration_time = elapsed_time - deceleration_time;
+            deceleration_time = timeElapsed - deceleration_time;
 
             // use the kinematic equations to calculate the instantaneous desired position
-            return acceleration_distance + cruise_distance + max_velocity * deceleration_time - 0.5 * max_acceleration * Math.pow(deceleration_time, 2);
+            instantPos = acceleration_distance + cruise_distance + max_velocity * deceleration_time - 0.5 * max_acceleration * Math.pow(deceleration_time, 2);
+            instantPos += start;
+            instantVel = max_velocity - max_acceleration * (timeElapsed - deceleration_time);
+            instantAcl = -1.0 * max_acceleration;
+            return;
         }
     }
-
-    /**
-     * Returns current goal position based on
-     * @param start
-     * @param end
-     * @precondition call setTime() method before this
-     * @return
-     */
-    public double position(double start, double end) {
-        double distance = end - start;
-        double max_acceleration = MAX_ACCELERATION;
-        double max_velocity = MAX_VELOCITY;
-
-        if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
-            return 0;
-        }
-
-        return 0;
+    public void setStartingTime(double startingTime) {
+        this.startingTime = startingTime;
     }
 
-    public double velocity() {
-        return 0;
+    public double getInstantPosition() {
+        return instantPos;
+    }
+    public double getInstantVelocity() {
+        return instantVel;
+    }
+    public double getInstantAcceleration() {
+        return instantAcl;
     }
 
 }

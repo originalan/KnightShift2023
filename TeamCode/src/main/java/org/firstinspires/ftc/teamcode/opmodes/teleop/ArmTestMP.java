@@ -9,64 +9,62 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.util.BulkReading;
-import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.util.SuperController;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
+import org.firstinspires.ftc.teamcode.util.MotionProfile;
 
-/**
- * ArmTestPIDF is a test Teleop mode that is used to tune the movement of the Arm with a PIDF controller
- * Calibration can be changed live in FTC Dashboard
- */
 @Config
-@TeleOp (name = "Arm Test (everything but MP)", group = "Tuning")
-public class ArmTestPIDF extends LinearOpMode {
+@TeleOp (name = "Arm Test (Motion Profiling)", group = "Tuning")
+public class ArmTestMP extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
-    private SuperController superController;
-
+    private MotionProfile mp;
     private Gamepad currentGamepad1;
     private Gamepad previousGamepad1;
-
+    private boolean turnedOff = true;
     private boolean left = true, right = true;
-
-    private boolean turnedOff = false;
-    public static boolean feedforward_g = true, pid = false;
-    public static boolean feedforward_kvka = false, fullstate = false;
-    public static int targetPos = 100;
-    public static double targetVelocity = 0; // enocder ticks per second
-    public static double targetAcceleration = 0;
+    public static int targetPos = 500;
 
     private enum ArmTestState {
         CLOSED,
         INTAKING,
         DROP_POS,
-        NOTHING,
-        RESET
+        RESET,
+        NOTHING
     }
+
     private ArmTestState armTestState = ArmTestState.CLOSED;
 
     @Override
-    public void runOpMode() {
-
-        currentGamepad1 = new Gamepad();
-        previousGamepad1 = new Gamepad();
+    public void runOpMode() throws InterruptedException {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
-        superController = new SuperController();
+        mp = new MotionProfile();
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
+        telemetry.addLine("Use dpad down to set a new targetPos after changing it in dashboard");
+        telemetry.addLine("Use dpad up to change gain scheduling");
         telemetry.update();
 
+        double pos1 = 0;
+        double pos2 = 0;
+        double time1 = 0;
+        double time2 = 0;
+
         waitForStart();
+
+        runtime.reset();
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -76,13 +74,24 @@ public class ArmTestPIDF extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    turnedOff = !turnedOff;
-                }
-
                 armControls();
 
                 robot.update();
+
+                telemetry.addData("Target Position", targetPos);
+                telemetry.addData("Actual Position", BulkReading.pArmLeftMotor);
+                telemetry.addLine("===========================");
+
+                pos2 = pos1;
+                pos1 = BulkReading.pArmLeftMotor;
+                time2 = time1;
+                time1 = runtime.seconds();
+
+                telemetry.addData("Target Position (rn)", mp.getInstantPosition());
+                telemetry.addData("Target Velocity (rn)", "%.4f", mp.getInstantVelocity());
+
+                telemetry.addData("Actual Velocity (reading)", "%.4f", BulkReading.vArmLeftMotor);
+                telemetry.addData("Actual Velocity (calculation)", "%.4f", (pos2 - pos1) / (time2 - time1));
 
                 telemetry.update();
             }
@@ -105,6 +114,8 @@ public class ArmTestPIDF extends LinearOpMode {
 //                }
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
+                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
+                    robot.armSubsystem.setMotionProfileTest(targetPos);
                     armTestState = ArmTestState.DROP_POS;
                 }
 
@@ -126,12 +137,12 @@ public class ArmTestPIDF extends LinearOpMode {
                 break;
             case DROP_POS:
                 robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-                robot.armSubsystem.armState = Arm.ArmState.PIDF_TEST;
                 clawSidePieceControls(false);
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
+                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
+                    robot.armSubsystem.setMotionProfileTest(targetPos);
                     armTestState = ArmTestState.CLOSED;
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                 }
                 break;
             case RESET:

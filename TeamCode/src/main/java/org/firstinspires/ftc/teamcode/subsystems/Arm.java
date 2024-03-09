@@ -6,10 +6,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.teleop.ArmTestPIDF;
 import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
+import org.firstinspires.ftc.teamcode.util.MotionProfile;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
+import org.firstinspires.ftc.teamcode.util.SuperController;
 
 /**
  * DeliveryArm is a Subsystem representing all delivery arm hardware movement
@@ -21,16 +24,19 @@ public class Arm extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
     private PIDFControl pid;
+    private MotionProfile mp;
+    private SuperController superController;
 
     public double targetPower = 0; // used purely for GO_TO_POSITION arm state, PIDF test
     public int encoderGoalPosition = 0;
     public int goalDistance = 0;
     public ElapsedTime motionProfileTime = new ElapsedTime();
     public int armPositionMP = 0;
-    private double instantTargetPos = 0;
     public static double MAX_A = 250; // in encoder ticks / second^2
     public static double MAX_V = 250; // in encoder ticks / second
     private double maxVelocity = 0;
+    private int STARTING_POS = 0;
+    private int ENDING_POS = 0;
 
     public enum ArmState {
         BOTTOM_CLAW_UP,
@@ -40,8 +46,9 @@ public class Arm extends Subsystem {
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
         NOTHING,
-        PIVOT_SERVO_MOVE,
-        MOTION_PROFILE
+        MOTION_PROFILE,
+        MOTION_PROFILE_TEST,
+        PIDF_TEST
     }
 
     public enum PivotState {
@@ -59,6 +66,8 @@ public class Arm extends Subsystem {
         this.telemetry = telemetry;
         this.robot = robot;
         this.pid = new PIDFControl();
+        this.mp = new MotionProfile();
+        this.superController = new SuperController();
 
         noEncoders();
 
@@ -110,23 +119,53 @@ public class Arm extends Subsystem {
                 break;
             case NOTHING:
                 break;
-            case PIVOT_SERVO_MOVE:
-                // NEED TO WRITE CODE
-                // 1.0 is 180 degrees
-                // 1120 is for 360 degrees
-                // 1120 / 2 is for 180 degrees
-                // 1120/2 / 180.0 = x / 1.0
-                // solve for x, x + initial servo pos = arm pivot servo pos
-                setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + ( BulkReading.pArmLeftMotor / 1120.0 ) );
-                break;
             case MOTION_PROFILE:
                 noEncoders();
-                instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
+                double instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
                 double power = pid.calculatePID(instantTargetPos, BulkReading.pArmLeftMotor, false);
                 double ff = pid.calculateFeedforward(instantTargetPos, true);
                 setArmPower(power + ff);
                 break;
+            case MOTION_PROFILE_TEST:
+                mp.setProfile(STARTING_POS, ENDING_POS, motionProfileTime.seconds());
+                double refPos = mp.getInstantPosition();
+                double refVel = mp.getInstantVelocity();
+                double refAcl = mp.getInstantAcceleration();
+
+                double pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+//                double pidPower = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                double f_g = superController.positionalFeedforward(refPos);
+                double k_va = superController.kvkaFeedforward(refVel, refAcl);
+
+                double output = pidPower + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
+                setArmPower(output);
+                break;
+            case PIDF_TEST:
+                double pid = 0;
+                double fg = 0;
+                double kva = 0;
+                double fullstate = 0;
+
+                double t = ArmTestPIDF.targetPos;
+
+                if (ArmTestPIDF.feedforward_g) {
+                    fg = superController.positionalFeedforward(t);
+                }
+                if (ArmTestPIDF.fullstate) {
+                    fullstate = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                }
+                if (ArmTestPIDF.pid) {
+                    pid = superController.calculatePID(t, BulkReading.pArmLeftMotor);
+                }
+                if (ArmTestPIDF.feedforward_kvka) {
+                    kva = superController.kvkaFeedforward(ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration);
+                }
+
+                double a = pid + fg + kva + fullstate;
+                setArmPower(a);
+                break;
         }
+
         switch (pivotState) {
             case NOTHING:
                 break;
@@ -176,6 +215,14 @@ public class Arm extends Subsystem {
         armPositionMP = BulkReading.pArmLeftMotor;
         motionProfileTime.reset();
 
+    }
+    public void setMotionProfileTest(int targetPosition) {
+        noEncoders();
+        motionProfileTime.reset();
+        mp.setStartingTime(motionProfileTime.seconds());
+
+        STARTING_POS = BulkReading.pArmLeftMotor;
+        ENDING_POS = targetPosition;
     }
 
 }
