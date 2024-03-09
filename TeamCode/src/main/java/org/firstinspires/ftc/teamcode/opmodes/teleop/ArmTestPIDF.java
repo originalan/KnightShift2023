@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
@@ -23,6 +24,7 @@ public class ArmTestPIDF extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
     private PIDFControl pid;
     private boolean turnedOff = false;
     private boolean gainSchedule = false;
@@ -38,6 +40,7 @@ public class ArmTestPIDF extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
         pid = new PIDFControl();
 
         telemetry.addData("Status", "Initialized");
@@ -49,6 +52,8 @@ public class ArmTestPIDF extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
@@ -62,7 +67,7 @@ public class ArmTestPIDF extends LinearOpMode {
 
                 robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                int armPos = robot.armLeftMotor.getCurrentPosition();
+                int armPos = BulkReading.pArmLeftMotor;
 
                 double pidPower;
                 if (gainSchedule) {
@@ -91,14 +96,14 @@ public class ArmTestPIDF extends LinearOpMode {
 
                 robot.update();
 
-                if (Math.abs(robot.armLeftMotor.getVelocity()) > maxVelocity) {
-                    maxVelocity = robot.armLeftMotor.getVelocity();
+                if (Math.abs(BulkReading.vArmLeftMotor) > maxVelocity) {
+                    maxVelocity = BulkReading.vArmLeftMotor;
                 }
 
                 telemetry.addData("PID IS GAIN SCHEDULING?", gainSchedule);
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
-                telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
+                telemetry.addData("Arm actual velocity", BulkReading.vArmLeftMotor);
                 telemetry.addData("Arm calculated power", pidPower + ffPower);
                 telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
                 telemetry.addData("Max power", maxOutputPower);

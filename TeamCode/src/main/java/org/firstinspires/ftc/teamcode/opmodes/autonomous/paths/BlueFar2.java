@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
 
 @Autonomous (name = "BlueFar 1+0", group = "Testing")
 public class BlueFar2 extends AutoBase {

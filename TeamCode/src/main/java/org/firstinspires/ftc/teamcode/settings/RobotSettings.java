@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.settings;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -28,8 +28,8 @@ public class RobotSettings {
     /*
     =================CLAW SETTINGS==============
     */
-    public static final String CLAW_RIGHT_SERVO_NAME = "ClawPieceLeftServo";
-    public static final String CLAW_LEFT_SERVO_NAME = "ClawPieceRightServo"; // config names are flipped but variable names are accurate
+    public static final String CLAW_RIGHT_SERVO_NAME = "ClawPieceLeft";
+    public static final String CLAW_LEFT_SERVO_NAME = "ClawPieceRight"; // config names are flipped but variable names are accurate
     public static boolean CLAW_RIGHT_REVERSED = false;
     public static boolean CLAW_LEFT_REVERSED = true;
 
@@ -57,10 +57,10 @@ public class RobotSettings {
     public static final boolean RIGGING_LEFT_SERVO_REVERSED = true;
     public static final boolean RIGGING_RIGHT_SERVO_REVERSED = false;
     public static double RIGGING_MOTOR_SPEED = 1;
-    public static final double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT SERVOS ARE SWITCHED (by accident)
-    public static final double RIGGING_RIGHT_REST = 0;
-    public static final double RIGGING_LEFT_TOP = 0.97;
-    public static final double RIGGING_RIGHT_TOP = 0.89;
+    public static double RIGGING_LEFT_REST = 0.04; // LEFT AND RIGHT SERVOS ARE SWITCHED (by accident)
+    public static double RIGGING_RIGHT_REST = 0;
+    public static double RIGGING_LEFT_TOP = 0.97;
+    public static double RIGGING_RIGHT_TOP = 0.89;
     public static double RIGGING_RESET_MOTOR_SPEED = 0.2;
 
     /*

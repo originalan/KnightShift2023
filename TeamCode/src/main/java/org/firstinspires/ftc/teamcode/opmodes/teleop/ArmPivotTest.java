@@ -7,10 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.settings.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 
 @TeleOp (name = "Arm Pivot Test", group = "Testing")
@@ -18,6 +17,7 @@ public class ArmPivotTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
     private PIDFControl pid;
     private boolean move = false;
     public static int targetPosition = 100;
@@ -32,6 +32,7 @@ public class ArmPivotTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         pid = new PIDFControl();
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -45,6 +46,8 @@ public class ArmPivotTest extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
+                bulkReading.readAll();
+
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
@@ -52,44 +55,10 @@ public class ArmPivotTest extends LinearOpMode {
                     move = !move;
                 }
 
-                if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper) {
-                    servosOff = !servosOff;
-                }
-                if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
-                    servosOff = !servosOff;
-                }
-
-                if (servosOff) {
-                    robot.clawPivotRightServo.getController().pwmDisable();
-                    robot.clawPivotLeftServo.getController().pwmDisable();
-                }else {
-                    robot.clawPivotRightServo.getController().pwmEnable();
-                    robot.clawPivotLeftServo.getController().pwmEnable();
-                }
-
                 if (move) {
                     robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
                 }else {
                     robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-                }
-
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    turnedOff = !turnedOff;
-                }
-
-                robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
-                robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                int armPos = robot.armLeftMotor.getCurrentPosition();
-
-                double pidPower = pid.calculatePID(targetPosition, armPos, false);
-                double ffPower = pid.calculateFeedforward(armPos);
-
-                double power = pidPower + ffPower;
-
-                if (turnedOff) {
-                    robot.armSubsystem.targetPower = 0;
-                }else {
-                    robot.armSubsystem.targetPower = power;
                 }
 
                 robot.update();

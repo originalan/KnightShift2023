@@ -33,9 +33,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
-import org.firstinspires.ftc.teamcode.util.UseTelemetry;
+import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
  * Intake is a Subsystem representing all intake hardware movement

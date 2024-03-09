@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 /**
  * AirplaneLauncherTest is a test Teleop mode that is used purely to test the airplane launcher.
@@ -19,6 +19,7 @@ public class AirplaneLauncherTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
     private boolean launchPlane = false;
 
     @Override
@@ -29,6 +30,7 @@ public class AirplaneLauncherTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -39,6 +41,8 @@ public class AirplaneLauncherTest extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);

@@ -9,8 +9,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
-import org.firstinspires.ftc.teamcode.util.BulkReading;
+import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 
 @Autonomous (name = "BlueClose 2+0", group = "Testing")
 public class BlueClose1 extends AutoBase {

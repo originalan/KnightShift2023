@@ -15,7 +15,7 @@ public class PIDFControl {
     private Telemetry telemetry;
     private ElapsedTime timer = new ElapsedTime();
     private double integralSum = 0;
-    public static double Kp_fightingGravity = 0.055; // 0.07
+    public static double Kp_fightingGravity = 0.050; // 0.07
     public static double Ki_fightingGravity = 0; // 0.00065
     public static double Kd_fightingGravity = 0; // 0.0004
     public static double Kp_withGravity = 0.008; // 0.07
@@ -368,7 +368,6 @@ public class PIDFControl {
 
 
     public double calculateFeedforward(double target, boolean gainSchedule) {
-
         if (target <= 0) {
             target = 1;
         }

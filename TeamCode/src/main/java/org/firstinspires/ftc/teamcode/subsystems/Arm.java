@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.util.UseTelemetry;
+import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
  * DeliveryArm is a Subsystem representing all delivery arm hardware movement
@@ -28,7 +28,7 @@ public class Arm extends Subsystem {
     public ElapsedTime motionProfileTime = new ElapsedTime();
     public int armPositionMP = 0;
     private double instantTargetPos = 0;
-    public static double MAX_A = 175; // in encoder ticks / second^2
+    public static double MAX_A = 250; // in encoder ticks / second^2
     public static double MAX_V = 250; // in encoder ticks / second
     private double maxVelocity = 0;
 

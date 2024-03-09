@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
-import org.firstinspires.ftc.teamcode.util.UseTelemetry;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
+import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
  * Rigging is a Subsystem representing all rigging/hanging hardware movement
@@ -22,7 +22,7 @@ public class Rigging extends Subsystem {
         NOTHING
     }
 
-    public RiggingState riggingState = RiggingState.NO_RIG;
+    public RiggingState riggingState = RiggingState.NOTHING;
 
     public Rigging(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;

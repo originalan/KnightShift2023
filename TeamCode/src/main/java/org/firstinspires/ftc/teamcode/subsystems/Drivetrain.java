@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.util.PoseStorage;
-import org.firstinspires.ftc.teamcode.util.UseTelemetry;
+import org.firstinspires.ftc.teamcode.settings.PoseStorage;
+import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
  * Drivetrain is a Subsystem representing all drivetrain hardware movement

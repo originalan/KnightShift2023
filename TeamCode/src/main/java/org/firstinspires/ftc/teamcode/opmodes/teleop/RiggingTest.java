@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 /**
  * AirplaneLauncherTest is a test Teleop mode that is used purely to test the airplane launcher.
@@ -18,6 +19,7 @@ public class RiggingTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
     private boolean isRigging = false;
     private boolean rigStringMove = false;
     private double rigTime = 0;
@@ -30,6 +32,7 @@ public class RiggingTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -40,6 +43,8 @@ public class RiggingTest extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);

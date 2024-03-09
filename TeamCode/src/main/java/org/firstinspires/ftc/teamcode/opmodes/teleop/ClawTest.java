@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.ArmSettings;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 
 /**
  * IntakeTest is a test Teleop mode that is used to test the speed of the intake
@@ -21,6 +22,7 @@ public class ClawTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
 
     private boolean left = false;
     private boolean right = false;
@@ -33,6 +35,7 @@ public class ClawTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -44,6 +47,8 @@ public class ClawTest extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
+                bulkReading.readAll();
+
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
@@ -54,24 +59,24 @@ public class ClawTest extends LinearOpMode {
                     right = !right;
                 }
 
-                if (right) {
-                    robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_CLOSE);
-                }else {
-                    robot.clawRightServo.setPosition(ArmSettings.CLAW_RIGHT_OPEN);
+                if (left && right) {
+                    robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 }
-
-                if (left) {
-                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_CLOSE);
-                }else {
-                    robot.clawLeftServo.setPosition(ArmSettings.CLAW_LEFT_OPEN);
+                if (left && !right) {
+                    robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
+                }
+                if (right && !left) {
+                    robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
+                }
+                if (!right && !left) {
+                    robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;
                 }
 
 
 //                robot.update();
 
-                telemetry.addData("Left Servo Pos", robot.clawRightServo.getPosition());
-                telemetry.addData("Right Servo Pos", robot.clawLeftServo.getPosition());
-
+                robot.clawSubsystem.addTelemetry();
+                robot.clawSubsystem.update();
                 telemetry.update();
             }
         }

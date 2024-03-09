@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
@@ -23,6 +24,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
+    private BulkReading bulkReading;
     private PIDFControl pid;
     private boolean turnedOff = false;
     private boolean gainScheduling = false;
@@ -40,6 +42,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        bulkReading = new BulkReading(robot, telemetry, hardwareMap);
         pid = new PIDFControl();
 
         telemetry.addData("Status", "Initialized");
@@ -52,14 +55,16 @@ public class ArmTestMotionProfile extends LinearOpMode {
         waitForStart();
 
         runtime.reset();
-        double instantTargetPos = robot.armLeftMotor.getCurrentPosition();
+        double instantTargetPos = BulkReading.pArmLeftMotor;
         double goalDistance = 0;
-        int armPosMP = robot.armLeftMotor.getCurrentPosition();
+        int armPosMP = BulkReading.pArmLeftMotor;
 
         robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+
+                bulkReading.readAll();
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
@@ -73,7 +78,7 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
                 robot.armSubsystem.armState = Arm.ArmState.GO_TO_POSITION;
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                int armPos = robot.armLeftMotor.getCurrentPosition();
+                int armPos = BulkReading.pArmLeftMotor;
 
                 // USE DPAD DOWN TO SET A NEW TARGET POS
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
@@ -111,14 +116,14 @@ public class ArmTestMotionProfile extends LinearOpMode {
 
                 robot.update();
 
-                if (Math.abs(robot.armLeftMotor.getVelocity()) > maxVelocity) {
-                    maxVelocity = robot.armLeftMotor.getVelocity();
+                if (Math.abs(BulkReading.vArmLeftMotor) > maxVelocity) {
+                    maxVelocity = BulkReading.vArmLeftMotor;
                 }
 
                 telemetry.addData("PID IS GAIN SCHEDULING?", gainScheduling);
                 telemetry.addData("Target Position", targetPos);
                 telemetry.addData("Arm actual position", armPos);
-                telemetry.addData("Arm actual velocity", robot.armLeftMotor.getVelocity());
+                telemetry.addData("Arm actual velocity", BulkReading.vArmLeftMotor);
                 telemetry.addData("Arm calculated power", pidPower);
                 telemetry.addData("Arm initial encoder position", JVBoysSoccerRobot.initialArmPosition);
                 telemetry.addData("Max power", maxOutputPower);

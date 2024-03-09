@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
-import org.firstinspires.ftc.teamcode.util.UseTelemetry;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
+import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
  * AirplaneLauncher is a Subsystem representing all airplane launcher hardware movement

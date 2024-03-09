@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 @Disabled
 @TeleOp(name = "Reset Everything", group = "Testing")

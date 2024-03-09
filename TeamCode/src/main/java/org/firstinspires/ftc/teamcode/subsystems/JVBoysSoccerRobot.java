@@ -10,9 +10,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
-import org.firstinspires.ftc.teamcode.util.RobotSettings;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -174,6 +173,8 @@ public class JVBoysSoccerRobot {
     }
     
     public void initClawHardware() {
+        clawRightServo = hwMap.servo.get(RobotSettings.CLAW_RIGHT_SERVO_NAME);
+        clawLeftServo = hwMap.servo.get(RobotSettings.CLAW_LEFT_SERVO_NAME);
         clawRightServo = hwMap.servo.get(RobotSettings.CLAW_RIGHT_SERVO_NAME);
         clawLeftServo = hwMap.servo.get(RobotSettings.CLAW_LEFT_SERVO_NAME);
 
