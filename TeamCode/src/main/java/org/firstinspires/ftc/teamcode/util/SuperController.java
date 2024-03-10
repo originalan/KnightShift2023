@@ -26,7 +26,8 @@ public class SuperController {
     public static double Kg = 0.102;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
-    public static double Kp = 0, Kv = 0, Ka = 0;
+    public static double FS_Kp = 0, FS_Kv = 0, FS_Ka = 0;
+    public static double FS_Kp_g = 0;
 
     public SuperController() {
         initGainScheduling();
@@ -109,7 +110,7 @@ public class SuperController {
 
         double positionError = targetPosition - robotPosition;
         double velocityError = targetVelocity - robotVelocity;
-        double u = (positionError * Kp) + (velocityError * Kv);
+        double u = (positionError * FS_Kp) + (velocityError * FS_Kv);
         return u;
 
     }
@@ -123,7 +124,56 @@ public class SuperController {
 
         lastVelocity = robotVelocity;
         elapsedTime2.reset();
-        double u = (positionError * Kp) + (velocityError * Kv) + (accelerationError * Ka);
+        double u = (positionError * FS_Kp) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
+        return u;
+
+    }
+
+    public double fullstateCalculateGravity(double targetPosition, double targetVelocity, double robotPosition, double robotVelocity) {
+
+        double positionError = targetPosition - robotPosition;
+        double velocityError = targetVelocity - robotVelocity;
+
+        boolean fightingGravity;
+        if (positionError > 0) {
+            fightingGravity = targetPosition <= 375;
+        }else {
+            fightingGravity = !(targetPosition <= 375);
+        }
+
+        double p = FS_Kp;
+        if (fightingGravity) {
+            p = FS_Kp_g;
+        }
+
+        double u = (positionError * p) + (velocityError * FS_Kv);
+        return u;
+
+    }
+
+    public double fullstateCalculateGravity(double targetPosition, double targetVelocity, double targetAcceleration, double robotPosition, double robotVelocity) {
+
+        double positionError = targetPosition - robotPosition;
+        double velocityError = targetVelocity - robotVelocity;
+        double r = (robotVelocity - lastVelocity) / elapsedTime2.seconds(); // current robot acceleration
+        double accelerationError = targetAcceleration - r;
+
+        lastVelocity = robotVelocity;
+        elapsedTime2.reset();
+
+        boolean fightingGravity;
+        if (positionError > 0) {
+            fightingGravity = targetPosition <= 375;
+        }else {
+            fightingGravity = !(targetPosition <= 375);
+        }
+
+        double p = FS_Kp;
+        if (fightingGravity) {
+            p = FS_Kp_g;
+        }
+
+        double u = (positionError * p) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
         return u;
 
     }

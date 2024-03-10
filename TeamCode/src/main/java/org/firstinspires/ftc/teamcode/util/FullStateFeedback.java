@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *  It is essentially a proportional derivative controller but you can control multiple states compared to PIDF only controlling one
  *  Unlike PIDF, the target values such as velocity do not necessarily have to be zero, allowing for more robust control and possible implementations of motion profiles
  */
-@Config
 public class FullStateFeedback {
 
     private Telemetry telemetry;
