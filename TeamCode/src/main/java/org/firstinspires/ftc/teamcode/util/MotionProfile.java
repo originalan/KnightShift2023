@@ -10,6 +10,7 @@ public class MotionProfile {
 
     public static int MAX_VELOCITY = 250; // enocder ticks per second
     public static int MAX_ACCELERATION = 175; // encoder ticks per second
+    public static int MAX_JERK = 0;
 
     private double acceleration_dt, distance, halfway_distance, max_acceleration,
             max_velocity, acceleration_distance, deceleration_dt,

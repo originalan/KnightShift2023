@@ -33,8 +33,6 @@ public class ArmTestPIDF extends LinearOpMode {
     private Gamepad previousGamepad1;
 
     private boolean left = true, right = true;
-
-    private boolean turnedOff = false;
     public static boolean feedforward_g = true, pid = false;
     public static boolean feedforward_kvka = false, fullstate = false;
     public static int targetPos = 100;
@@ -76,10 +74,6 @@ public class ArmTestPIDF extends LinearOpMode {
 
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
-
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    turnedOff = !turnedOff;
-                }
 
                 armControls();
 

@@ -133,18 +133,20 @@ public class Arm extends Subsystem {
                 double refAcl = mp.getInstantAcceleration();
 
                 double pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
-//                double pidPower = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                double fullstate = 0;
+//                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 double f_g = superController.positionalFeedforward(refPos);
                 double k_va = superController.kvkaFeedforward(refVel, refAcl);
 
-                double output = pidPower + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
+                double output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
                 setArmPower(output);
                 break;
             case PIDF_TEST:
                 double pid = 0;
                 double fg = 0;
                 double kva = 0;
-                double fullstate = 0;
+                double full_state = 0;
 
                 double t = ArmTestPIDF.targetPos;
 
@@ -152,7 +154,8 @@ public class Arm extends Subsystem {
                     fg = superController.positionalFeedforward(t);
                 }
                 if (ArmTestPIDF.fullstate) {
-                    fullstate = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                    full_state = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                    full_state = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 }
                 if (ArmTestPIDF.pid) {
                     pid = superController.calculatePID(t, BulkReading.pArmLeftMotor);
@@ -161,7 +164,7 @@ public class Arm extends Subsystem {
                     kva = superController.kvkaFeedforward(ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration);
                 }
 
-                double a = pid + fg + kva + fullstate;
+                double a = pid + fg + kva + full_state;
                 setArmPower(a);
                 break;
         }
