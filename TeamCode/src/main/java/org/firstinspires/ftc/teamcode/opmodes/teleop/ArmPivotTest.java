@@ -37,8 +37,6 @@ public class ArmPivotTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Use dpad down to move pivot claw (left)");
-        telemetry.addLine("Press X to move the actual arm to 'targetPosition'");
-        telemetry.addLine("Press left or right bumper to release/activate servo tension");
         telemetry.update();
 
         waitForStart();

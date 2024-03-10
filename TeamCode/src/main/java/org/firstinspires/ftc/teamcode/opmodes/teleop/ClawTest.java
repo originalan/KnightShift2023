@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.util.BulkReading;
  * IntakeTest is a test Teleop mode that is used to test the speed of the intake
  * Calibration can be changed live in FTC Dashboard
  */
-@Config
 @TeleOp (name = "Claw Test", group = "Testing")
 public class ClawTest extends LinearOpMode {
 

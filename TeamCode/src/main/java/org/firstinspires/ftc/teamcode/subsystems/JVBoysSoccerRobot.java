@@ -40,22 +40,13 @@ public class JVBoysSoccerRobot {
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DistanceSensor dSensorLeft, dSensorRight;
-    
-    public Servo launcherFireServo;
-    public Servo launcherAdjustServo;
-    
-    public DcMotorEx armLeftMotor;
-    public DcMotorEx armRightMotor;
-    
-    public Servo rigLeftServo; // These are flipped on the actual robot
-    public Servo rigRightServo;
-    public DcMotorEx rigLeftMotor;
-    public DcMotorEx rigRightMotor;
-    
-    public Servo clawRightServo;
-    public Servo clawLeftServo;
-    public Servo clawPivotLeftServo;
-    public Servo clawPivotRightServo;
+    public Servo launcherFireServo, launcherAdjustServo;
+    public DcMotorEx armLeftMotor, armRightMotor;
+    public Servo rigLeftServo, rigRightServo; // These are flipped on the actual robot
+    public DcMotorEx rigLeftMotor, rigRightMotor;
+    public Servo clawRightServo, clawLeftServo;
+    public Servo clawPivotLeftServo, clawPivotRightServo;
+    public DistanceSensor clawDRight, clawDLeft;
 
     // Alliance Type
     public enum AllianceType {
@@ -180,6 +171,9 @@ public class JVBoysSoccerRobot {
 
         clawRightServo.setDirection(RobotSettings.CLAW_RIGHT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
         clawLeftServo.setDirection(RobotSettings.CLAW_LEFT_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+
+        clawDRight = hwMap.get(DistanceSensor.class, RobotSettings.CLAW_DSENSOR_RIGHT);
+        clawDLeft = hwMap.get(DistanceSensor.class, RobotSettings.CLAW_DSENSOR_LEFT);
     }
     
     public void initArmHardware() {

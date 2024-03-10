@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.purepursuit;
 
 import static org.firstinspires.ftc.teamcode.purepursuit.RobotMovement.followCurve;
 

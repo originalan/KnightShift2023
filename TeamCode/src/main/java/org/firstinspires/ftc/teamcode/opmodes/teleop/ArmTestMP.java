@@ -53,8 +53,7 @@ public class ArmTestMP extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
-        telemetry.addLine("Use dpad down to set a new targetPos after changing it in dashboard");
-        telemetry.addLine("Use dpad up to change gain scheduling");
+        telemetry.addLine("Same controls as TwoDriver for arm");
         telemetry.update();
 
         double pos1 = 0;

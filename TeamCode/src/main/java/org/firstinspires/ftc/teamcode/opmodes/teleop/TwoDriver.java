@@ -43,8 +43,9 @@ public class TwoDriver extends LinearOpMode {
 
     private boolean left = true, right = true;
 
-    public enum IntakeControlsState {
+    private enum IntakeControlsState {
         INTAKING, // claw on the floor and open for pixels
+        INTAKING_AUTO,
         CLOSED, // claw up and closed, holding pixels
         DROP_POS_1, // first level of pixels
         DROP_POS_2, // third level of pixels
@@ -53,15 +54,15 @@ public class TwoDriver extends LinearOpMode {
         RESET, // reset arm encoder and brings claw to closed position
         NOTHING, // idk yet
     }
-    public enum RiggingControlsState {
+    private enum RiggingControlsState {
         DOWN_WAIT,
         DOWN,
         UP,
         HANGING,
         NOTHING
     }
-    public IntakeControlsState intakeState = IntakeControlsState.CLOSED;
-    public RiggingControlsState hangState = RiggingControlsState.DOWN;
+    private IntakeControlsState intakeState = IntakeControlsState.CLOSED;
+    private RiggingControlsState hangState = RiggingControlsState.DOWN;
 
     @Override
     public void runOpMode() {
@@ -485,6 +486,23 @@ public class TwoDriver extends LinearOpMode {
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                     intakeState = IntakeControlsState.CLOSED;
+                }
+                if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                    intakeState = IntakeControlsState.INTAKING_AUTO;
+                }
+                break;
+            case INTAKING_AUTO:
+                robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+                robot.clawSubsystem.clawState = Claw.ClawState.AUTO_DETECT;
+
+                if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                    intakeState = IntakeControlsState.CLOSED;
+                }
+                if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                    intakeState = IntakeControlsState.INTAKING;
                 }
                 break;
             case DROP_POS_1:

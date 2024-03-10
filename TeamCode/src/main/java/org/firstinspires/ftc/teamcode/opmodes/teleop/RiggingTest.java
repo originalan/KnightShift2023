@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
+import org.firstinspires.ftc.teamcode.subsystems.Rigging;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
@@ -20,9 +21,16 @@ public class RiggingTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
-    private boolean isRigging = false;
-    private boolean rigStringMove = false;
-    private double rigTime = 0;
+    private double rigWaitTime = 0;
+
+    private enum RiggingControlsState {
+        DOWN_WAIT,
+        DOWN,
+        UP,
+        HANGING,
+        NOTHING
+    }
+    private RiggingControlsState hangState = RiggingControlsState.DOWN;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -59,48 +67,65 @@ public class RiggingTest extends LinearOpMode {
 //                    robot.riggingSubsystem.noHang();
 //                }
 
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    isRigging = !isRigging;
-                    rigTime = runtime.seconds();
-                }
-
-                if (!rigStringMove && isRigging) {
-                    robot.riggingSubsystem.hang();
-                    robot.rigRightServo.getController().pwmEnable();
-                    robot.rigLeftServo.getController().pwmEnable();
-                }else if (!isRigging) {
-                    if (runtime.seconds() - rigTime < 1.5) {
-                        robot.rigRightServo.getController().pwmEnable();
-                        robot.rigLeftServo.getController().pwmEnable();
-                        robot.riggingSubsystem.noHang();
-                    }else {
+                switch (hangState) {
+                    case UP:
+                        robot.riggingSubsystem.riggingState = Rigging.RiggingState.RIG;
+                        if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
+                            hangState = RiggingControlsState.HANGING;
+                        }
+                        if (currentGamepad1.x && !previousGamepad1.x) {
+                            rigWaitTime = runtime.seconds();
+                            robot.rigRightServo.getController().pwmEnable();
+                            robot.rigLeftServo.getController().pwmEnable();
+                            hangState = RiggingControlsState.DOWN_WAIT;
+                        }
+                        break;
+                    case DOWN:
+                        robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
                         robot.rigRightServo.getController().pwmDisable();
                         robot.rigLeftServo.getController().pwmDisable();
-                    }
-                }
-                if (isRigging && rigStringMove) {
-                    robot.rigRightServo.getController().pwmDisable();
-                    robot.rigLeftServo.getController().pwmDisable();
-                }
-
-                // If arms are up and motor power buttons are pressed...
-                if (isRigging && (currentGamepad1.left_bumper || currentGamepad1.right_bumper)) {
-                    rigStringMove = true;
-                    robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                }else {
-                    robot.rigRightMotor.setPower(0);
-                    robot.rigLeftMotor.setPower(0);
+                        if (currentGamepad1.x && !previousGamepad1.x) {
+                            robot.rigRightServo.getController().pwmEnable();
+                            robot.rigLeftServo.getController().pwmEnable();
+                            hangState = RiggingControlsState.UP;
+                        }
+                        break;
+                    case DOWN_WAIT:
+                        robot.riggingSubsystem.riggingState = Rigging.RiggingState.NO_RIG;
+                        if (runtime.seconds() - rigWaitTime > 1.0) {
+                            hangState = RiggingControlsState.DOWN;
+                        }
+                        break;
+                    case HANGING:
+                        robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
+                        robot.rigRightServo.getController().pwmDisable();
+                        robot.rigLeftServo.getController().pwmDisable();
+                        if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
+                            robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                            robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                        }else {
+                            robot.rigRightMotor.setPower(0);
+                            robot.rigLeftMotor.setPower(0);
+                        }
+                        if (currentGamepad1.x && !previousGamepad1.x) {
+                            rigWaitTime = runtime.seconds();
+                            robot.rigRightServo.getController().pwmEnable();
+                            robot.rigLeftServo.getController().pwmEnable();
+                            hangState = RiggingControlsState.DOWN_WAIT;
+                        }
+                        break;
+                    case NOTHING:
+                        break;
                 }
 
                 if (currentGamepad1.dpad_left) {
-                    robot.rigLeftMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigLeftMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED * 0.5);
                 }else {
                     robot.rigLeftMotor.setPower(0);
                 }
 
                 if (currentGamepad1.dpad_right) {
-                    robot.rigRightMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.rigRightMotor.setPower(-1.0 * RobotSettings.RIGGING_MOTOR_SPEED * 0.5);
                 }else {
                     robot.rigRightMotor.setPower(0);
                 }

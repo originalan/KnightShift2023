@@ -64,6 +64,7 @@ public class ArmTestPIDF extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
+        telemetry.addLine("Same controls as TwoDriver for arm");
         telemetry.update();
 
         waitForStart();

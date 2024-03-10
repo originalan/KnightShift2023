@@ -59,6 +59,8 @@ public class ArmTestBackForth extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
+        telemetry.addLine("Back and forth arm movement opmode for tuning");
+        telemetry.addLine("Press X, then dpad down to activate, then x again to turn off");
         telemetry.update();
 
         double pos1 = 0;

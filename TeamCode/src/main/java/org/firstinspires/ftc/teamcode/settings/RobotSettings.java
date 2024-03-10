@@ -32,6 +32,10 @@ public class RobotSettings {
     public static final String CLAW_LEFT_SERVO_NAME = "ClawPieceRight"; // config names are flipped but variable names are accurate
     public static boolean CLAW_RIGHT_REVERSED = false;
     public static boolean CLAW_LEFT_REVERSED = true;
+    public static final String CLAW_DSENSOR_LEFT = "ClawDLeft";
+    public static final String CLAW_DSENSOR_RIGHT = "ClawDRight";
+    public static double CLAW_LEFT_THRESHOLD = 1.5;
+    public static double CLAW_RIGHT_THRESHOLD = 1.5;
 
     /*
     ================= ARM SETTINGS==============
