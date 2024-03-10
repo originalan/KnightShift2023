@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TwoDriver;
 import org.firstinspires.ftc.teamcode.settings.PoseStorage;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
@@ -96,11 +97,11 @@ public class Drivetrain extends Subsystem {
 
         lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        if (orientPerpendicular) {
-            if (Math.abs(lastAngle.firstAngle - 90) % 180 <= 1) { // if within 1 angle of perpendicular...
-                r = 0; // don't rotate
-            }
-        }
+//        if (orientPerpendicular) {
+//            if (Math.abs(lastAngle.firstAngle - 90) % 180 <= 1) { // if within 1 angle of perpendicular...
+//                r = 0; // don't rotate
+//            }
+//        }
 
         power = 0;
         theta = 0;
@@ -111,13 +112,26 @@ public class Drivetrain extends Subsystem {
         if (isFieldOriented) {
             lastAngle = robot.imu2.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double zeroedYaw = (-1 * initYaw) + lastAngle.firstAngle;
-            double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees
+            double thetaGamepad = Math.atan2(y, x) * 180 / Math.PI; // Angle of gamepad in degrees, -180 to 180 degrees
             theta = (360 - zeroedYaw) + thetaGamepad; // Real theta that robot must travel in degrees
             theta = theta * Math.PI / 180; // convert to radians
             power = Math.hypot(x, y);
         }else {
             power = Math.hypot(x, y);
             theta = Math.atan2(y, x); // -pi to pi
+        }
+
+        if (TwoDriver.orientHelp) {
+
+            double newTheta = Math.toDegrees(theta);
+            newTheta %= 360;
+            double ref = newTheta % 90;
+            if (ref > 45) {
+                theta = Math.toRadians( newTheta + (90 - ref) );
+            }else {
+                theta = Math.toRadians( newTheta - ref );
+            }
+
         }
 
         sin = Math.sin(theta - (Math.PI / 4));

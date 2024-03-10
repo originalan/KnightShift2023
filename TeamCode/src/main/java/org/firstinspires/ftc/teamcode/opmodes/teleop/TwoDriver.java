@@ -41,7 +41,8 @@ public class TwoDriver extends LinearOpMode {
 
     private boolean switchDriveControls = false;
 
-    private boolean left = true, right = true;
+    public static boolean leftClosed = true, rightClosed = true;
+    public static boolean orientHelp = false;
 
     private enum IntakeControlsState {
         INTAKING, // claw on the floor and open for pixels
@@ -79,13 +80,14 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Make sure both gamepads are connected");
         telemetry.addLine("Gamepad2: x, y, a, b = arm preset positions");
-        telemetry.addLine("    right/left triggers = reset arm encoder");
-        telemetry.addLine("    right/left bumpers = open / close claw");
-        telemetry.addLine("    right/left dpads = pivot up, pivot ground");
-        telemetry.addLine("    dpad down = auto orient pivot claw");
-        telemetry.addLine("    dpad up to switch field-oriented drive to robot-oriented drive");
+        telemetry.addLine("    right/left bumper in closed state = reset arm encoder");
+        telemetry.addLine("    right/left bumpers elsewhere = open / close claw");
+        telemetry.addLine("    dpad down = intake auto (using dsensors)");
+        telemetry.addLine("    dpad up = intake manual");
         telemetry.addLine("Gamepad1: drivetrain movement using joysticks");
         telemetry.addLine("    x to rig, left/right bumpers to move string");
+        telemetry.addLine("    b to switch field-oriented drive to robot-oriented drive");
+        telemetry.addLine("    a to help move straight");
         telemetry.addLine("    dpad down to fire airplane");
         telemetry.addLine("    dpad up to reset yaw for field-oriented drive");
         telemetry.addLine("    left/right triggers to slow down drivetrain by factor of 3.0");
@@ -172,6 +174,10 @@ public class TwoDriver extends LinearOpMode {
             switchDriveControls = !switchDriveControls;
         }
 
+        if (currentGamepad1.a && !previousGamepad1.a) {
+            orientHelp = !orientHelp;
+        }
+
 //        if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
 //            robot.drivetrainSubsystem.dSensorCheck();
 //        }
@@ -253,6 +259,7 @@ public class TwoDriver extends LinearOpMode {
                 break;
             case HANGING:
                 robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
+                intakeState = IntakeControlsState.CLOSED;
                 robot.rigRightServo.getController().pwmDisable();
                 robot.rigLeftServo.getController().pwmDisable();
                 if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
@@ -403,30 +410,30 @@ public class TwoDriver extends LinearOpMode {
     public void clawSidePieceControls(boolean reversed) {
         if (reversed) {
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
-                right = !right;
+                rightClosed = !rightClosed;
             }
             if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
-                left = !left;
+                leftClosed = !leftClosed;
             }
         }else {
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
-                left = !left;
+                leftClosed = !leftClosed;
             }
             if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
-                right = !right;
+                rightClosed = !rightClosed;
             }
         }
 
-        if (left && right) {
+        if (leftClosed && rightClosed) {
             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
         }
-        if (left && !right) {
+        if (leftClosed && !rightClosed) {
             robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
         }
-        if (right && !left) {
+        if (rightClosed && !leftClosed) {
             robot.clawSubsystem.clawState = Claw.ClawState.RIGHT_CLAW_OPEN;
         }
-        if (!right && !left) {
+        if (!rightClosed && !leftClosed) {
             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;
         }
     }
@@ -472,10 +479,16 @@ public class TwoDriver extends LinearOpMode {
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up /*  && withinRange(BulkReading.pArmLeftMotor, -5, 5) */ ) {
-                    left = false; // left claw open
-                    right = false; // right claw open
+                    leftClosed = false; // left claw open
+                    rightClosed = false; // right claw open
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                     intakeState = IntakeControlsState.INTAKING;
+                }
+                if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down /*  && withinRange(BulkReading.pArmLeftMotor, -5, 5) */ ) {
+                    leftClosed = false; // left claw open
+                    rightClosed = false; // right claw open
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                    intakeState = IntakeControlsState.INTAKING_AUTO;
                 }
                 break;
             case INTAKING:
@@ -497,11 +510,11 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    intakeState = IntakeControlsState.CLOSED;
+                    intakeState = IntakeControlsState.INTAKING;
                 }
                 if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    intakeState = IntakeControlsState.INTAKING;
+                    intakeState = IntakeControlsState.CLOSED;
                 }
                 break;
             case DROP_POS_1:

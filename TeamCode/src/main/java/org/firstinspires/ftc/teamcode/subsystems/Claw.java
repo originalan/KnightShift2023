@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TwoDriver;
 import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
@@ -101,14 +102,18 @@ public class Claw extends Subsystem {
 
         if (left < RobotSettings.CLAW_LEFT_THRESHOLD) {
             closeClawLeft();
+            TwoDriver.leftClosed = true;
         }else {
             openClawLeft();
+            TwoDriver.leftClosed = false;
         }
 
         if (right < RobotSettings.CLAW_RIGHT_THRESHOLD) {
             closeClawRight();
+            TwoDriver.rightClosed = true;
         }else {
             openClawRight();
+            TwoDriver.rightClosed = false;
         }
     }
 
