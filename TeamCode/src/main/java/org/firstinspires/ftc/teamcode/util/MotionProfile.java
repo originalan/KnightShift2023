@@ -11,24 +11,34 @@ public class MotionProfile {
     public static int MAX_VELOCITY = 250; // enocder ticks per second
     public static int MAX_ACCELERATION = 175; // encoder ticks per second
 
+    private double acceleration_dt, distance, halfway_distance, max_acceleration,
+            max_velocity, acceleration_distance, deceleration_dt,
+            cruise_distance, cruise_dt, deceleration_time, entire_dt,
+            start, end;
+
     private double instantPos = 0;
     private double instantVel = 0;
     private double instantAcl = 0;
+    private boolean isBusy = false;
 
-    public double profileTime = 100; // seconds
+//    public double profileTime = 100; // seconds
 
     public MotionProfile() { }
-    public void setProfile(double start, double end, double currentTime) {
-        double timeElapsed = currentTime - startingTime;
-        double distance = end - start;
-        double max_acceleration = MAX_ACCELERATION;
-        double max_velocity = MAX_VELOCITY;
+    public void setProfile(double start, double end) {
+        isBusy = true;
+
+        this.start = start;
+        this.end = end;
+        distance = end - start;
+        max_acceleration = MAX_ACCELERATION;
+        max_velocity = MAX_VELOCITY;
 
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
+            isBusy = false;
             instantPos = end;
             instantVel = 0;
             instantAcl = 0;
-            return;
+//            return;
         }
 
         if (distance < 0) {
@@ -37,11 +47,11 @@ public class MotionProfile {
         }
 
         // Calculate the time it takes to accelerate to max velocity
-        double acceleration_dt = max_velocity / max_acceleration;
+        acceleration_dt = max_velocity / max_acceleration;
 
         // If we can't accelerate to max velocity in the given distance, we'll accelerate as much as possible
-        double halfway_distance = distance / 2;
-        double acceleration_distance = 0.5 * max_acceleration * Math.pow(acceleration_dt, 2);
+        halfway_distance = distance / 2;
+        acceleration_distance = 0.5 * max_acceleration * Math.pow(acceleration_dt, 2);
 
         if (Math.abs(acceleration_distance) > Math.abs(halfway_distance)) {
             acceleration_dt = Math.sqrt(halfway_distance / (0.5 * max_acceleration));
@@ -53,17 +63,35 @@ public class MotionProfile {
         max_velocity = max_acceleration * acceleration_dt;
 
         // we decelerate at the same rate as we accelerate
-        double deceleration_dt = acceleration_dt;
+        deceleration_dt = acceleration_dt;
 
         // calculate the time that we're at max velocity
-        double cruise_distance = distance - 2 * acceleration_distance;
-        double cruise_dt = cruise_distance / max_velocity;
-        double deceleration_time = acceleration_dt + cruise_dt;
+        cruise_distance = distance - 2 * acceleration_distance;
+        cruise_dt = cruise_distance / max_velocity;
+        deceleration_time = acceleration_dt + cruise_dt;
 
         // check if we're still in the motion profile
-        double entire_dt = acceleration_dt + cruise_dt + deceleration_dt;
-        profileTime = entire_dt; // + 5.0; // 5 seconds for arm to settle
+        entire_dt = acceleration_dt + cruise_dt + deceleration_dt;
+
+        // for back and forth test opmode
+//        profileTime = entire_dt;
+    }
+
+    public void updateState(double currentTime) {
+        isBusy = true;
+        double timeElapsed = currentTime - startingTime;
+
+        if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
+            isBusy = false;
+            instantPos = end;
+            instantVel = 0;
+            instantAcl = 0;
+            return;
+        }
+
+        // if motion profile is done
         if (timeElapsed > entire_dt) {
+            isBusy = false;
             instantPos = end;
             instantVel = 0;
             instantAcl = 0;
@@ -120,5 +148,7 @@ public class MotionProfile {
     public double getInstantAcceleration() {
         return instantAcl;
     }
-
+    public boolean isBusy() {
+        return isBusy;
+    }
 }

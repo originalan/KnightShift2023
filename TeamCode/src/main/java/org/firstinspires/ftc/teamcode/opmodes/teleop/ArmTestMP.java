@@ -119,7 +119,7 @@ public class ArmTestMP extends LinearOpMode {
                     armTestState = ArmTestState.DROP_POS;
                 }
 
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up /*  && withinRange(BulkReading.pArmLeftMotor, -5, 5) */ ) {
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up && !mp.isBusy() ) {
                     left = false; // left claw open
                     right = false; // right claw open
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
@@ -139,9 +139,9 @@ public class ArmTestMP extends LinearOpMode {
                 robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 clawSidePieceControls(false);
 
-                if (currentGamepad1.x && !previousGamepad1.x) {
+                if (currentGamepad1.x && !previousGamepad1.x && !mp.isBusy()) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                    robot.armSubsystem.setMotionProfileTest(targetPos);
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
                     armTestState = ArmTestState.CLOSED;
                 }
                 break;

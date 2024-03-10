@@ -127,7 +127,7 @@ public class Arm extends Subsystem {
                 setArmPower(power + ff);
                 break;
             case MOTION_PROFILE_TEST:
-                mp.setProfile(STARTING_POS, ENDING_POS, motionProfileTime.seconds());
+                mp.updateState(motionProfileTime.seconds());
                 double refPos = mp.getInstantPosition();
                 double refVel = mp.getInstantVelocity();
                 double refAcl = mp.getInstantAcceleration();
@@ -223,6 +223,8 @@ public class Arm extends Subsystem {
 
         STARTING_POS = BulkReading.pArmLeftMotor;
         ENDING_POS = targetPosition;
+
+        mp.setProfile(STARTING_POS, ENDING_POS);
     }
 
 }

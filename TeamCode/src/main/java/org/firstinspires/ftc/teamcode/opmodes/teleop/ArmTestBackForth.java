@@ -113,6 +113,10 @@ public class ArmTestBackForth extends LinearOpMode {
                     robot.armSubsystem.setMotionProfileTest(120);
                     armTestState = ArmTestState.IN_POSITION;
                 }
+
+                if (currentGamepad1.left_bumper && currentGamepad1.right_bumper) {
+                    armTestState = ArmTestState.RESET;
+                }
                 break;
             case RESET:
                 robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -130,28 +134,26 @@ public class ArmTestBackForth extends LinearOpMode {
                 double time = backForthTimer.seconds();
                 switch (backForthState) {
                     case FORTH:
-                        if (time > mp.profileTime) {
+                        if (!mp.isBusy()) {
                             backForthTimer.reset();
                             backForthState = BackForthState.WAIT;
                         }
                         break;
                     case WAIT:
                         if (time > 3.0) {
-                            backForthTimer.reset();
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
                             robot.armSubsystem.setMotionProfileTest(630);
                             backForthState = BackForthState.BACK;
                         }
                         break;
                     case BACK:
-                        if (time > mp.profileTime) {
+                        if (!mp.isBusy()) {
                             backForthTimer.reset();
                             backForthState = BackForthState.WAIT2;
                         }
                         break;
                     case WAIT2:
-                        if (time > mp.profileTime) {
-                            backForthTimer.reset();
+                        if (time > 3.0) {
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
                             robot.armSubsystem.setMotionProfileTest(120);
                             backForthState = BackForthState.FORTH;
@@ -163,6 +165,7 @@ public class ArmTestBackForth extends LinearOpMode {
 
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
                     armTestState = ArmTestState.BACK_AND_FORTH;
+                    backForthState = BackForthState.FORTH;
                     backForthTimer.reset();
                 }
                 break;
