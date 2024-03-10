@@ -139,7 +139,6 @@ public class MotionProfile {
     public void setStartingTime(double startingTime) {
         this.startingTime = startingTime;
     }
-
     public double getInstantPosition() {
         return instantPos;
     }

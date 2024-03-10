@@ -18,6 +18,8 @@ public class RedFar1 extends AutoBase {
     private TrajectorySequence waitingOneAndHalfSeconds, waitingThreeSeconds, waitingHalfSecond;
     private TrajectorySequence waitingTime;
     private double waitTime = 0;
+    private double shift = 7.0;
+    private boolean leftSide = true;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
@@ -53,6 +55,7 @@ public class RedFar1 extends AutoBase {
             telemetry.addData("LOCATION: ", detectedSide);
             telemetry.addLine("Red, starting far to backstage");
             telemetry.addLine("purple pixel in RIGHT claw!!!!!");
+            telemetry.addData("Yellow Pixel on", leftSide ? "LEFT" : "RIGHT");
             telemetry.update();
 
             if (currentGamepad.left_bumper && !previousGamepad.left_bumper) {
@@ -64,11 +67,15 @@ public class RedFar1 extends AutoBase {
             if (waitTime < 0) {
                 waitTime = 0;
             }
-
-//            if (runtime.seconds() > 1.0 && checkAgain) {
-//                checkAgain = false;
-//                buildTrajectories();
-//            }
+            if (currentGamepad.dpad_up && !previousGamepad.dpad_up) {
+                leftSide = !leftSide;
+                if (leftSide) {
+                    shift = 9.5;
+                } else {
+                    shift = 7.0;
+                }
+                buildTrajectories();
+            }
         }
 
         waitForStart();
@@ -216,7 +223,10 @@ public class RedFar1 extends AutoBase {
                 .back(5)
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
-                .strafeTo(new Vector2d(moveBackLittle.end().getX(), -6))
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(moveBackLittle.end().getX(), -4))
+                .turn(Math.toRadians(90))
+//                .strafeTo(new Vector2d(moveBackLittle.end().getX(), -6))
                 .back(15)
                 .build();
     }
@@ -236,7 +246,7 @@ public class RedFar1 extends AutoBase {
                         .turn(Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -249,7 +259,7 @@ public class RedFar1 extends AutoBase {
                         .turn(Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 6.0 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 6.0 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -263,7 +273,7 @@ public class RedFar1 extends AutoBase {
                         .splineTo(new Vector2d(-36, -3), Math.toRadians(180))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 12.0 + 8), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 12.0 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

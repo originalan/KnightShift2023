@@ -132,7 +132,8 @@ public class Arm extends Subsystem {
                 double refVel = mp.getInstantVelocity();
                 double refAcl = mp.getInstantAcceleration();
 
-                double pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+                double pidPower = 0;
+                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
                 double fullstate = 0;
 //                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
 //                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);

@@ -18,6 +18,8 @@ public class BlueClose1 extends AutoBase {
     private TrajectorySequence waitingOneHalfSeconds, waitingThreeSeconds, waitingHalfSeconds;
     private TrajectorySequence waitingTime;
     private double waitTime = 0;
+    private double shift = 9.5;
+    private boolean leftSide = false;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
@@ -57,6 +59,7 @@ public class BlueClose1 extends AutoBase {
             telemetry.addData("Waiting Time", waitTime);
             telemetry.addLine("Blue, starting closer to backstage");
             telemetry.addLine("purple pixel in LEFT claw!!!!!");
+            telemetry.addData("Yellow Pixel on", leftSide ? "LEFT" : "RIGHT");
             telemetry.update();
 
             if (currentGamepad.left_bumper && !previousGamepad.left_bumper) {
@@ -68,10 +71,15 @@ public class BlueClose1 extends AutoBase {
             if (waitTime < 0) {
                 waitTime = 0;
             }
-//            if (runtime.seconds() > 1.0 && checkAgain) {
-//                checkAgain = false;
-//                buildTrajectories();
-//            }
+            if (currentGamepad.dpad_up && !previousGamepad.dpad_up) {
+                leftSide = !leftSide;
+                if (leftSide) {
+                    shift = 7.0;
+                }else {
+                    shift = 9.5;
+                }
+                buildTrajectories();
+            }
         }
 
         waitForStart();
@@ -219,8 +227,11 @@ public class BlueClose1 extends AutoBase {
                 .back(5.5)
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
-                .strafeTo(new Vector2d(backdropTraj.end().getX(), 46))
-                .back(17)
+                .turn(Math.toRadians(90))
+                .lineTo(new Vector2d(moveBackLittle.end().getX(), 54))
+                .turn(Math.toRadians(-90))
+//                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
+                .back(15)
                 .build();
     }
 
@@ -232,7 +243,7 @@ public class BlueClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 12.0 + 8) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 12.0 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -242,7 +253,7 @@ public class BlueClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 6.0 + 8) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 6.0 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -254,7 +265,7 @@ public class BlueClose1 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 + 8) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

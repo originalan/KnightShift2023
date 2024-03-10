@@ -126,64 +126,64 @@ public class RedFar2 extends AutoBase {
                         }
                         break;
                         // STOPS HERE ===================================================
-                    case MOVING_TO_BACKBOARD:
-                        // robot is moving to backboard, arm and servo are moving too
-                        if (!drive.isBusy()) {
-                            state = AutoState.LIFT_ARM;
-
-                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-
-                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
-
-                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionYellowPixel;
-                            robot.armSubsystem.setMotionProfile();
-                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                        }
-                        break;
-                    case LIFT_ARM:
-                        // give about 3 seconds for arm and servo to move in place
-                        if (!drive.isBusy()) {
-                            state = AutoState.MOVE_FORWARD;
-                            drive.followTrajectorySequenceAsync(moveBackLittle);
-                        }
-                        break;
-                    case MOVE_FORWARD:
-                        // robot is moving back into the backdrop a little bit
-                        if (!drive.isBusy()) {
-                            state = AutoState.RELEASE_PIXEL;
-                            drive.followTrajectorySequenceAsync(waitingHalfSecond);
-                        }
-                        break;
-                    case RELEASE_PIXEL:
-                        // 1.5 seconds for yellow pixel to release and fall
-                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
-                        if (!drive.isBusy()) {
-                            state = AutoState.ARM_BACK_DOWN;
-
-                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
-                            robot.armSubsystem.setMotionProfile();
-                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-
-                            robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                            drive.followTrajectorySequenceAsync(waitingOneAndHalfSeconds);
-                        }
-                        break;
-                    case ARM_BACK_DOWN:
-                        // robot is bringing arm back down for 1.5 seconds
-                        if (!drive.isBusy()) {
-                            state = AutoState.PARKING;
-                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-
-                            drive.followTrajectorySequenceAsync(parkingTraj);
-                        }
-                        break;
-                    case PARKING:
-                        if (!drive.isBusy()) {
-                            state = AutoState.IDLE;
-                        }
-                        break;
-                    case IDLE:
-                        break;
+//                    case MOVING_TO_BACKBOARD:
+//                        // robot is moving to backboard, arm and servo are moving too
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.LIFT_ARM;
+//
+//                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+//
+//                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
+//
+//                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionYellowPixel;
+//                            robot.armSubsystem.setMotionProfile();
+//                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+//                        }
+//                        break;
+//                    case LIFT_ARM:
+//                        // give about 3 seconds for arm and servo to move in place
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.MOVE_FORWARD;
+//                            drive.followTrajectorySequenceAsync(moveBackLittle);
+//                        }
+//                        break;
+//                    case MOVE_FORWARD:
+//                        // robot is moving back into the backdrop a little bit
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.RELEASE_PIXEL;
+//                            drive.followTrajectorySequenceAsync(waitingHalfSecond);
+//                        }
+//                        break;
+//                    case RELEASE_PIXEL:
+//                        // 1.5 seconds for yellow pixel to release and fall
+//                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.ARM_BACK_DOWN;
+//
+//                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
+//                            robot.armSubsystem.setMotionProfile();
+//                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+//
+//                            robot.armSubsystem.pivotState = Arm.PivotState.REST;
+//                            drive.followTrajectorySequenceAsync(waitingOneAndHalfSeconds);
+//                        }
+//                        break;
+//                    case ARM_BACK_DOWN:
+//                        // robot is bringing arm back down for 1.5 seconds
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.PARKING;
+//                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+//
+//                            drive.followTrajectorySequenceAsync(parkingTraj);
+//                        }
+//                        break;
+//                    case PARKING:
+//                        if (!drive.isBusy()) {
+//                            state = AutoState.IDLE;
+//                        }
+//                        break;
+//                    case IDLE:
+//                        break;
                 }
 
                 drive.update();
