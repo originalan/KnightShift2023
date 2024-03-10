@@ -10,8 +10,10 @@ public class SuperController {
 
     private Telemetry telemetry;
     private ElapsedTime elapsedTime = new ElapsedTime();
+    private ElapsedTime elapsedTime2 = new ElapsedTime();
     private double integralSum = 0;
     private double lastError = 0;
+    private double lastVelocity = 0;
     private final double motorEncoderTicks = 1120;
 
     public static double maxPower = 0.45;
@@ -24,7 +26,7 @@ public class SuperController {
     public static double Kg = 0.102;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
-    public static double Kp = 0, Kv = 0;
+    public static double Kp = 0, Kv = 0, Ka = 0;
 
     public SuperController() {
         initGainScheduling();
@@ -108,6 +110,20 @@ public class SuperController {
         double positionError = targetPosition - robotPosition;
         double velocityError = targetVelocity - robotVelocity;
         double u = (positionError * Kp) + (velocityError * Kv);
+        return u;
+
+    }
+
+    public double fullstateCalculate(double targetPosition, double targetVelocity, double targetAcceleration, double robotPosition, double robotVelocity) {
+
+        double positionError = targetPosition - robotPosition;
+        double velocityError = targetVelocity - robotVelocity;
+        double r = (robotVelocity - lastVelocity) / elapsedTime2.seconds(); // current robot acceleration
+        double accelerationError = targetAcceleration - r;
+
+        lastVelocity = robotVelocity;
+        elapsedTime2.reset();
+        double u = (positionError * Kp) + (velocityError * Kv) + (accelerationError * Ka);
         return u;
 
     }

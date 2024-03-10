@@ -66,7 +66,6 @@ public class TwoDriver extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
         currentGamepad2 = new Gamepad();
