@@ -67,7 +67,7 @@ public class Arm extends Subsystem {
         this.robot = robot;
         this.pid = new PIDFControl();
         this.mp = new MotionProfile();
-        this.superController = new SuperController();
+        this.superController = new SuperController(telemetry);
 
         noEncoders();
 
@@ -132,10 +132,15 @@ public class Arm extends Subsystem {
                 double refVel = mp.getInstantVelocity();
                 double refAcl = mp.getInstantAcceleration();
 
+                telemetry.addData("MP TIME", motionProfileTime.seconds());
+                telemetry.addData("Reference Position", refPos);
+                telemetry.addData("Reference Velocity", refVel);
+                telemetry.addData("Reference Acceleration", refAcl);
+
                 double pidPower = 0;
-                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+//                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
                 double fullstate = 0;
-//                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
 //                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 double f_g = superController.positionalFeedforward(refPos);
                 double k_va = superController.kvkaFeedforward(refVel, refAcl);

@@ -23,13 +23,14 @@ public class SuperController {
     public static double Kp_withGravity = 0.008; // 0.07
     public static double Ki_withGravity = 0; // 0.00065
     public static double Kd_withGravity = 0; // 0.0004
-    public static double Kg = 0.102;
+    public static double Kg = 0.105;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
     public static double FS_Kp = 0, FS_Kv = 0, FS_Ka = 0;
     public static double FS_Kp_g = 0;
 
-    public SuperController() {
+    public SuperController(Telemetry telemetry) {
+        this.telemetry = telemetry;
         initGainScheduling();
     }
 
@@ -87,6 +88,9 @@ public class SuperController {
         // convert target of 375 to 0 degrees
         double degrees = 375 - targetPosition;
         degrees = degrees / motorEncoderTicks * 360.0;
+
+        telemetry.addData("FF Degrees", degrees);
+        telemetry.addData("FF Power", Kg * Math.sin(Math.toRadians(degrees)));
 
         return Kg * Math.sin( Math.toRadians(degrees) );
     }

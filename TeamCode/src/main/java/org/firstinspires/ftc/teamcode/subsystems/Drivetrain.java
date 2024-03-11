@@ -247,10 +247,10 @@ public class Drivetrain extends Subsystem {
 //            }
 //        }
 
-        // or, we just make every power less
-        if (left < distanceThreshold || right < distanceThreshold) {
-            factor = dSensorFactor;
-        }
+//        // or, we just make every power less
+//        if (left < distanceThreshold || right < distanceThreshold) {
+//            factor = dSensorFactor;
+//        }
     }
 
 }

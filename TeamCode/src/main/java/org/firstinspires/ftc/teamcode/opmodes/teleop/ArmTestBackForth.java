@@ -56,17 +56,14 @@ public class ArmTestBackForth extends LinearOpMode {
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
         mp = new MotionProfile();
 
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Back and forth arm movement opmode for tuning");
         telemetry.addLine("Press X, then dpad down to activate, then x again to turn off");
         telemetry.update();
-
-        double pos1 = 0;
-        double pos2 = 0;
-        double time1 = 0;
-        double time2 = 0;
 
         waitForStart();
 
@@ -88,16 +85,10 @@ public class ArmTestBackForth extends LinearOpMode {
                 telemetry.addData("Actual Position", BulkReading.pArmLeftMotor);
                 telemetry.addLine("===========================");
 
-                pos2 = pos1;
-                pos1 = BulkReading.pArmLeftMotor;
-                time2 = time1;
-                time1 = runtime.seconds();
-
                 telemetry.addData("Target Position (rn)", mp.getInstantPosition());
                 telemetry.addData("Target Velocity (rn)", "%.4f", mp.getInstantVelocity());
 
                 telemetry.addData("Actual Velocity (reading)", "%.4f", BulkReading.vArmLeftMotor);
-                telemetry.addData("Actual Velocity (calculation)", "%.4f", (pos2 - pos1) / (time2 - time1));
 
                 telemetry.update();
 

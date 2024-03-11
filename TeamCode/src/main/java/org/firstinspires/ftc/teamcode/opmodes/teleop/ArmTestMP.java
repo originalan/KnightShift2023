@@ -27,12 +27,12 @@ public class ArmTestMP extends LinearOpMode {
     private MotionProfile mp;
     private Gamepad currentGamepad1;
     private Gamepad previousGamepad1;
-    private boolean turnedOff = true;
     private boolean left = true, right = true;
     public static int targetPos = 500;
 
     private enum ArmTestState {
         CLOSED,
+        GO_BACK,
         INTAKING,
         DROP_POS,
         RESET,
@@ -49,17 +49,14 @@ public class ArmTestMP extends LinearOpMode {
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
         mp = new MotionProfile();
 
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
         telemetry.addLine("Change 'targetPos' variable in this opmode using FTC Dashboard");
         telemetry.addLine("Same controls as TwoDriver for arm");
         telemetry.update();
-
-        double pos1 = 0;
-        double pos2 = 0;
-        double time1 = 0;
-        double time2 = 0;
 
         waitForStart();
 
@@ -77,20 +74,11 @@ public class ArmTestMP extends LinearOpMode {
 
                 robot.update();
 
-                telemetry.addData("Target Position", targetPos);
+                telemetry.addData("Target/Goal Position", targetPos);
                 telemetry.addData("Actual Position", BulkReading.pArmLeftMotor);
                 telemetry.addLine("===========================");
 
-                pos2 = pos1;
-                pos1 = BulkReading.pArmLeftMotor;
-                time2 = time1;
-                time1 = runtime.seconds();
-
-                telemetry.addData("Target Position (rn)", mp.getInstantPosition());
-                telemetry.addData("Target Velocity (rn)", "%.4f", mp.getInstantVelocity());
-
                 telemetry.addData("Actual Velocity (reading)", "%.4f", BulkReading.vArmLeftMotor);
-                telemetry.addData("Actual Velocity (calculation)", "%.4f", (pos2 - pos1) / (time2 - time1));
 
                 telemetry.update();
             }
@@ -125,13 +113,18 @@ public class ArmTestMP extends LinearOpMode {
                     armTestState = ArmTestState.INTAKING;
                 }
                 break;
+            case GO_BACK:
+                if (!mp.isBusy() && withinRange(BulkReading.pArmLeftMotor, -10, 10)) {
+                    armTestState = ArmTestState.RESET;
+                }
+                break;
             case INTAKING:
                 robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
                 clawSidePieceControls(true);
 
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    armTestState = ArmTestState.CLOSED;
+//                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                    armTestState = ArmTestState.RESET;
                 }
                 break;
             case DROP_POS:
@@ -141,7 +134,7 @@ public class ArmTestMP extends LinearOpMode {
                 if (currentGamepad1.x && !previousGamepad1.x && !mp.isBusy()) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
                     robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
-                    armTestState = ArmTestState.CLOSED;
+                    armTestState = ArmTestState.GO_BACK;
                 }
                 break;
             case RESET:
@@ -184,6 +177,12 @@ public class ArmTestMP extends LinearOpMode {
         if (!right && !left) {
             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_OPEN;
         }
+    }
+
+    public boolean withinRange(double value, double bottom, double top) {
+
+        return value >= bottom && value <= top;
+
     }
 
 }

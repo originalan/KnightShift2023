@@ -57,7 +57,7 @@ public class ArmTestPIDF extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
-        superController = new SuperController();
+        superController = new SuperController(telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Elapsed time", runtime.toString());
@@ -78,6 +78,11 @@ public class ArmTestPIDF extends LinearOpMode {
                 armControls();
 
                 robot.update();
+
+                telemetry.addData("Target/Goal Position", targetPos);
+                telemetry.addData("Actual Position", BulkReading.pArmLeftMotor);
+                telemetry.addLine("===========================");
+                telemetry.addData("Actual Velocity (reading)", "%.4f", BulkReading.vArmLeftMotor);
 
                 telemetry.update();
             }

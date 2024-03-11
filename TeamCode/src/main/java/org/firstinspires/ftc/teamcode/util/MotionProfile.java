@@ -9,8 +9,8 @@ public class MotionProfile {
     private double startingTime = 0;
 
     public static int MAX_VELOCITY = 250; // enocder ticks per second
-    public static int MAX_ACCELERATION = 175; // encoder ticks per second
-    public static int MAX_JERK = 0;
+    public static int MAX_ACCELERATION = 250; // encoder ticks per second
+//    public static int MAX_JERK = 0;
 
     private double acceleration_dt, distance, halfway_distance, max_acceleration,
             max_velocity, acceleration_distance, deceleration_dt,
@@ -81,6 +81,8 @@ public class MotionProfile {
     public void updateState(double currentTime) {
         isBusy = true;
         double timeElapsed = currentTime - startingTime;
+        timeElapsed = Math.abs(timeElapsed);
+
 
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
             isBusy = false;
@@ -126,10 +128,10 @@ public class MotionProfile {
         else {
             acceleration_distance = 0.5 * max_acceleration * Math.pow(acceleration_dt, 2);
             cruise_distance = max_velocity * cruise_dt;
-            deceleration_time = timeElapsed - deceleration_time;
+            double decelerationTime = timeElapsed - deceleration_time;
 
             // use the kinematic equations to calculate the instantaneous desired position
-            instantPos = acceleration_distance + cruise_distance + max_velocity * deceleration_time - 0.5 * max_acceleration * Math.pow(deceleration_time, 2);
+            instantPos = acceleration_distance + cruise_distance + max_velocity * decelerationTime - 0.5 * max_acceleration * Math.pow(decelerationTime, 2);
             instantPos += start;
             instantVel = max_velocity - max_acceleration * (timeElapsed - deceleration_time);
             instantAcl = -1.0 * max_acceleration;
