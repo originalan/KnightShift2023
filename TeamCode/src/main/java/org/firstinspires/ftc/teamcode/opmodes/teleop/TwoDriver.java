@@ -315,22 +315,22 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
@@ -401,23 +401,23 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
                     intakeState = IntakeControlsState.DELAY;
                 }
@@ -428,23 +428,23 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
                     intakeState = IntakeControlsState.DELAY;
                 }
@@ -455,23 +455,23 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
                     intakeState = IntakeControlsState.DELAY;
                 }
@@ -482,23 +482,23 @@ public class TwoDriver extends LinearOpMode {
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
                     intakeState = IntakeControlsState.DELAY;
                 }

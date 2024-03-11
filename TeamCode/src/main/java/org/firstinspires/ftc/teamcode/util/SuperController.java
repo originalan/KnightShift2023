@@ -115,6 +115,10 @@ public class SuperController {
         double positionError = targetPosition - robotPosition;
         double velocityError = targetVelocity - robotVelocity;
         double u = (positionError * FS_Kp) + (velocityError * FS_Kv);
+
+        if (u > maxPower) {
+            u = maxPower;
+        }
         return u;
 
     }
@@ -129,6 +133,10 @@ public class SuperController {
         lastVelocity = robotVelocity;
         elapsedTime2.reset();
         double u = (positionError * FS_Kp) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
+
+        if (u > maxPower) {
+            u = maxPower;
+        }
         return u;
 
     }
@@ -151,6 +159,9 @@ public class SuperController {
         }
 
         double u = (positionError * p) + (velocityError * FS_Kv);
+        if (u > maxPower) {
+            u = maxPower;
+        }
         return u;
 
     }
@@ -178,6 +189,9 @@ public class SuperController {
         }
 
         double u = (positionError * p) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
+        if (u > maxPower) {
+            u = maxPower;
+        }
         return u;
 
     }
