@@ -16,7 +16,6 @@ public class SuperController {
     private double lastVelocity = 0;
     private final double motorEncoderTicks = 1120;
 
-    public static double maxPower = 0.45;
     public static double Kp_fightingGravity = 0.050; // 0.07
     public static double Ki_fightingGravity = 0; // 0.00065
     public static double Kd_fightingGravity = 0; // 0.0004
@@ -72,10 +71,6 @@ public class SuperController {
 
         double output = (error * p) + (derivative * d) + (integralSum * i);
 
-        if (output > maxPower) {
-            output = maxPower;
-        }
-
         return output;
     }
 
@@ -116,9 +111,6 @@ public class SuperController {
         double velocityError = targetVelocity - robotVelocity;
         double u = (positionError * FS_Kp) + (velocityError * FS_Kv);
 
-        if (u > maxPower) {
-            u = maxPower;
-        }
         return u;
 
     }
@@ -133,10 +125,6 @@ public class SuperController {
         lastVelocity = robotVelocity;
         elapsedTime2.reset();
         double u = (positionError * FS_Kp) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
-
-        if (u > maxPower) {
-            u = maxPower;
-        }
         return u;
 
     }
@@ -159,9 +147,6 @@ public class SuperController {
         }
 
         double u = (positionError * p) + (velocityError * FS_Kv);
-        if (u > maxPower) {
-            u = maxPower;
-        }
         return u;
 
     }
@@ -189,9 +174,6 @@ public class SuperController {
         }
 
         double u = (positionError * p) + (velocityError * FS_Kv) + (accelerationError * FS_Ka);
-        if (u > maxPower) {
-            u = maxPower;
-        }
         return u;
 
     }

@@ -23,11 +23,10 @@ public class Arm extends Subsystem {
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
-    private PIDFControl pid;
     private MotionProfile mp;
     private SuperController superController;
 
-    public double targetPower = 0; // used purely for GO_TO_POSITION arm state, PIDF test
+    public static double MAX_POWER = 0.45;
     public ElapsedTime motionProfileTime = new ElapsedTime();
     private double maxVelocity = 0;
     private int STARTING_POS = 0;
@@ -56,7 +55,6 @@ public class Arm extends Subsystem {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
-        this.pid = new PIDFControl();
         this.mp = new MotionProfile();
         this.superController = new SuperController(telemetry);
 
@@ -180,12 +178,19 @@ public class Arm extends Subsystem {
     }
 
     public void setArmPower(double power) {
+        if (power > MAX_POWER) {
+            power = MAX_POWER;
+        }
+        if (power < -MAX_POWER) {
+            power = -MAX_POWER;
+        }
+
         robot.armLeftMotor.setPower(power);
         robot.armRightMotor.setPower(power);
     }
 
     public void setArmEncoderPosition(int encoderPos) {
-        double pow = pid.calculatePID(encoderPos, BulkReading.pArmLeftMotor, false);
+        double pow = superController.calculatePID(encoderPos, BulkReading.pArmLeftMotor);
         robot.armLeftMotor.setPower(pow);
         robot.armRightMotor.setPower(pow);
     }
