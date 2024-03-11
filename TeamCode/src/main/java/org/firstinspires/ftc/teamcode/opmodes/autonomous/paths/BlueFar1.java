@@ -142,8 +142,7 @@ public class BlueFar1 extends AutoBase {
 
                             drive.followTrajectorySequenceAsync(waitingThreeSeconds);
 
-                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionYellowPixel;
-                            robot.armSubsystem.setMotionProfile();
+                            robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                         }
                         break;
@@ -167,8 +166,7 @@ public class BlueFar1 extends AutoBase {
                         if (!drive.isBusy()) {
                             state = AutoState.ARM_BACK_DOWN;
 
-                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
-                            robot.armSubsystem.setMotionProfile();
+                            robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
 
                             robot.armSubsystem.pivotState = Arm.PivotState.REST;
@@ -177,6 +175,9 @@ public class BlueFar1 extends AutoBase {
                         break;
                     case ARM_BACK_DOWN:
                         // robot is bringing arm back down for 3.0 seconds
+                        if (!robot.armSubsystem.getMP().isBusy()) {
+                            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                        }
                         if (!drive.isBusy()) {
                             state = AutoState.PARKING;
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
@@ -185,11 +186,17 @@ public class BlueFar1 extends AutoBase {
                         }
                         break;
                     case PARKING:
+                        if (!robot.armSubsystem.getMP().isBusy()) {
+                            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                        }
                         if (!drive.isBusy()) {
                             state = AutoState.IDLE;
                         }
                         break;
                     case IDLE:
+                        if (!robot.armSubsystem.getMP().isBusy()) {
+                            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+                        }
                         break;
                 }
 

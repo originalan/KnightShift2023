@@ -28,21 +28,12 @@ public class Arm extends Subsystem {
     private SuperController superController;
 
     public double targetPower = 0; // used purely for GO_TO_POSITION arm state, PIDF test
-    public int encoderGoalPosition = 0;
-    public int goalDistance = 0;
     public ElapsedTime motionProfileTime = new ElapsedTime();
-    public int armPositionMP = 0;
-    public static double MAX_A = 250; // in encoder ticks / second^2
-    public static double MAX_V = 250; // in encoder ticks / second
     private double maxVelocity = 0;
     private int STARTING_POS = 0;
     private int ENDING_POS = 0;
 
     public enum ArmState {
-        BOTTOM_CLAW_UP,
-        BOTTOM_CLAW_DOWN,
-        GO_TO_POSITION,
-        AUTO_YELLOW_POS,
         AUTO_PIXEL_STACK_POS_1,
         AUTO_PIXEL_STACK_POS_2,
         NOTHING,
@@ -89,26 +80,7 @@ public class Arm extends Subsystem {
         if (Math.abs(BulkReading.vArmLeftMotor) > maxVelocity) {
             maxVelocity = BulkReading.vArmLeftMotor;
         }
-        if (encoderGoalPosition < 0) {
-            encoderGoalPosition = 0;
-        }
         switch (armState) {
-            case GO_TO_POSITION:
-                noEncoders();
-                setArmPower(targetPower);
-                break;
-            case BOTTOM_CLAW_UP:
-                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-                setArmEncoderPosition(ArmSettings.positionBottom);
-                break;
-            case BOTTOM_CLAW_DOWN:
-                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
-                setArmEncoderPosition(ArmSettings.positionBottom);
-                break;
-            case AUTO_YELLOW_POS:
-                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_YELLOW); // -0.5 / 3 + 200/180
-                setArmEncoderPosition( ArmSettings.positionYellowPixel );
-                break;
             case AUTO_PIXEL_STACK_POS_1: // for redclose1 and redclose2, pick up 2 white pixels
                 setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_PIXELSTACK1);
                 setArmEncoderPosition( ArmSettings.positionPixelStack1); // supposed to go up ~1.5 inches
@@ -120,22 +92,10 @@ public class Arm extends Subsystem {
             case NOTHING:
                 break;
             case MOTION_PROFILE:
-                noEncoders();
-                double instantTargetPos = pid.motionProfile(MAX_A, MAX_V, goalDistance, motionProfileTime.seconds()) + armPositionMP;
-                double power = pid.calculatePID(instantTargetPos, BulkReading.pArmLeftMotor, false);
-                double ff = pid.calculateFeedforward(instantTargetPos, true);
-                setArmPower(power + ff);
-                break;
-            case MOTION_PROFILE_TEST:
                 mp.updateState(motionProfileTime.seconds());
                 double refPos = mp.getInstantPosition();
                 double refVel = mp.getInstantVelocity();
                 double refAcl = mp.getInstantAcceleration();
-
-                telemetry.addData("MP TIME", motionProfileTime.seconds());
-                telemetry.addData("Reference Position", refPos);
-                telemetry.addData("Reference Velocity", refVel);
-                telemetry.addData("Reference Acceleration", refAcl);
 
                 double pidPower = 0;
 //                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
@@ -148,16 +108,38 @@ public class Arm extends Subsystem {
                 double output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
                 setArmPower(output);
                 break;
+            case MOTION_PROFILE_TEST:
+                mp.updateState(motionProfileTime.seconds());
+                double refePos = mp.getInstantPosition();
+                double refeVel = mp.getInstantVelocity();
+                double refeAcl = mp.getInstantAcceleration();
+
+                telemetry.addData("MP TIME", motionProfileTime.seconds());
+                telemetry.addData("Reference Position", refePos);
+                telemetry.addData("Reference Velocity", refeVel);
+                telemetry.addData("Reference Acceleration", refeAcl);
+
+                double pidpower = 0;
+//                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+                double fullState = 0;
+                fullState = superController.fullstateCalculate(refePos, refeVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                fullState = superController.fullstateCalculate(refePos, refeVel, refeAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                double fg = superController.positionalFeedforward(refePos);
+                double kva = superController.kvkaFeedforward(refeVel, refeAcl);
+
+                double out = pidpower + fullState + fg + kva; // PID + gravity positional feedforward + velocity and acceleration feedforward
+                setArmPower(out);
+                break;
             case PIDF_TEST:
                 double pid = 0;
-                double fg = 0;
-                double kva = 0;
+                double Fg = 0;
+                double Kva = 0;
                 double full_state = 0;
 
                 double t = ArmTestPIDF.targetPos;
 
                 if (ArmTestPIDF.feedforward_g) {
-                    fg = superController.positionalFeedforward(t);
+                    Fg = superController.positionalFeedforward(t);
                 }
                 if (ArmTestPIDF.fullstate) {
                     full_state = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
@@ -167,10 +149,10 @@ public class Arm extends Subsystem {
                     pid = superController.calculatePID(t, BulkReading.pArmLeftMotor);
                 }
                 if (ArmTestPIDF.feedforward_kvka) {
-                    kva = superController.kvkaFeedforward(ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration);
+                    Kva = superController.kvkaFeedforward(ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration);
                 }
 
-                double a = pid + fg + kva + full_state;
+                double a = pid + Fg + Kva + full_state;
                 setArmPower(a);
                 break;
         }
@@ -218,12 +200,15 @@ public class Arm extends Subsystem {
         robot.armRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setMotionProfile() {
-
-        goalDistance = (int)encoderGoalPosition - BulkReading.pArmLeftMotor;
-        armPositionMP = BulkReading.pArmLeftMotor;
+    public void setMotionProfile(int targetPosition) {
+        noEncoders();
         motionProfileTime.reset();
+        mp.setStartingTime(motionProfileTime.seconds());
 
+        STARTING_POS = BulkReading.pArmLeftMotor;
+        ENDING_POS = targetPosition;
+
+        mp.setProfile(STARTING_POS, ENDING_POS);
     }
     public void setMotionProfileTest(int targetPosition) {
         noEncoders();
@@ -234,6 +219,10 @@ public class Arm extends Subsystem {
         ENDING_POS = targetPosition;
 
         mp.setProfile(STARTING_POS, ENDING_POS);
+    }
+
+    public MotionProfile getMP() {
+        return mp;
     }
 
 }

@@ -25,6 +25,8 @@ public class TwoDriver extends LinearOpMode {
     private BulkReading bulkReading;
     private ElapsedTime runtime = new ElapsedTime();
     private double rigWaitTime = 0;
+    private double doubleCheckWaitTime = 0;
+    private double delayTime = 0;
     private int counter = 1;
 
     private Gamepad currentGamepad1;
@@ -48,6 +50,9 @@ public class TwoDriver extends LinearOpMode {
         INTAKING, // claw on the floor and open for pixels
         INTAKING_AUTO,
         CLOSED, // claw up and closed, holding pixels
+        DELAY, // arm is moving, wait 0.25 seconds before moving claw subsystems
+        GO_BACK_DOWN, // from any other arm position, going back down to closed position
+        DOUBLE_CHECK, // reset the arm encoder position again after 0.5 seconds of GO_BACK_DOWN
         DROP_POS_1, // first level of pixels
         DROP_POS_2, // third level of pixels
         DROP_POS_3, // past first set line
@@ -92,6 +97,10 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addLine("    dpad up to reset yaw for field-oriented drive");
         telemetry.addLine("    left/right triggers to slow down drivetrain by factor of 3.0");
         telemetry.update();
+
+        robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+        robot.armSubsystem.pivotState = Arm.PivotState.REST;
+        robot.armSubsystem.armState = Arm.ArmState.NOTHING;
 
         waitForStart();
 
@@ -191,42 +200,6 @@ public class TwoDriver extends LinearOpMode {
         robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
     }
 
-//    public void riggingControls() {
-//        if (currentGamepad1.x && !previousGamepad1.x) {
-//            isRigging = !isRigging;
-//            rigTime = runtime.seconds();
-//        }
-//
-//        if (!rigStringMove && isRigging) {
-//            robot.riggingSubsystem.hang();
-//            robot.rigRightServo.getController().pwmEnable();
-//            robot.rigLeftServo.getController().pwmEnable();
-//        }else if (!isRigging) {
-//            if (runtime.seconds() - rigTime < 1.5) {
-//                robot.rigRightServo.getController().pwmEnable();
-//                robot.rigLeftServo.getController().pwmEnable();
-//                robot.riggingSubsystem.noHang();
-//            }else {
-//                robot.rigRightServo.getController().pwmDisable();
-//                robot.rigLeftServo.getController().pwmDisable();
-//            }
-//        }
-//        if (isRigging && rigStringMove) {
-//            robot.rigRightServo.getController().pwmDisable();
-//            robot.rigLeftServo.getController().pwmDisable();
-//        }
-//
-//        // If arms are up and motor power buttons are pressed...
-//        if (isRigging && (currentGamepad1.left_bumper || currentGamepad1.right_bumper)) {
-//            rigStringMove = true;
-//            robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-//            robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-//        }else {
-//            robot.rigRightMotor.setPower(0);
-//            robot.rigLeftMotor.setPower(0);
-//        }
-//    }
-
     public void rigControls() {
         switch (hangState) {
             case UP:
@@ -297,116 +270,6 @@ public class TwoDriver extends LinearOpMode {
         }
     }
 
-    public void armMotionProfileControls() {
-        if (currentGamepad2.y && !previousGamepad2.y) {
-            robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
-            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-            robot.armSubsystem.setMotionProfile();
-        }
-        if (currentGamepad2.a && !previousGamepad2.a) {
-            robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
-            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-            robot.armSubsystem.setMotionProfile();
-        }
-        if (currentGamepad2.b && !previousGamepad2.b) {
-            robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
-            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-            robot.armSubsystem.setMotionProfile();
-        }
-        if (currentGamepad2.x && !previousGamepad2.x) {
-            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
-            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-            robot.armSubsystem.setMotionProfile();
-//            resetZeroTimer.reset();
-//            counter = 2;
-        }
-
-        // If timer is 4 seconds, run once (done with the counter variable), and the goal position is still 0
-//        if (resetZeroTimer.seconds() > 4.0 && counter == 2 && robot.armSubsystem.encoderGoalPosition == ArmSettings.positionBottom) {
-//            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
-//            counter = 1;
-//        }
-
-        if (currentGamepad2.left_trigger > 0.01 && currentGamepad2.right_trigger > 0.01) {
-            robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);;
-            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-        }
-
-        // Manual "override" of PIDF control of arm
-//        overrideLeft = currentGamepad2.left_trigger > 0.01 && !(previousGamepad2.left_trigger > 0.01);
-//
-//        overrideRight = currentGamepad2.right_trigger > 0.01 && !(previousGamepad2.right_trigger > 0.01);;
-//
-//        if (overrideLeft || overrideRight) {
-//            robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-//            robot.armSubsystem.setArmEncoderPosition(robot.armSubsystem.encoderGoalPosition);
-//        }
-//
-//        // Increase encoder ticks
-//        if (overrideRight && !overrideLeft) {
-//            startingTimeRight++;
-//            if (startingTimeRight == 1) {
-//                overrideRightCounter = robot.armSubsystem.encoderGoalPosition;
-//                runtime1.reset();
-//            }
-//            robot.armSubsystem.encoderGoalPosition = overrideRightCounter + (int)(runtime1.seconds() * 20);
-//        }else {
-//            startingTimeRight = 0;
-//        }
-//
-//        // Decrease encoder ticks
-//        if (overrideLeft && !overrideRight) {
-//            startingTimeLeft++;
-//            if (startingTimeLeft == 1) {
-//                overrideLeftCounter = robot.armSubsystem.encoderGoalPosition;
-//                runtime2.reset();
-//            }
-//            robot.armSubsystem.encoderGoalPosition = overrideLeftCounter - (int)(runtime2.seconds() * 20);
-//        }else {
-//            overrideLeftCounter = 0;
-//        }
-
-
-//        if (overrideLeft) {
-//            robot.armSubsystem.encoderGoalPosition += 10;
-//        }
-//        if (overrideRight) {
-//            robot.armSubsystem.encoderGoalPosition -= 10;
-//        }
-
-    }
-
-    public void pivotClawControls() {
-
-        if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
-//            pivotDown = !pivotDown;
-//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
-            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
-        }
-        if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right) {
-//            pivotDown = !pivotDown;
-//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
-        }
-        if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-//            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-//            robot.armSubsystem.setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
-//            robot.armSubsystem.setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ) );
-            robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( robot.armLeftMotor.getCurrentPosition() / 1120.0 ));
-        }
-//
-//        if (pivotDown) {
-//            robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
-//        } else {
-//            robot.armSubsystem.pivotState = Arm.PivotState.REST;
-//        }
-
-//        if (pivotAuto && robot.armLeftMotor.getCurrentPosition() > 375) {
-//            robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-//        }
-
-    }
-
     public void clawSidePieceControls(boolean reversed) {
         if (reversed) {
             if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper) {
@@ -442,39 +305,32 @@ public class TwoDriver extends LinearOpMode {
 
         switch (intakeState) {
             case CLOSED:
-                robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                robot.armSubsystem.pivotState = Arm.PivotState.REST;
+//                robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+//                robot.armSubsystem.pivotState = Arm.PivotState.REST;
 
                 // reset button
                 if (currentGamepad2.right_bumper && currentGamepad2.left_bumper) {
                     intakeState = IntakeControlsState.RESET;
                 }
-//                if (currentGamepad2.right_bumper && currentGamepad2.left_bumper && !previousGamepad2.right_bumper) {
-//                    intakeState = IntakeControlsState.RESET;
-//                }
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position4;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
@@ -491,13 +347,37 @@ public class TwoDriver extends LinearOpMode {
                     intakeState = IntakeControlsState.INTAKING_AUTO;
                 }
                 break;
+            case DELAY:
+                // robot arm is moving back down to intaking / closed position
+                // only after 0.5 seconds from button press does claw servos move (so they don't hit the backdrop)
+                if (runtime.seconds() - delayTime > 0.5) {
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                    robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+
+                    intakeState = IntakeControlsState.GO_BACK_DOWN;
+                }
+                break;
+            case GO_BACK_DOWN:
+                // robot arm is moving back down to intaking / closed position
+                if (!robot.armSubsystem.getMP().isBusy()) {
+                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+
+                    doubleCheckWaitTime = runtime.seconds();
+                    intakeState = IntakeControlsState.DOUBLE_CHECK;
+                }
+                break;
+            case DOUBLE_CHECK:
+                // let arm settle for 0.5 seconds
+                if (runtime.seconds() - doubleCheckWaitTime > 0.5) {
+                    intakeState = IntakeControlsState.RESET;
+                }
+                break;
             case INTAKING:
                 robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
                 clawSidePieceControls(true);
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    intakeState = IntakeControlsState.CLOSED;
+                    intakeState = IntakeControlsState.RESET;
                 }
                 if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
@@ -509,12 +389,10 @@ public class TwoDriver extends LinearOpMode {
                 robot.clawSubsystem.clawState = Claw.ClawState.AUTO_DETECT;
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                     intakeState = IntakeControlsState.INTAKING;
                 }
                 if (currentGamepad2.dpad_down && !previousGamepad2.dpad_down) {
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    intakeState = IntakeControlsState.CLOSED;
+                    intakeState = IntakeControlsState.RESET;
                 }
                 break;
             case DROP_POS_1:
@@ -522,29 +400,26 @@ public class TwoDriver extends LinearOpMode {
                 clawSidePieceControls(false);
 
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position4;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
-                    intakeState = IntakeControlsState.CLOSED;
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    delayTime = runtime.seconds();
+                    intakeState = IntakeControlsState.DELAY;
                 }
                 break;
             case DROP_POS_2:
@@ -552,29 +427,26 @@ public class TwoDriver extends LinearOpMode {
                 clawSidePieceControls(false);
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position4;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
-                    intakeState = IntakeControlsState.CLOSED;
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    delayTime = runtime.seconds();
+                    intakeState = IntakeControlsState.DELAY;
                 }
                 break;
             case DROP_POS_3:
@@ -582,29 +454,26 @@ public class TwoDriver extends LinearOpMode {
                 clawSidePieceControls(false);
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position4;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS_4;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
-                    intakeState = IntakeControlsState.CLOSED;
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    delayTime = runtime.seconds();
+                    intakeState = IntakeControlsState.DELAY;
                 }
                 break;
             case DROP_POS_4:
@@ -612,35 +481,36 @@ public class TwoDriver extends LinearOpMode {
                 clawSidePieceControls(false);
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position1;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS_1;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position2;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS_2;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.position3;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS_3;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
-                    robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile();
-                    intakeState = IntakeControlsState.CLOSED;
+                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    delayTime = runtime.seconds();
+                    intakeState = IntakeControlsState.DELAY;
                 }
                 break;
             case RESET:
                 robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+
                 intakeState = IntakeControlsState.CLOSED;
                 break;
             case NOTHING:

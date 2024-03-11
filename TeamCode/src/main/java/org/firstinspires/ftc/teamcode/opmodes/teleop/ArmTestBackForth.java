@@ -25,7 +25,6 @@ public class ArmTestBackForth extends LinearOpMode {
     private BulkReading bulkReading;
     private SuperController superController;
 
-    private MotionProfile mp;
     private Gamepad currentGamepad1;
     private Gamepad previousGamepad1;
     private boolean turnedOff = true;
@@ -54,7 +53,6 @@ public class ArmTestBackForth extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
-        mp = new MotionProfile();
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
@@ -85,8 +83,8 @@ public class ArmTestBackForth extends LinearOpMode {
                 telemetry.addData("Actual Position", BulkReading.pArmLeftMotor);
                 telemetry.addLine("===========================");
 
-                telemetry.addData("Target Position (rn)", mp.getInstantPosition());
-                telemetry.addData("Target Velocity (rn)", "%.4f", mp.getInstantVelocity());
+                telemetry.addData("Target Position (rn)", robot.armSubsystem.getMP().getInstantPosition());
+                telemetry.addData("Target Velocity (rn)", "%.4f", robot.armSubsystem.getMP().getInstantVelocity());
 
                 telemetry.addData("Actual Velocity (reading)", "%.4f", BulkReading.vArmLeftMotor);
 
@@ -127,7 +125,7 @@ public class ArmTestBackForth extends LinearOpMode {
                 double time = backForthTimer.seconds();
                 switch (backForthState) {
                     case FORTH:
-                        if (!mp.isBusy()) {
+                        if (!robot.armSubsystem.getMP().isBusy()) {
                             backForthTimer.reset();
                             backForthState = BackForthState.WAIT;
                         }
@@ -140,7 +138,7 @@ public class ArmTestBackForth extends LinearOpMode {
                         }
                         break;
                     case BACK:
-                        if (!mp.isBusy()) {
+                        if (!robot.armSubsystem.getMP().isBusy()) {
                             backForthTimer.reset();
                             backForthState = BackForthState.WAIT2;
                         }
