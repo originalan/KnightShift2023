@@ -59,6 +59,10 @@ public class ArmTestMP extends LinearOpMode {
         telemetry.addLine("Same controls as TwoDriver for arm");
         telemetry.update();
 
+        robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+        robot.armSubsystem.pivotState = Arm.PivotState.REST;
+        robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+
         waitForStart();
 
         runtime.reset();
@@ -72,7 +76,6 @@ public class ArmTestMP extends LinearOpMode {
                 currentGamepad1.copy(gamepad1);
 
                 armControls2();
-//                armControls();
 
                 robot.update();
 
@@ -104,7 +107,7 @@ public class ArmTestMP extends LinearOpMode {
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(targetPos);
+                    robot.armSubsystem.setMotionProfile(targetPos);
                     armTestState = ArmTestState.DROP_POS;
                 }
 
@@ -175,7 +178,7 @@ public class ArmTestMP extends LinearOpMode {
 
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
                     armTestState = ArmTestState.DELAY;
                 }
@@ -189,68 +192,6 @@ public class ArmTestMP extends LinearOpMode {
                 robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 robot.armSubsystem.armState = Arm.ArmState.NOTHING;
 
-                armTestState = ArmTestState.CLOSED;
-                break;
-            case NOTHING:
-                break;
-        }
-    }
-
-    private void armControls() {
-        switch (armTestState) {
-            case CLOSED:
-                robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                robot.armSubsystem.pivotState = Arm.PivotState.REST;
-
-                // reset button
-                if (currentGamepad1.right_bumper && currentGamepad1.left_bumper) {
-                    armTestState = ArmTestState.RESET;
-                }
-//                if (currentGamepad2.right_bumper && currentGamepad2.left_bumper && !previousGamepad2.right_bumper) {
-//                    intakeState = IntakeControlsState.RESET;
-//                }
-
-                if (currentGamepad1.x && !previousGamepad1.x) {
-                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                    robot.armSubsystem.setMotionProfileTest(targetPos);
-                    armTestState = ArmTestState.DROP_POS;
-                }
-
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up && !robot.armSubsystem.getMP().isBusy() ) {
-                    leftClosed = false; // left claw open
-                    rightClosed = false; // right claw open
-                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    armTestState = ArmTestState.INTAKING;
-                }
-                break;
-            case GO_BACK_DOWN:
-                if (!robot.armSubsystem.getMP().isBusy() && withinRange(BulkReading.pArmLeftMotor, -10, 10)) {
-                    armTestState = ArmTestState.RESET;
-                }
-                break;
-            case INTAKING:
-                robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
-                clawSidePieceControls(true);
-
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-//                    robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                    armTestState = ArmTestState.RESET;
-                }
-                break;
-            case DROP_POS:
-                robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-                clawSidePieceControls(false);
-
-                if (currentGamepad1.x && !previousGamepad1.x && !robot.armSubsystem.getMP().isBusy()) {
-                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                    robot.armSubsystem.setMotionProfileTest(ArmSettings.positionBottom);
-                    armTestState = ArmTestState.GO_BACK_DOWN;
-                }
-                break;
-            case RESET:
-                robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.armSubsystem.armState = Arm.ArmState.NOTHING;
                 armTestState = ArmTestState.CLOSED;
                 break;
             case NOTHING:

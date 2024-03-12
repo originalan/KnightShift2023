@@ -18,6 +18,7 @@ public class MotionProfile {
             start, end;
 
     private double instantPos = 0;
+    public double distanceTraveled = 0;
     private double instantVel = 0;
     private double instantAcl = 0;
     private boolean isBusy = false;
@@ -37,6 +38,7 @@ public class MotionProfile {
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
             isBusy = false;
             instantPos = end;
+            distanceTraveled = 0;
             instantVel = 0;
             instantAcl = 0;
 //            return;

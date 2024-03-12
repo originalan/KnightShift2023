@@ -100,8 +100,8 @@ public class ArmTestBackForth extends LinearOpMode {
                 robot.armSubsystem.armState = Arm.ArmState.NOTHING;
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
-                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                    robot.armSubsystem.setMotionProfileTest(120);
+                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+                    robot.armSubsystem.setMotionProfile(120);
                     armTestState = ArmTestState.IN_POSITION;
                 }
 
@@ -132,8 +132,8 @@ public class ArmTestBackForth extends LinearOpMode {
                         break;
                     case WAIT:
                         if (time > 3.0) {
-                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                            robot.armSubsystem.setMotionProfileTest(630);
+                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+                            robot.armSubsystem.setMotionProfile(630);
                             backForthState = BackForthState.BACK;
                         }
                         break;
@@ -145,15 +145,14 @@ public class ArmTestBackForth extends LinearOpMode {
                         break;
                     case WAIT2:
                         if (time > 3.0) {
-                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE_TEST;
-                            robot.armSubsystem.setMotionProfileTest(120);
+                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+                            robot.armSubsystem.setMotionProfile(120);
                             backForthState = BackForthState.FORTH;
                         }
                         break;
                 }
                 break;
             case IN_POSITION:
-
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
                     armTestState = ArmTestState.BACK_AND_FORTH;
                     backForthState = BackForthState.FORTH;

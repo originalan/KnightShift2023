@@ -37,7 +37,6 @@ public class Arm extends Subsystem {
         AUTO_PIXEL_STACK_POS_2,
         NOTHING,
         MOTION_PROFILE,
-        MOTION_PROFILE_TEST,
         PIDF_TEST
     }
 
@@ -96,6 +95,11 @@ public class Arm extends Subsystem {
                 double refVel = mp.getInstantVelocity();
                 double refAcl = mp.getInstantAcceleration();
 
+                telemetry.addData("MP TIME", motionProfileTime.seconds());
+                telemetry.addData("Reference Position", refPos);
+                telemetry.addData("Reference Velocity", refVel);
+                telemetry.addData("Reference Acceleration", refAcl);
+
                 double pidPower = 0;
 //                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
                 double fullstate = 0;
@@ -106,28 +110,6 @@ public class Arm extends Subsystem {
 
                 double output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
                 setArmPower(output);
-                break;
-            case MOTION_PROFILE_TEST:
-                mp.updateState(motionProfileTime.seconds());
-                double refePos = mp.getInstantPosition();
-                double refeVel = mp.getInstantVelocity();
-                double refeAcl = mp.getInstantAcceleration();
-
-                telemetry.addData("MP TIME", motionProfileTime.seconds());
-                telemetry.addData("Reference Position", refePos);
-                telemetry.addData("Reference Velocity", refeVel);
-                telemetry.addData("Reference Acceleration", refeAcl);
-
-                double pidpower = 0;
-//                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
-                double fullState = 0;
-                fullState = superController.fullstateCalculate(refePos, refeVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-//                fullState = superController.fullstateCalculate(refePos, refeVel, refeAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-                double fg = superController.positionalFeedforward(refePos);
-                double kva = superController.kvkaFeedforward(refeVel, refeAcl);
-
-                double out = pidpower + fullState + fg + kva; // PID + gravity positional feedforward + velocity and acceleration feedforward
-                setArmPower(out);
                 break;
             case PIDF_TEST:
                 double pid = 0;
@@ -215,16 +197,6 @@ public class Arm extends Subsystem {
     }
 
     public void setMotionProfile(int targetPosition) {
-        noEncoders();
-        motionProfileTime.reset();
-        mp.setStartingTime(motionProfileTime.seconds());
-
-        STARTING_POS = BulkReading.pArmLeftMotor;
-        ENDING_POS = targetPosition;
-
-        mp.setProfile(STARTING_POS, ENDING_POS);
-    }
-    public void setMotionProfileTest(int targetPosition) {
         noEncoders();
         motionProfileTime.reset();
         mp.setStartingTime(motionProfileTime.seconds());
