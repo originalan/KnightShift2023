@@ -121,51 +121,40 @@ public class TwoDriver extends LinearOpMode {
                 previousGamepad2.copy(currentGamepad2);
                 currentGamepad2.copy(gamepad2);
 
-                /*
-                =================DRIVETRAIN CONTROLS==============
-                 */
+                if (robot.armSubsystem.armState == Arm.ArmState.MOTION_PROFILE) {
 
-                drivetrainControls();
+                    drivetrainControls();
+                    intakeControls();
 
-                /*
-                =================RIGGING CONTROLS==============
-                */
+//                    robot.addTelemetry();
+                    telemetry.update();
+                    robot.armSubsystem.update();
+                    robot.clawSubsystem.update();
 
-//                riggingControls();
-                rigControls();
+                }else {
 
-                /*
-                =================AIRPLANE CONTROLS==============
-                */
+                    drivetrainControls();
 
-                launcherControls();
+                    rigControls();
 
-                /*
-                =================ARM CONTROLS==============
-                */
+                    launcherControls();
 
-                /*
-                =================CLAW CONTROLS==============
-                */
+                    intakeControls();
 
-                intakeControls();
+                    if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                        robot.drivetrainSubsystem.resetInitYaw();
+                    }
 
-//                armControls();
-//                armMotionProfileControls();
-//                pivotClawControls();
-//                clawSidePieceControls();
+                    robot.addTelemetry();
+                    telemetry.update();
+                    robot.update();
+                }
+
 
                 /*
                 =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
                 */
 
-                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    robot.drivetrainSubsystem.resetInitYaw();
-                }
-
-                robot.addTelemetry();
-                telemetry.update();
-                robot.update();
 
             }
         }
@@ -350,7 +339,7 @@ public class TwoDriver extends LinearOpMode {
             case DELAY:
                 // robot arm is moving back down to intaking / closed position
                 // only after 0.5 seconds from button press does claw servos move (so they don't hit the backdrop)
-                if (runtime.seconds() - delayTime > 0.5) {
+                if (runtime.seconds() - delayTime > 0.25) {
                     robot.armSubsystem.pivotState = Arm.PivotState.REST;
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
@@ -368,7 +357,7 @@ public class TwoDriver extends LinearOpMode {
                 break;
             case DOUBLE_CHECK:
                 // let arm settle for 0.5 seconds
-                if (runtime.seconds() - doubleCheckWaitTime > 0.5) {
+                if (runtime.seconds() - doubleCheckWaitTime > 0.25) {
                     intakeState = IntakeControlsState.RESET;
                 }
                 break;

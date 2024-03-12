@@ -124,7 +124,7 @@ public class ArmTestMP extends LinearOpMode {
             case DELAY:
                 // robot arm is moving back down to intaking / closed position
                 // only after 0.5 seconds from button press does claw servos move (so they don't hit the backdrop)
-                if (runtime.seconds() - delayTime > 0.5) {
+                if (runtime.seconds() - delayTime > 0.25) {
                     robot.armSubsystem.pivotState = Arm.PivotState.REST;
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 

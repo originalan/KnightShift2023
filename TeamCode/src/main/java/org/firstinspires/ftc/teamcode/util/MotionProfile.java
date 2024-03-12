@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class MotionProfile {
     private double startingTime = 0;
 
-    public static int MAX_VELOCITY = 250; // enocder ticks per second
-    public static int MAX_ACCELERATION = 250; // encoder ticks per second
+    public static int MAX_VELOCITY = 400; // enocder ticks per second
+    public static int MAX_ACCELERATION = 400; // encoder ticks per second
 //    public static int MAX_JERK = 0;
 
     private double acceleration_dt, distance, halfway_distance, max_acceleration,

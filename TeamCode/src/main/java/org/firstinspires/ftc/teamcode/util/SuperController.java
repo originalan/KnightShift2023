@@ -16,16 +16,16 @@ public class SuperController {
     private double lastVelocity = 0;
     private final double motorEncoderTicks = 1120;
 
-    public static double Kp_fightingGravity = 0.050; // 0.07
+    public static double Kp_fightingGravity = 0; // 0.07
     public static double Ki_fightingGravity = 0; // 0.00065
     public static double Kd_fightingGravity = 0; // 0.0004
-    public static double Kp_withGravity = 0.008; // 0.07
+    public static double Kp_withGravity = 0; // 0.07
     public static double Ki_withGravity = 0; // 0.00065
     public static double Kd_withGravity = 0; // 0.0004
     public static double Kg = 0.105;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
-    public static double FS_Kp = 0.035, FS_Kv = 0, FS_Ka = 0;
+    public static double FS_Kp = 0.030, FS_Kv = 0, FS_Ka = 0;
     public static double FS_Kp_g = 0;
 
     public SuperController(Telemetry telemetry) {

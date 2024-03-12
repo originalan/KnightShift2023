@@ -18,6 +18,7 @@ public class RedClose2 extends AutoBase {
     private TrajectorySequence waitingTime;
     private double waitTime = 0;
     private boolean park = true;
+    private boolean parkOutside = true;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
