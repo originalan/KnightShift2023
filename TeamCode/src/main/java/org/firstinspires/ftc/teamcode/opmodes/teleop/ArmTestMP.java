@@ -106,6 +106,8 @@ public class ArmTestMP extends LinearOpMode {
                 }
 
                 if (currentGamepad1.x && !previousGamepad1.x) {
+                    leftClosed = true;
+                    rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(targetPos);
                     armTestState = ArmTestState.DROP_POS;

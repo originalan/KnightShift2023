@@ -85,10 +85,11 @@ public class MotionProfile {
         double timeElapsed = currentTime - startingTime;
         timeElapsed = Math.abs(timeElapsed);
 
-
+        // if no motion profile is set
         if (distance == 0 || max_acceleration == 0 || max_velocity == 0) {
             isBusy = false;
             instantPos = end;
+            distanceTraveled = 0;
             instantVel = 0;
             instantAcl = 0;
             return;
@@ -98,6 +99,7 @@ public class MotionProfile {
         if (timeElapsed > entire_dt) {
             isBusy = false;
             instantPos = end;
+            distanceTraveled = end - start;
             instantVel = 0;
             instantAcl = 0;
             return;
@@ -107,6 +109,7 @@ public class MotionProfile {
         if (timeElapsed < acceleration_dt) {
             // use the kinematic equation for acceleration
             instantPos = 0.5 * max_acceleration * Math.pow(timeElapsed, 2);
+            distanceTraveled = instantPos;
             instantPos += start;
             instantVel = max_acceleration * timeElapsed;
             instantAcl = max_acceleration;
@@ -120,6 +123,7 @@ public class MotionProfile {
 
             // use the kinematic equation for constant velocity
             instantPos = acceleration_distance + max_velocity * cruise_current_dt;
+            distanceTraveled = instantPos;
             instantPos += start;
             instantVel = max_velocity;
             instantAcl = 0;
@@ -134,6 +138,7 @@ public class MotionProfile {
 
             // use the kinematic equations to calculate the instantaneous desired position
             instantPos = acceleration_distance + cruise_distance + max_velocity * decelerationTime - 0.5 * max_acceleration * Math.pow(decelerationTime, 2);
+            distanceTraveled = instantPos;
             instantPos += start;
             instantVel = max_velocity - max_acceleration * (timeElapsed - deceleration_time);
             instantAcl = -1.0 * max_acceleration;

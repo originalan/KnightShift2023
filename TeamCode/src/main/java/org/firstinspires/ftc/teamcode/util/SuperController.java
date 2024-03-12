@@ -22,6 +22,7 @@ public class SuperController {
     public static double Kp_withGravity = 0; // 0.07
     public static double Ki_withGravity = 0; // 0.00065
     public static double Kd_withGravity = 0; // 0.0004
+    public static double Kp = 0.025, Ki = 0, Kd = 0;
     public static double Kg = 0.105;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
@@ -43,7 +44,7 @@ public class SuperController {
      * @param state is the current position
      * @return power output of motor
      */
-    public double calculatePID(double reference, double state) {
+    public double calculatePIDGravity(double reference, double state) {
         double error = reference - state;
         integralSum += error * elapsedTime.seconds();
         double derivative = (error - lastError) / elapsedTime.seconds();
@@ -70,6 +71,19 @@ public class SuperController {
         }
 
         double output = (error * p) + (derivative * d) + (integralSum * i);
+
+        return output;
+    }
+
+    public double calculatePID(double reference, double state) {
+        double error = reference - state;
+        integralSum += error * elapsedTime.seconds();
+        double derivative = (error - lastError) / elapsedTime.seconds();
+        lastError = error;
+
+        elapsedTime.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
 
         return output;
     }

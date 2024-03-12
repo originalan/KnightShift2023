@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.opmodes.teleop.ArmTestPIDF;
 import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.util.MotionProfile;
-import org.firstinspires.ftc.teamcode.util.PIDFControl;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 import org.firstinspires.ftc.teamcode.util.SuperController;
 
@@ -31,6 +30,9 @@ public class Arm extends Subsystem {
     private double maxVelocity = 0;
     private int STARTING_POS = 0;
     private int ENDING_POS = 0;
+    private double previousPower = 5;
+    private double previousRefPos = 100000;
+    private double previousCurrentPos = 100000;
 
     public enum ArmState {
         AUTO_PIXEL_STACK_POS_1,
@@ -101,15 +103,29 @@ public class Arm extends Subsystem {
                 telemetry.addData("Reference Acceleration", refAcl);
 
                 double pidPower = 0;
-//                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
                 double fullstate = 0;
+                double output = 0;
+//                if ( !(previousCurrentPos == BulkReading.pArmLeftMotor && previousRefPos == refPos) ) {
+////                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+//                    fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+////                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                    double f_g = superController.positionalFeedforward(refPos);
+//                    double k_va = superController.kvkaFeedforward(refVel, refAcl);
+//
+//                    output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
+//                    setArmPower(output);
+//                }
+                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
                 fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
 //                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 double f_g = superController.positionalFeedforward(refPos);
                 double k_va = superController.kvkaFeedforward(refVel, refAcl);
 
-                double output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
+                output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
                 setArmPower(output);
+
+                previousCurrentPos = BulkReading.pArmLeftMotor;
+                previousRefPos = refPos;
                 break;
             case PIDF_TEST:
                 double pid = 0;
@@ -127,7 +143,7 @@ public class Arm extends Subsystem {
 //                    full_state = superController.fullstateCalculate(t, ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 }
                 if (ArmTestPIDF.pid) {
-                    pid = superController.calculatePID(t, BulkReading.pArmLeftMotor);
+                    pid = superController.calculatePIDGravity(t, BulkReading.pArmLeftMotor);
                 }
                 if (ArmTestPIDF.feedforward_kvka) {
                     Kva = superController.kvkaFeedforward(ArmTestPIDF.targetVelocity, ArmTestPIDF.targetAcceleration);
@@ -168,12 +184,17 @@ public class Arm extends Subsystem {
             power = -MAX_POWER;
         }
 
-        robot.armLeftMotor.setPower(power);
-        robot.armRightMotor.setPower(power);
+        if (power != previousPower) {
+            robot.armLeftMotor.setPower(power);
+            robot.armRightMotor.setPower(power);
+        }
+
+
+        previousPower = power;
     }
 
     public void setArmEncoderPosition(int encoderPos) {
-        double pow = superController.calculatePID(encoderPos, BulkReading.pArmLeftMotor);
+        double pow = superController.calculatePIDGravity(encoderPos, BulkReading.pArmLeftMotor);
 
         if (pow > MAX_POWER) {
             pow = MAX_POWER;

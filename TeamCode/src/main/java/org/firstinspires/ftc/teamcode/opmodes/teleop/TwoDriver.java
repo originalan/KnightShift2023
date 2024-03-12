@@ -40,6 +40,7 @@ public class TwoDriver extends LinearOpMode {
 
     public static boolean leftClosed = true, rightClosed = true;
     public static boolean orientHelp = false;
+    private double previousX = 5, previousY = 5, previousR = 5;
 
     private enum IntakeControlsState {
         INTAKING, // claw on the floor and open for pixels
@@ -159,8 +160,6 @@ public class TwoDriver extends LinearOpMode {
         double y = gamepad1.left_stick_y * -1;
         double r = gamepad1.right_stick_x;
 
-        robot.drivetrainSubsystem.factor = 1.0;
-
         if (currentGamepad1.b && !previousGamepad1.b) {
             switchDriveControls = !switchDriveControls;
         }
@@ -179,7 +178,14 @@ public class TwoDriver extends LinearOpMode {
             r /= 3;
         }
 
-        robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
+        // attempting to save motor calls == faster frequency of command calls
+        if ( !(previousX == x && previousY == y && previousR == r) ) {
+            robot.drivetrainSubsystem.moveXYR(x, y, r, !switchDriveControls);
+        }
+
+        previousX = x;
+        previousY = y;
+        previousR = r;
     }
 
     public void rigControls() {
@@ -218,11 +224,9 @@ public class TwoDriver extends LinearOpMode {
                 robot.rigRightServo.getController().pwmDisable();
                 robot.rigLeftServo.getController().pwmDisable();
                 if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
-                    robot.rigRightMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
-                    robot.rigLeftMotor.setPower(RobotSettings.RIGGING_MOTOR_SPEED);
+                    robot.riggingSubsystem.setRiggingMotors(RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
-                    robot.rigRightMotor.setPower(0);
-                    robot.rigLeftMotor.setPower(0);
+                    robot.riggingSubsystem.setRiggingMotors(0);
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     rigWaitTime = runtime.seconds();
@@ -296,21 +300,29 @@ public class TwoDriver extends LinearOpMode {
                 }
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
+                    leftClosed = true;
+                    rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     intakeState = IntakeControlsState.DROP_POS;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
+                    leftClosed = true;
+                    rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position2);
                     intakeState = IntakeControlsState.DROP_POS;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
+                    leftClosed = true;
+                    rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     intakeState = IntakeControlsState.DROP_POS;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
+                    leftClosed = true;
+                    rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position4);
                     intakeState = IntakeControlsState.DROP_POS;

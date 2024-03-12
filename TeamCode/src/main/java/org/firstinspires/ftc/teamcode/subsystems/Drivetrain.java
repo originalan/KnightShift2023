@@ -25,10 +25,6 @@ public class Drivetrain extends Subsystem {
 
     private Orientation lastAngle;
     private double initYaw;
-    public static double distanceThreshold = 5.0;
-    public double factor = 1.0;
-    public static double dSensorFactor = 3.0;
-
     private double  frontLeftPower,
                     frontRightPower,
                     backLeftPower,
@@ -150,10 +146,10 @@ public class Drivetrain extends Subsystem {
             backRightPower /= power + Math.abs(r);
         }
 
-        robot.backLeft.setPower(backLeftPower / factor);
-        robot.backRight.setPower(backRightPower / factor);
-        robot.frontLeft.setPower(frontLeftPower / factor);
-        robot.frontRight.setPower(frontRightPower / factor);
+        robot.backLeft.setPower(backLeftPower);
+        robot.backRight.setPower(backRightPower);
+        robot.frontLeft.setPower(frontLeftPower);
+        robot.frontRight.setPower(frontRightPower);
 
     }
 

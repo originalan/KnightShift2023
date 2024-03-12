@@ -15,6 +15,7 @@ public class Rigging extends Subsystem {
     private HardwareMap hwMap;
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
+    private double previousPower;
 
     public enum RiggingState {
         NO_RIG,
@@ -69,11 +70,13 @@ public class Rigging extends Subsystem {
         robot.rigRightServo.setPosition(RobotSettings.RIGGING_RIGHT_REST);
     }
 
-    public void pullString(boolean isReversed) {
-        double reversed = isReversed ? -1.0 : 1.0;
-        //have u considered writing comments
-        robot.rigLeftMotor.setPower(reversed);
-        robot.rigRightMotor.setPower(reversed);
+    public void setRiggingMotors(double power) {
+        if (previousPower != power) {
+            robot.rigRightMotor.setPower(power);
+            robot.rigLeftMotor.setPower(power);
+        }
+
+        previousPower = power;
     }
 
 }
