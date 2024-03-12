@@ -20,6 +20,7 @@ public class BlueClose1 extends AutoBase {
     private double waitTime = 0;
     private double shift = 9.5;
     private boolean leftSide = false;
+    private boolean parkOutside = true;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
@@ -58,8 +59,9 @@ public class BlueClose1 extends AutoBase {
             telemetry.addData("LOCATION: ", detectedSide);
             telemetry.addData("Waiting Time", waitTime);
             telemetry.addLine("Blue, starting closer to backstage");
-            telemetry.addLine("purple pixel in LEFT claw!!!!!");
+            telemetry.addLine("purple pixel in LEFT claw");
             telemetry.addData("Yellow Pixel on", leftSide ? "LEFT" : "RIGHT");
+            telemetry.addData("Parking on ", parkOutside ? "OUTSIDE" : "INSIDE");
             telemetry.update();
 
             if (currentGamepad.left_bumper && !previousGamepad.left_bumper) {
@@ -79,6 +81,10 @@ public class BlueClose1 extends AutoBase {
                     shift = 9.5;
                 }
                 buildTrajectories();
+            }
+            if (currentGamepad.dpad_down && !previousGamepad.dpad_down) {
+                parkOutside = !parkOutside;
+                buildParkTrajectory();
             }
         }
 
@@ -233,13 +239,27 @@ public class BlueClose1 extends AutoBase {
         moveBackLittle = drive.trajectorySequenceBuilder(backdropTraj.end())
                 .back(5.5)
                 .build();
-        parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(moveBackLittle.end().getX(), 54))
-                .turn(Math.toRadians(-90))
+        buildParkTrajectory();
+    }
+
+    public void buildParkTrajectory() {
+        if (parkOutside) {
+            parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
+                    .turn(Math.toRadians(90))
+                    .lineTo(new Vector2d(moveBackLittle.end().getX(), 54))
+                    .turn(Math.toRadians(-90))
 //                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
-                .back(15)
-                .build();
+                    .back(15)
+                    .build();
+        }else {
+            parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
+                    .turn(Math.toRadians(90))
+                    .lineTo(new Vector2d(moveBackLittle.end().getX(), 3))
+                    .turn(Math.toRadians(-90))
+//                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
+                    .back(15)
+                    .build();
+        }
     }
 
     public void setGoalPose() {
