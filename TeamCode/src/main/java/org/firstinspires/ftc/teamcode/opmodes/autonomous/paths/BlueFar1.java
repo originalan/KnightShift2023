@@ -250,7 +250,7 @@ public class BlueFar1 extends AutoBase {
                         .splineTo(new Vector2d(-36, (-3) * -1), Math.toRadians(180))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 + shift) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -263,7 +263,7 @@ public class BlueFar1 extends AutoBase {
                         .turn(-1 * Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 - 6.0 + shift) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 6.0 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -283,7 +283,7 @@ public class BlueFar1 extends AutoBase {
                         .turn(-1 * Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, (-49.5 + 20.25 + 1.725 - 12.0 + shift) * -1), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, (-49.5 + 20.25 + 1.725 - 12.0 + shift) * -1), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

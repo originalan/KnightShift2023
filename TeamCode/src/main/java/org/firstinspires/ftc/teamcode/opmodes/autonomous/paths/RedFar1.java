@@ -253,7 +253,7 @@ public class RedFar1 extends AutoBase {
                         .turn(Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 + shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, -49.5 + 20.25 + 1.725 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -266,7 +266,7 @@ public class RedFar1 extends AutoBase {
                         .turn(Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 6.0 + shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, -49.5 + 20.25 + 1.725 - 6.0 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
@@ -280,7 +280,7 @@ public class RedFar1 extends AutoBase {
                         .splineTo(new Vector2d(-36, -3), Math.toRadians(180))
                         .forward(-48)
                         .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 12.0 + shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 11, -49.5 + 20.25 + 1.725 - 12.0 + shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
