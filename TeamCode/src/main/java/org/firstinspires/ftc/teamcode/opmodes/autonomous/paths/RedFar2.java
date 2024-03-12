@@ -122,68 +122,19 @@ public class RedFar2 extends AutoBase {
                         robot.armSubsystem.pivotState = Arm.PivotState.REST;
                         if (!drive.isBusy()) {
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-                            state = AutoState.IDLE;
+                            state = AutoState.MOVING_TO_BACKBOARD;
+                            drive.followTrajectorySequenceAsync(backdropTraj);
                         }
                         break;
                         // STOPS HERE ===================================================
-//                    case MOVING_TO_BACKBOARD:
-//                        // robot is moving to backboard, arm and servo are moving too
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.LIFT_ARM;
-//
-//                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-//
-//                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
-//
-//                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionYellowPixel;
-//                            robot.armSubsystem.setMotionProfile();
-//                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-//                        }
-//                        break;
-//                    case LIFT_ARM:
-//                        // give about 3 seconds for arm and servo to move in place
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.MOVE_FORWARD;
-//                            drive.followTrajectorySequenceAsync(moveBackLittle);
-//                        }
-//                        break;
-//                    case MOVE_FORWARD:
-//                        // robot is moving back into the backdrop a little bit
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.RELEASE_PIXEL;
-//                            drive.followTrajectorySequenceAsync(waitingHalfSecond);
-//                        }
-//                        break;
-//                    case RELEASE_PIXEL:
-//                        // 1.5 seconds for yellow pixel to release and fall
-//                        robot.clawSubsystem.clawState = Claw.ClawState.LEFT_CLAW_OPEN;
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.ARM_BACK_DOWN;
-//
-//                            robot.armSubsystem.encoderGoalPosition = ArmSettings.positionBottom;
-//                            robot.armSubsystem.setMotionProfile();
-//                            robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-//
-//                            robot.armSubsystem.pivotState = Arm.PivotState.REST;
-//                            drive.followTrajectorySequenceAsync(waitingOneAndHalfSeconds);
-//                        }
-//                        break;
-//                    case ARM_BACK_DOWN:
-//                        // robot is bringing arm back down for 1.5 seconds
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.PARKING;
-//                            robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-//
-//                            drive.followTrajectorySequenceAsync(parkingTraj);
-//                        }
-//                        break;
-//                    case PARKING:
-//                        if (!drive.isBusy()) {
-//                            state = AutoState.IDLE;
-//                        }
-//                        break;
-//                    case IDLE:
-//                        break;
+                    case MOVING_TO_BACKBOARD:
+                        // robot is moving back
+                        if (!drive.isBusy()) {
+                            state = AutoState.IDLE;
+                        }
+                        break;
+                    case IDLE:
+                        break;
                 }
 
                 drive.update();
@@ -232,12 +183,7 @@ public class RedFar2 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .turn(-1 * Math.toRadians(90))
-                        .lineTo(new Vector2d(detectionTraj.end().getX(), -3))
-                        .turn(Math.toRadians(90))
-                        .forward(-48)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 + 8), Math.toRadians(0))
-                        .setReversed(false)
+                        .back(10)
                         .build();
                 break;
             case MIDDLE:
@@ -245,12 +191,7 @@ public class RedFar2 extends AutoBase {
                         .splineTo(new Vector2d(-39 - 1.725, -24 - 0.5 - 2.25), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .back(1)
-                        .turn(Math.toRadians(90))
-                        .forward(-48)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 6.0 + 8), Math.toRadians(0))
-                        .setReversed(false)
+                        .back(10)
                         .build();
                 break;
             case RIGHT:
@@ -260,11 +201,7 @@ public class RedFar2 extends AutoBase {
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .turn(Math.toRadians(90))
-                        .splineTo(new Vector2d(-36, -3), Math.toRadians(180))
-                        .forward(-48)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(60.75 - 32.5 - 0.25 + 9, -49.5 + 20.25 + 1.725 - 12.0 + 8), Math.toRadians(0))
-                        .setReversed(false)
+                        .back(10)
                         .build();
                 break;
         }

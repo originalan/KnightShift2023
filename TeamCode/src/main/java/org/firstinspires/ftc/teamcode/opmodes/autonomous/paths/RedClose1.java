@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 
 @Autonomous (name = "RedClose 2+0", group = "Testing")
 public class RedClose1 extends AutoBase {
-    private TrajectorySequence detectionTraj, backdropTraj,parkingTraj;
+    private TrajectorySequence detectionTraj, backdropTraj, parkingTraj;
     private TrajectorySequence moveBackLittle;
     private TrajectorySequence waitingOneHalfSeconds, waitingThreeSeconds, waitingHalfSeconds;
     private TrajectorySequence waitingTime;

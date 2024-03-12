@@ -191,6 +191,14 @@ public class Arm extends Subsystem {
 
     public void setArmEncoderPosition(int encoderPos) {
         double pow = superController.calculatePID(encoderPos, BulkReading.pArmLeftMotor);
+
+        if (pow > MAX_POWER) {
+            pow = MAX_POWER;
+        }
+        if (pow < -MAX_POWER) {
+            pow = -MAX_POWER;
+        }
+
         robot.armLeftMotor.setPower(pow);
         robot.armRightMotor.setPower(pow);
     }
