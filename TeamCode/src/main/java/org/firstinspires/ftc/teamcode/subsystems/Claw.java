@@ -100,6 +100,8 @@ public class Claw extends Subsystem {
         double left = robot.clawDLeft.getDistance(DistanceUnit.INCH);
         double right = robot.clawDRight.getDistance(DistanceUnit.INCH);
 
+        telemetry.addData("LEFT/RIGHT DSENSORS: ","%.4f, %.4f", left, right);
+
         if (left < RobotSettings.CLAW_LEFT_THRESHOLD) {
             closeClawLeft();
             TwoDriver.leftClosed = true;

@@ -68,6 +68,7 @@ public class Arm extends Subsystem {
         if (UseTelemetry.ARM) {
             telemetry.addLine("Arm");
             telemetry.addData("    Arm Motor Position Encoder Value", "%d", BulkReading.pArmLeftMotor);
+            telemetry.addData("Arm State", armState);
             telemetry.addData("    Max velocity", maxVelocity);
             telemetry.addData("    Left/Right Pivot Servo Pos", "%.3f, %.3f", BulkReading.pClawPivotLeftServo, BulkReading.pClawPivotRightServo);
         }
@@ -204,7 +205,7 @@ public class Arm extends Subsystem {
     }
 
     public void setPivotServoPosition(double position) {
-//        robot.clawPivotLeftServo.setPosition(position);
+        robot.clawPivotLeftServo.setPosition(position);
         robot.clawPivotRightServo.setPosition(position);
     }
 

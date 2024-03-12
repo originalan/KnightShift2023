@@ -127,6 +127,8 @@ public class TwoDriver extends LinearOpMode {
                     intakeControls();
 
 //                    robot.addTelemetry();
+                    robot.armSubsystem.addTelemetry();
+                    telemetry.addData("Intake State", intakeState);
                     telemetry.update();
                     robot.armSubsystem.update();
                     robot.clawSubsystem.update();
@@ -493,6 +495,7 @@ public class TwoDriver extends LinearOpMode {
                 }
                 break;
             case RESET:
+                robot.armSubsystem.setArmPower(0);
                 robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

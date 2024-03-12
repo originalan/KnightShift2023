@@ -181,6 +181,7 @@ public class ArmTestMP extends LinearOpMode {
                 }
                 break;
             case RESET:
+                robot.armSubsystem.setArmPower(0);
                 robot.armLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.armLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
