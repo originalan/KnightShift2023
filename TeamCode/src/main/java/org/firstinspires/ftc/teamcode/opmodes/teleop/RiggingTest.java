@@ -130,6 +130,18 @@ public class RiggingTest extends LinearOpMode {
                     robot.rigRightMotor.setPower(0);
                 }
 
+                if (currentGamepad1.dpad_up) {
+                    robot.rigLeftMotor.setPower(1.0 * RobotSettings.RIGGING_MOTOR_SPEED * 0.5);
+                }else {
+                    robot.rigLeftMotor.setPower(0);
+                }
+
+                if (currentGamepad1.dpad_down) {
+                    robot.rigRightMotor.setPower(1.0 * RobotSettings.RIGGING_MOTOR_SPEED * 0.5);
+                }else {
+                    robot.rigRightMotor.setPower(0);
+                }
+
                 robot.riggingSubsystem.addTelemetry();
                 robot.riggingSubsystem.update();
                 telemetry.update();

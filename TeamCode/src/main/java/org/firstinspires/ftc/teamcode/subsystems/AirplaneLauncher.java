@@ -16,61 +16,48 @@ public class AirplaneLauncher extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    private ElapsedTime launcherTimer = new ElapsedTime();
-    public int counter = 0;
-
     public enum LauncherState {
-        SETUP,
         AT_REST,
         ZONE_ONE_OR_BUST,
         NOTHING
     }
     public LauncherState launcherState = LauncherState.NOTHING;
-
     private LauncherState previousState = LauncherState.NOTHING;
+    private int counter = 0;
 
     public AirplaneLauncher(HardwareMap hwMap, Telemetry telemetry, JVBoysSoccerRobot robot) {
         this.hwMap = hwMap;
         this.telemetry = telemetry;
         this.robot = robot;
-        launcherTimer.reset();
     }
 
     @Override
     public void addTelemetry() {
         if (UseTelemetry.LAUNCHER) {
-//            telemetry.addLine("Airplane Launcher");
-//            telemetry.addData("   Launcher Fire Servo Current Position", "%4.2f", robot.launcherFireServo.getPosition());
-//            telemetry.addData("   Launcher Adjust Servo Current Position
-//            ", "%4.2f", robot.launcherAdjustServo.getPosition());
-//            telemetry.addData("    Times states switched", counter);
+            telemetry.addLine("Airplane Launcher");
+            telemetry.addData("   Launcher Servo Current Position", "%4.2f", robot.launcherServo.getPosition());
+            telemetry.addData("   Times states have changed", counter);
         }
     }
 
     @Override
     public void update() {
+        if (launcherState == previousState) {
+            counter++;
+        }
 
-//        if (previousState != launcherState) {
-//            counter++;
-//        }
-//
-//        switch (launcherState) {
-//            case AT_REST:
-//                restFireServo();
-//                clampAdjustServo();
-//                break;
-//            case ZONE_ONE_OR_BUST:
-//                unclampAdjustServo();
-//                releaseFireServo();
-//                break;
-//            case SETUP:
-//                restFireServo();
-//                unclampAdjustServo();
-//                break;
-//            case NOTHING:
-//                break;
-//        }
-//        previousState = launcherState;
+        switch (launcherState) {
+            case AT_REST:
+                restFireServo();
+                break;
+            case ZONE_ONE_OR_BUST:
+                releaseFireServo();
+                break;
+            case NOTHING:
+                break;
+        }
+
+        previousState = launcherState;
     }
 
     @Override
@@ -79,19 +66,10 @@ public class AirplaneLauncher extends Subsystem {
     }
 
     public void releaseFireServo() {
-        robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+        robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
     }
 
     public void restFireServo() {
-        robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+        robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
     }
-
-    public void unclampAdjustServo() {
-        robot.launcherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_UNCLAMPED);
-    }
-
-    public void clampAdjustServo() {
-        robot.launcherAdjustServo.setPosition(RobotSettings.LAUNCHER_ADJUST_POSITION_CLAMPED);
-    }
-
 }

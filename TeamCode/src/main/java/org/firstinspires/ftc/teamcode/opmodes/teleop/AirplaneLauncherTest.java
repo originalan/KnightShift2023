@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
 import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
@@ -52,13 +53,13 @@ public class AirplaneLauncherTest extends LinearOpMode {
                 }
 
                 if (launchPlane) {
-//                    robot.launcherSubsystem.releaseFireServo();
-//                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
-                    robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+                    robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+//                    robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
                 }else {
-//                    robot.launcherSubsystem.restFireServo();
-//                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
-                    robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+                    robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+//                    robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
                 }
 
                 robot.launcherSubsystem.addTelemetry();

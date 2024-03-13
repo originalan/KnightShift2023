@@ -21,6 +21,8 @@ public class RobotSettings {
     public static final boolean DRIVETRAIN_BACKRIGHT_REVERSED = false;
     public static final boolean DRIVETRAIN_FRONTLEFT_REVERSED = true;
     public static final boolean DRIVETRAIN_FRONTRIGHT_REVERSED = false;
+    public static double DSENSOR_LEFT_OFFSET = 0.75;
+    public static double DSENSOR_RIGHT_OFFSET = 0.5;
 
     public static final String DSENSOR_LEFT_NAME = "DSensorLeft";
     public static final String DSENSOR_RIGHT_NAME = "DSensorRight";
@@ -71,6 +73,7 @@ public class RobotSettings {
     =================AIRPLANE LAUNCHER SETTINGS==============
     */
     public static final String LAUNCHER_FIRE_SERVO_NAME = "AirplaneLauncherFireServo";
+    public static final String LAUNCHER_NAME = "AirplaneServo";
     public static boolean LAUNCHER_FIRE_SERVO_REVERSED = false;
     public static final String LAUNCHER_ADJUST_SERVO_NAME = "AirplaneLauncherAdjustServo";
     public static boolean LAUNCHER_ADJUST_SERVO_REVERSED = false;

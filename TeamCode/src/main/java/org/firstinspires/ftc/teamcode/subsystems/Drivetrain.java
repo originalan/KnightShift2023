@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.opmodes.teleop.TwoDriver;
 import org.firstinspires.ftc.teamcode.settings.PoseStorage;
+import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
 /**
@@ -119,15 +120,28 @@ public class Drivetrain extends Subsystem {
 
         if (TwoDriver.orientHelp) {
 
-            double newTheta = Math.toDegrees(theta);
-            newTheta %= 360;
-            double ref = newTheta % 90;
-            if (ref > 45) {
-                theta = Math.toRadians( newTheta + (90 - ref) );
+            if (isFieldOriented) {
+                double newTheta = Math.toDegrees(theta);
+                newTheta %= 360;
+                double ref = newTheta % 90;
+                if (ref > 45) {
+                    theta = Math.toRadians( newTheta + (90 - ref) );
+                }else {
+                    theta = Math.toRadians( newTheta - ref );
+                }
             }else {
-                theta = Math.toRadians( newTheta - ref );
+                double newTheta = Math.toDegrees(theta);
+                newTheta %= 360;
+                double ref = newTheta % 90;
+                double zeroYaw = (-1 * initYaw) + lastAngle.firstAngle;
+                double thetaGamePad = Math.atan2(y, x) * 180 / Math.PI; // in degrees
+                newTheta = (360 - zeroYaw) + thetaGamePad;
+                if (ref > 45) {
+                    theta = Math.toRadians( newTheta + (90 - ref) );
+                }else {
+                    theta = Math.toRadians( newTheta - ref );
+                }
             }
-
         }
 
         sin = Math.sin(theta - (Math.PI / 4));
@@ -228,9 +242,16 @@ public class Drivetrain extends Subsystem {
     }
 
     public void dSensorCheck() {
-        double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH);
-        double right = robot.dSensorRight.getDistance(DistanceUnit.INCH);
+        double left = robot.dSensorLeft.getDistance(DistanceUnit.INCH) - RobotSettings.DSENSOR_LEFT_OFFSET;
+        double right = robot.dSensorRight.getDistance(DistanceUnit.INCH) - RobotSettings.DSENSOR_RIGHT_OFFSET;
         telemetry.addData("dsensors are ON: ", "%.3f, %.3f", left, right);
+
+        if (left < 25.0 || right < 25.0) {
+            robot.backLeft.setPower(0);
+            robot.backRight.setPower(0);
+            robot.frontLeft.setPower(0);
+            robot.frontRight.setPower(0);
+        }
 
 //        // IF robot is moving 'backward', set power to 0 (y component is > 0)
 //        // else, let robot move

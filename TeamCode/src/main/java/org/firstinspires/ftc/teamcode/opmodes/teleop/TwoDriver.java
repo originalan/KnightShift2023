@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
@@ -35,8 +36,10 @@ public class TwoDriver extends LinearOpMode {
 
     // AIRPLANE LAUNCHER
     private boolean launcherFired = false;
+    private boolean fireAirplane = false;
 
     private boolean switchDriveControls = false;
+    private boolean useDSensors = false;
 
     public static boolean leftClosed = true, rightClosed = true;
     public static boolean orientHelp = false;
@@ -87,6 +90,7 @@ public class TwoDriver extends LinearOpMode {
         telemetry.addLine("    x to rig, left/right bumpers to move string");
         telemetry.addLine("    b to switch field-oriented drive to robot-oriented drive");
         telemetry.addLine("    a to help move straight");
+        telemetry.addLine("    y to use dsensors");
         telemetry.addLine("    dpad down to fire airplane");
         telemetry.addLine("    dpad up to reset yaw for field-oriented drive");
         telemetry.addLine("    left/right triggers to slow down drivetrain by factor of 3.0");
@@ -113,6 +117,11 @@ public class TwoDriver extends LinearOpMode {
                 previousGamepad2.copy(currentGamepad2);
                 currentGamepad2.copy(gamepad2);
 
+                // Failsafe field-oriented view
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                    robot.drivetrainSubsystem.resetInitYaw();
+                }
+
                 if (robot.armSubsystem.armState == Arm.ArmState.MOTION_PROFILE) {
 
                     drivetrainControls();
@@ -135,20 +144,11 @@ public class TwoDriver extends LinearOpMode {
 
                     intakeControls();
 
-                    if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                        robot.drivetrainSubsystem.resetInitYaw();
-                    }
-
                     robot.addTelemetry();
+                    telemetry.addData("Intake State", intakeState);
                     telemetry.update();
                     robot.update();
                 }
-
-
-                /*
-                =================FAILSAFE FIELD-ORIENTED VIEW CONTROLS==============
-                */
-
 
             }
         }
@@ -168,9 +168,18 @@ public class TwoDriver extends LinearOpMode {
             orientHelp = !orientHelp;
         }
 
+        if (currentGamepad1.y && !previousGamepad1.y) {
+            useDSensors = !useDSensors;
+        }
+
 //        if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
 //            robot.drivetrainSubsystem.dSensorCheck();
 //        }
+
+        if (useDSensors) {
+            robot.drivetrainSubsystem.dSensorCheck();
+        }
+
 
         if (currentGamepad1.right_trigger > 0.01 || currentGamepad1.left_trigger > 0.01) {
             x /= 3;
@@ -245,15 +254,27 @@ public class TwoDriver extends LinearOpMode {
             launcherFired = !launcherFired;
         }
 
-        if (launcherFired) {
-//                    robot.launcherSubsystem.counter++;
-//            robot.launcherSubsystem.releaseFireServo();
-            robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
-        }else {
-//                    robot.launcherSubsystem.counter++;
-//            robot.launcherSubsystem.restFireServo();
-            robot.launcherFireServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+        if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
+            fireAirplane = !fireAirplane;
         }
+
+//        if (launcherFired) {
+////                    robot.launcherSubsystem.counter++;
+////            robot.launcherSubsystem.releaseFireServo();
+//            robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+//        }else {
+////                    robot.launcherSubsystem.counter++;
+////            robot.launcherSubsystem.restFireServo();
+//            robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+//        }
+        if (fireAirplane) {
+            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
+            robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
+        }else {
+            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
+            robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+        }
+
     }
 
     public void clawSidePieceControls(boolean reversed) {

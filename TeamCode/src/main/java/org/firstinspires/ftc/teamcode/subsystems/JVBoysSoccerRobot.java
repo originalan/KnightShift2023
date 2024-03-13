@@ -40,7 +40,7 @@ public class JVBoysSoccerRobot {
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DistanceSensor dSensorLeft, dSensorRight;
-    public Servo launcherFireServo, launcherAdjustServo;
+    public Servo launcherFireServo, launcherAdjustServo, launcherServo, testServo;
     public DcMotorEx armLeftMotor, armRightMotor;
     public Servo rigLeftServo, rigRightServo; // These are flipped on the actual robot
     public DcMotorEx rigLeftMotor, rigRightMotor;
@@ -77,7 +77,7 @@ public class JVBoysSoccerRobot {
         riggingSubsystem = new Rigging(hwMap, telemetry, this);
         launcherSubsystem = new AirplaneLauncher(hwMap, telemetry, this);
 
-        subsystems = Arrays.asList(drivetrainSubsystem, clawSubsystem, armSubsystem, riggingSubsystem);
+        subsystems = Arrays.asList(drivetrainSubsystem, clawSubsystem, armSubsystem, riggingSubsystem, launcherSubsystem);
     }
 
     public JVBoysSoccerRobot(HardwareMap hwMap, Telemetry telemetry, AllianceType allianceType) {
@@ -128,14 +128,18 @@ public class JVBoysSoccerRobot {
     }
     
     public void initLauncherHardware() {
+        launcherServo = hwMap.get(Servo.class, RobotSettings.LAUNCHER_NAME);
+
         launcherFireServo = hwMap.servo.get(RobotSettings.LAUNCHER_FIRE_SERVO_NAME);
         launcherFireServo.setDirection(RobotSettings.LAUNCHER_FIRE_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
 
-        launcherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_ADJUST_SERVO_NAME);
-        launcherAdjustServo.setDirection(RobotSettings.LAUNCHER_ADJUST_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+//        launcherAdjustServo = hwMap.servo.get(RobotSettings.LAUNCHER_ADJUST_SERVO_NAME);
+//        launcherAdjustServo.setDirection(RobotSettings.LAUNCHER_ADJUST_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
     }
     
     public void initDrivetrainHardware() {
+        testServo = hwMap.get(Servo.class, "TestServo");
+
         backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);
         backRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKRIGHT_MOTOR_NAME);
         frontLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_FRONTLEFT_MOTOR_NAME);
