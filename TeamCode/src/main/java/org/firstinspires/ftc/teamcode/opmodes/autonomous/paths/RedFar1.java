@@ -176,17 +176,16 @@ public class RedFar1 extends AutoBase {
                             robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
 
                             robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                            drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                         }
                         break;
                     case ARM_BACK_DOWN:
-                        // robot is bringing arm back down for 3.0 seconds
+                        // robot is bringing arm back down
                         if (!robot.armSubsystem.getMP().isBusy()) {
+                            robot.armSubsystem.setArmPower(0);
                             robot.armSubsystem.armState = Arm.ArmState.NOTHING;
-                        }
-                        if (!drive.isBusy()) {
-                            state = AutoState.PARKING;
                             robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+
+                            state = AutoState.PARKING;
 
                             drive.followTrajectorySequenceAsync(parkingTraj);
                         }

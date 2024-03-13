@@ -22,6 +22,13 @@ public class AirplaneLauncherTest extends LinearOpMode {
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
     private boolean launchPlane = false;
+    private double launchTime = 0;
+    private enum LauncherControlsState {
+        REST,
+        FIRE,
+        OFF
+    }
+    private LauncherControlsState launchState = LauncherControlsState.REST;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,18 +55,24 @@ public class AirplaneLauncherTest extends LinearOpMode {
                 previousGamepad1.copy(currentGamepad1);
                 currentGamepad1.copy(gamepad1);
 
-                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    launchPlane = !launchPlane;
-                }
-
-                if (launchPlane) {
-                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
-                    robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
-//                    robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
-                }else {
-                    robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
-                    robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
-//                    robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
+                switch (launchState) {
+                    case REST:
+                        robot.testServo.getController().pwmDisable();
+                        if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                            launchState = LauncherControlsState.FIRE;
+                            launchTime = runtime.seconds();
+                        }
+                        break;
+                    case OFF:
+                        robot.testServo.getController().pwmDisable();
+                        break;
+                    case FIRE:
+                        robot.testServo.getController().pwmEnable();
+                        robot.testServo.setPosition(0.7);
+                        if (runtime.seconds() - launchTime > 1.0) {
+                            launchState = LauncherControlsState.OFF;
+                        }
+                        break;
                 }
 
                 robot.launcherSubsystem.addTelemetry();

@@ -53,8 +53,6 @@ public abstract class AutoBase extends LinearOpMode {
     protected Gamepad previousGamepad = new Gamepad();
 
     public void initialize(JVBoysSoccerRobot.AllianceType allianceType) {
-
-
         ALLIANCE_TYPE = allianceType;
         drive = new SampleMecanumDrive(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

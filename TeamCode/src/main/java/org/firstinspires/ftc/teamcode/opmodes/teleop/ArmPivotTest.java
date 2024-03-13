@@ -55,8 +55,10 @@ public class ArmPivotTest extends LinearOpMode {
 
                 if (move) {
                     robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
+                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_TEST_POS);
                 }else {
                     robot.clawPivotRightServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
+                    robot.clawPivotLeftServo.setPosition(ArmSettings.ARM_PIVOT_SERVO_REST);
                 }
 
                 robot.update();

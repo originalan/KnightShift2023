@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 @Config
-@TeleOp (name = "TwoDriver", group = "Final")
-public class TwoDriver extends LinearOpMode {
+@TeleOp (name = "TwoDriverRed", group = "Final")
+public class TwoDriverRed extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
@@ -28,6 +28,7 @@ public class TwoDriver extends LinearOpMode {
     private double rigWaitTime = 0;
     private double doubleCheckWaitTime = 0;
     private double delayTime = 0;
+    private double launchTime = 0;
 
     private Gamepad currentGamepad1;
     private Gamepad previousGamepad1;
@@ -49,7 +50,7 @@ public class TwoDriver extends LinearOpMode {
         INTAKING, // claw on the floor and open for pixels
         INTAKING_AUTO,
         CLOSED, // claw up and closed, holding pixels
-        DELAY, // arm is moving, wait 0.25 seconds before moving claw subsystems
+//        DELAY, // arm is moving, wait 0.25 seconds before moving claw subsystems
         GO_BACK_DOWN, // from any other arm position, going back down to closed position
         DOUBLE_CHECK, // reset the arm encoder position again after 0.5 seconds of GO_BACK_DOWN
         DROP_POS,
@@ -63,14 +64,20 @@ public class TwoDriver extends LinearOpMode {
         HANGING,
         NOTHING
     }
+    private enum LauncherControlsState {
+        REST,
+        FIRE,
+        OFF
+    }
     private IntakeControlsState intakeState = IntakeControlsState.CLOSED;
     private RiggingControlsState hangState = RiggingControlsState.DOWN;
+    private LauncherControlsState launchState = LauncherControlsState.REST;
 
     @Override
     public void runOpMode() {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.RED);
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         currentGamepad1 = new Gamepad();
@@ -250,31 +257,25 @@ public class TwoDriver extends LinearOpMode {
     }
 
     public void launcherControls() {
-        if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-            launcherFired = !launcherFired;
+        switch (launchState) {
+            case REST:
+                robot.testServo.getController().pwmDisable();
+                if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                    launchState = LauncherControlsState.FIRE;
+                    launchTime = runtime.seconds();
+                }
+                break;
+            case OFF:
+                robot.testServo.getController().pwmDisable();
+                break;
+            case FIRE:
+                robot.testServo.getController().pwmEnable();
+                robot.testServo.setPosition(0.7);
+                if (runtime.seconds() - launchTime > 1.0) {
+                    launchState = LauncherControlsState.OFF;
+                }
+                break;
         }
-
-        if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
-            fireAirplane = !fireAirplane;
-        }
-
-//        if (launcherFired) {
-////                    robot.launcherSubsystem.counter++;
-////            robot.launcherSubsystem.releaseFireServo();
-//            robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
-//        }else {
-////                    robot.launcherSubsystem.counter++;
-////            robot.launcherSubsystem.restFireServo();
-//            robot.launcherServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
-//        }
-        if (fireAirplane) {
-            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.ZONE_ONE_OR_BUST;
-            robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
-        }else {
-            robot.launcherSubsystem.launcherState = AirplaneLauncher.LauncherState.AT_REST;
-            robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_REST);
-        }
-
     }
 
     public void clawSidePieceControls(boolean reversed) {
@@ -362,19 +363,14 @@ public class TwoDriver extends LinearOpMode {
                     intakeState = IntakeControlsState.INTAKING_AUTO;
                 }
                 break;
-            case DELAY:
-                // robot arm is moving back down to intaking / closed position
-                // only after 0.5 seconds from button press does claw servos move (so they don't hit the backdrop)
-                if (runtime.seconds() - delayTime > 0.25) {
-                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
-                    robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
-
-                    intakeState = IntakeControlsState.GO_BACK_DOWN;
-                }
-                break;
             case GO_BACK_DOWN:
                 // robot arm is moving back down to intaking / closed position
+                if (robot.armSubsystem.getMP().distanceTraveled > 100) {
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                    robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
+                }
                 if (!robot.armSubsystem.getMP().isBusy()) {
+                    robot.armSubsystem.setArmPower(0);
                     robot.armSubsystem.armState = Arm.ArmState.NOTHING;
 
                     doubleCheckWaitTime = runtime.seconds();
@@ -382,7 +378,7 @@ public class TwoDriver extends LinearOpMode {
                 }
                 break;
             case DOUBLE_CHECK:
-                // let arm settle for 0.5 seconds
+                // let arm settle for 0.25 seconds
                 if (runtime.seconds() - doubleCheckWaitTime > 0.25) {
                     intakeState = IntakeControlsState.RESET;
                 }
@@ -430,7 +426,7 @@ public class TwoDriver extends LinearOpMode {
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.positionBottom);
                     delayTime = runtime.seconds();
-                    intakeState = IntakeControlsState.DELAY;
+                    intakeState = IntakeControlsState.GO_BACK_DOWN;
                 }
                 break;
             case RESET:

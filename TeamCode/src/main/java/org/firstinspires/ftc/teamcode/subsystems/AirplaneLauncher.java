@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
 
@@ -35,29 +36,29 @@ public class AirplaneLauncher extends Subsystem {
     public void addTelemetry() {
         if (UseTelemetry.LAUNCHER) {
             telemetry.addLine("Airplane Launcher");
-            telemetry.addData("   Launcher Servo Current Position", "%4.2f", robot.launcherServo.getPosition());
-            telemetry.addData("   Times states have changed", counter);
+            telemetry.addData("   Launcher Servo Current Position", "%4.2f", robot.testServo.getPosition());
+//            telemetry.addData("   Times states have changed", counter);
         }
     }
 
     @Override
     public void update() {
-        if (launcherState == previousState) {
-            counter++;
-        }
-
-        switch (launcherState) {
-            case AT_REST:
-                restFireServo();
-                break;
-            case ZONE_ONE_OR_BUST:
-                releaseFireServo();
-                break;
-            case NOTHING:
-                break;
-        }
-
-        previousState = launcherState;
+//        if (launcherState != previousState) {
+//            counter++;
+//        }
+//
+//        switch (launcherState) {
+//            case AT_REST:
+//                restFireServo();
+//                break;
+//            case ZONE_ONE_OR_BUST:
+//                releaseFireServo();
+//                break;
+//            case NOTHING:
+//                break;
+//        }
+//
+//        previousState = launcherState;
     }
 
     @Override

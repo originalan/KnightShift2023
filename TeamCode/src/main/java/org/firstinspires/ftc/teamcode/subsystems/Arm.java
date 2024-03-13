@@ -116,7 +116,7 @@ public class Arm extends Subsystem {
 //                    setArmPower(output);
 //                }
                 pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
-                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
 //                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
                 double f_g = superController.positionalFeedforward(refPos);
                 double k_va = superController.kvkaFeedforward(refVel, refAcl);
