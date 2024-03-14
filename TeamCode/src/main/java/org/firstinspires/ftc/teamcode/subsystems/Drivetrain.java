@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.opmodes.teleop.TwoDriverRed;
+import org.firstinspires.ftc.teamcode.opmodes.teleop.TwoDriver;
 import org.firstinspires.ftc.teamcode.settings.PoseStorage;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 import org.firstinspires.ftc.teamcode.settings.UseTelemetry;
@@ -24,8 +24,8 @@ public class Drivetrain extends Subsystem {
     private Telemetry telemetry;
     private JVBoysSoccerRobot robot;
 
-    private Orientation lastAngle;
-    private double initYaw;
+    public Orientation lastAngle;
+    public double initYaw;
     private double  frontLeftPower,
                     frontRightPower,
                     backLeftPower,
@@ -118,7 +118,7 @@ public class Drivetrain extends Subsystem {
             theta = Math.atan2(y, x); // -pi to pi
         }
 
-        if (TwoDriverRed.orientHelp) {
+        if (TwoDriver.orientHelp) {
 
             if (isFieldOriented) {
                 double newTheta = Math.toDegrees(theta);

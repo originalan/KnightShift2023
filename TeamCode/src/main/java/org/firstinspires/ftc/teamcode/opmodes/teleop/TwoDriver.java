@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.AirplaneLauncher;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
@@ -19,12 +21,13 @@ import org.firstinspires.ftc.teamcode.util.BulkReading;
 import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 
 @Config
-@TeleOp (name = "TwoDriverRed", group = "Final")
-public class TwoDriverRed extends LinearOpMode {
+@TeleOp (name = "TwoDriver", group = "Final")
+public class TwoDriver extends LinearOpMode {
 
     private JVBoysSoccerRobot robot;
     private BulkReading bulkReading;
     private ElapsedTime runtime = new ElapsedTime();
+    private SampleMecanumDrive drive;
     private double rigWaitTime = 0;
     private double doubleCheckWaitTime = 0;
     private double delayTime = 0;
@@ -45,6 +48,7 @@ public class TwoDriverRed extends LinearOpMode {
     public static boolean leftClosed = true, rightClosed = true;
     public static boolean orientHelp = false;
     private double previousX = 5, previousY = 5, previousR = 5;
+    private boolean isRed = true;
 
     private enum IntakeControlsState {
         INTAKING, // claw on the floor and open for pixels
@@ -66,6 +70,7 @@ public class TwoDriverRed extends LinearOpMode {
     }
     private enum LauncherControlsState {
         REST,
+        READY,
         FIRE,
         OFF
     }
@@ -77,7 +82,9 @@ public class TwoDriverRed extends LinearOpMode {
     public void runOpMode() {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        robot = new JVBoysSoccerRobot(hardwareMap, telemetry, JVBoysSoccerRobot.AllianceType.RED);
+        robot = new JVBoysSoccerRobot(hardwareMap, telemetry);
+        drive = new SampleMecanumDrive(hardwareMap);
+
         bulkReading = new BulkReading(robot, telemetry, hardwareMap);
 
         currentGamepad1 = new Gamepad();
@@ -106,6 +113,15 @@ public class TwoDriverRed extends LinearOpMode {
         robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
         robot.armSubsystem.pivotState = Arm.PivotState.REST;
         robot.armSubsystem.armState = Arm.ArmState.NOTHING;
+
+        while (opModeInInit()) {
+            previousGamepad1.copy(currentGamepad1);
+            currentGamepad1.copy(gamepad1);
+
+            if (currentGamepad1.x && !previousGamepad1.x) {
+                isRed = !isRed;
+            }
+        }
 
         waitForStart();
 
@@ -261,8 +277,26 @@ public class TwoDriverRed extends LinearOpMode {
             case REST:
                 robot.testServo.getController().pwmDisable();
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    launchState = LauncherControlsState.FIRE;
+                    launchState = LauncherControlsState.READY;
                     launchTime = runtime.seconds();
+                    double angle = robot.drivetrainSubsystem.initYaw - robot.drivetrainSubsystem.lastAngle.firstAngle;
+                    angle %= 360;
+                    double a;
+                    if (isRed) {
+                        a = 90 - angle - 5;
+                    }else {
+                        a = -1 * (90 - angle - 5);
+                    }
+                    TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(angle)))
+                            .turn( Math.toRadians(a) )
+                            .build();
+                    drive.followTrajectorySequenceAsync(traj);
+                    launchState = LauncherControlsState.READY;
+                }
+                break;
+            case READY:
+                if (!drive.isBusy()) {
+                    launchState = LauncherControlsState.FIRE;
                 }
                 break;
             case OFF:
