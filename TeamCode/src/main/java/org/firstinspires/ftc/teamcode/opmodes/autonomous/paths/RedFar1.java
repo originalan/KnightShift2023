@@ -278,7 +278,7 @@ public class RedFar1 extends AutoBase {
                 break;
             case MIDDLE:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(-39 - 1.725, -24 - 0.5 - 2.25), Math.toRadians(90))
+                        .splineTo(new Vector2d(-39 - 1.725, -24 - 0.5 - 4.25), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .back(1)

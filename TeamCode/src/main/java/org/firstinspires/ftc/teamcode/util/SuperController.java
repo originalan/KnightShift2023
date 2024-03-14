@@ -98,8 +98,8 @@ public class SuperController {
         double degrees = 375 - targetPosition;
         degrees = degrees / motorEncoderTicks * 360.0;
 
-        telemetry.addData("FF Degrees", degrees);
-        telemetry.addData("FF Power", Kg * Math.sin(Math.toRadians(degrees)));
+//        telemetry.addData("FF Degrees", degrees);
+//        telemetry.addData("FF Power", Kg * Math.sin(Math.toRadians(degrees)));
 
         return Kg * Math.sin( Math.toRadians(degrees) );
     }

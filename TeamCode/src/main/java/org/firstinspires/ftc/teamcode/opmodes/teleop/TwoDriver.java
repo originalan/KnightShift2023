@@ -443,20 +443,23 @@ public class TwoDriver extends LinearOpMode {
                 }
                 break;
             case DROP_POS:
-                robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 clawSidePieceControls(false);
 
                 if (currentGamepad2.y && !previousGamepad2.y) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position1);
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
                 }
                 if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position2);
+                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position3);
+                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position4);
+                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 }
 
                 if (currentGamepad2.dpad_up && !previousGamepad2.dpad_up) {

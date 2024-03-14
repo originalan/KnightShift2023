@@ -275,7 +275,7 @@ public class BlueClose1 extends AutoBase {
                 break;
             case MIDDLE:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(15 - 1.725, (-24.5 - 2.25) * -1), Math.toRadians(270))
+                        .splineTo(new Vector2d(15 - 1.725, (-24.5 - 4.25) * -1), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
