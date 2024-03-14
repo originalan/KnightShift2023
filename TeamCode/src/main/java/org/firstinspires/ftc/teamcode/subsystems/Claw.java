@@ -97,25 +97,25 @@ public class Claw extends Subsystem {
     }
 
     public void autoDetect() {
-        double left = robot.clawDLeft.getDistance(DistanceUnit.INCH);
-        double right = robot.clawDRight.getDistance(DistanceUnit.INCH);
+        double left = robot.clawDLeft.getDistance(DistanceUnit.INCH) - RobotSettings.CLAW_LEFT_OFFSET;
+        double right = robot.clawDRight.getDistance(DistanceUnit.INCH) - RobotSettings.CLAW_RIGHT_OFFSET;
 
         telemetry.addData("LEFT/RIGHT DSENSORS: ","%.4f, %.4f", left, right);
 
         if (left < RobotSettings.CLAW_LEFT_THRESHOLD) {
             closeClawLeft();
-            TwoDriver.leftClosed = true;
+            TwoDriver.leftClosed = false; // cuz i reverse the controls
         }else {
             openClawLeft();
-            TwoDriver.leftClosed = false;
+            TwoDriver.leftClosed = true;
         }
 
         if (right < RobotSettings.CLAW_RIGHT_THRESHOLD) {
             closeClawRight();
-            TwoDriver.rightClosed = true;
+            TwoDriver.rightClosed = false;
         }else {
             openClawRight();
-            TwoDriver.rightClosed = false;
+            TwoDriver.rightClosed = true;
         }
     }
 

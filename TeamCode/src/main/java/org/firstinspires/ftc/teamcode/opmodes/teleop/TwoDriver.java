@@ -401,7 +401,7 @@ public class TwoDriver extends LinearOpMode {
                 break;
             case GO_BACK_DOWN:
                 // robot arm is moving back down to intaking / closed position
-                if (robot.armSubsystem.getMP().distanceTraveled > 100) {
+                if (robot.armSubsystem.getMP().getInstantPosition() < 375) {
                     robot.armSubsystem.pivotState = Arm.PivotState.REST;
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
                 }
@@ -415,7 +415,7 @@ public class TwoDriver extends LinearOpMode {
                 break;
             case DOUBLE_CHECK:
                 // let arm settle for 0.25 seconds
-                if (runtime.seconds() - doubleCheckWaitTime > 0.25) {
+                if (runtime.seconds() - doubleCheckWaitTime > 0.4) {
                     intakeState = IntakeControlsState.RESET;
                 }
                 break;

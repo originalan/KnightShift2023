@@ -105,24 +105,24 @@ public class Arm extends Subsystem {
                 double pidPower = 0;
                 double fullstate = 0;
                 double output = 0;
-//                if ( !(previousCurrentPos == BulkReading.pArmLeftMotor && previousRefPos == refPos) ) {
-////                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
-//                    fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-////                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-//                    double f_g = superController.positionalFeedforward(refPos);
-//                    double k_va = superController.kvkaFeedforward(refVel, refAcl);
-//
-//                    output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
-//                    setArmPower(output);
-//                }
-                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
-//                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-//                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
-                double f_g = superController.positionalFeedforward(refPos);
-                double k_va = superController.kvkaFeedforward(refVel, refAcl);
+                if ( !(previousCurrentPos == BulkReading.pArmLeftMotor && previousRefPos == refPos) ) {
+                    pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+//                  fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                  fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+                    double f_g = superController.positionalFeedforward(refPos);
+                    double k_va = superController.kvkaFeedforward(refVel, refAcl);
 
-                output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
-                setArmPower(output);
+                    output = pidPower + fullstate + f_g + k_va; // PID + gravity positional feedforward + velocity and acceleration feedforward
+                    setArmPower(output);
+                }
+//                pidPower = superController.calculatePID(refPos, BulkReading.pArmLeftMotor);
+////                fullstate = superController.fullstateCalculate(refPos, refVel, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+////                fullstate = superController.fullstateCalculate(refPos, refVel, refAcl, BulkReading.pArmLeftMotor, BulkReading.vArmLeftMotor);
+//                double f_g = superController.positionalFeedforward(refPos);
+////                double k_va = superController.kvkaFeedforward(refVel, refAcl);
+//
+//                output = pidPower + fullstate + f_g; // PID + gravity positional feedforward + velocity and acceleration feedforward
+//                setArmPower(output);
 
                 previousCurrentPos = BulkReading.pArmLeftMotor;
                 previousRefPos = refPos;
@@ -165,7 +165,7 @@ public class Arm extends Subsystem {
                 break;
             case AUTO_CALIBRATE:
                 if (BulkReading.pArmLeftMotor > 375) {
-                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) + 0.10 + ( BulkReading.pArmLeftMotor / 1120.0 ) );
+                    setPivotServoPosition( ArmSettings.ARM_PIVOT_SERVO_REST + (1.0/3.0) - 0.05 + ( BulkReading.pArmLeftMotor / 1120.0 ) );
                 }
                 break;
         }
