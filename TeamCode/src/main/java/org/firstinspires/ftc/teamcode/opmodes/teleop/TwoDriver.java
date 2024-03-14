@@ -121,6 +121,8 @@ public class TwoDriver extends LinearOpMode {
             if (currentGamepad1.x && !previousGamepad1.x) {
                 isRed = !isRed;
             }
+            telemetry.addData("WHICH SIDE? ", isRed ? "RED" : "BLUE");
+            telemetry.update();
         }
 
         waitForStart();
