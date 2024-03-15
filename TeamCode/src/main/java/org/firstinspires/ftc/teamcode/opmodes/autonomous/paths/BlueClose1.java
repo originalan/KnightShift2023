@@ -179,6 +179,10 @@ public class BlueClose1 extends AutoBase {
 
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
+//                    robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
+//                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+//                    armMoving = true;
+
                     drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                 }
                 break;
@@ -188,6 +192,10 @@ public class BlueClose1 extends AutoBase {
                     state = AutoState.MOVE_FORWARD;
                     drive.followTrajectorySequenceAsync(moveBackLittle);
                 }
+//                if (!robot.armSubsystem.getMP().isBusy()) {
+//                    state = AutoState.MOVE_FORWARD;
+//                    drive.followTrajectorySequenceAsync(moveBackLittle);
+//                }
                 break;
             case MOVE_FORWARD:
                 // robot is moving back into the backdrop a little bit
