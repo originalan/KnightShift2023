@@ -107,7 +107,7 @@ public class RedClose2 extends AutoBase {
                         break;
                     case PLACING_PURPLE_PIXEL:
                         // robot is pivoting claw down for 0.5 seconds
-                        robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+                        robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL2;
                             drive.followTrajectorySequenceAsync(waitingHalfSeconds);

@@ -105,7 +105,7 @@ public class BlueClose2 extends AutoBase {
                         break;
                     case PLACING_PURPLE_PIXEL:
                         // robot is pivoting claw down for 0.5 seconds
-                        robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+                        robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL2;
                             drive.followTrajectorySequenceAsync(waitingHalfSeconds);
@@ -136,7 +136,7 @@ public class BlueClose2 extends AutoBase {
                         // robot is moving to park
                         if (!drive.isBusy()) {
                             state = AutoState.RELEASE_PIXEL;
-                            robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+                            robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
                             drive.followTrajectorySequenceAsync(waitingHalfSeconds);
                         }
                         break;

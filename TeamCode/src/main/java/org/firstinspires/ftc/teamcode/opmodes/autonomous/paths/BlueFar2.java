@@ -98,7 +98,7 @@ public class BlueFar2 extends AutoBase {
                         break;
                     case PLACING_PURPLE_PIXEL:
                         // robot is releasing claw servo for purple pixel
-                        robot.armSubsystem.pivotState = Arm.PivotState.GROUND;
+                        robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL2;
                             drive.followTrajectorySequenceAsync(waitingHalfSecond);
