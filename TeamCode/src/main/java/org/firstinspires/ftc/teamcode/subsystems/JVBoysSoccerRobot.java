@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.PIDFControl;
@@ -40,9 +41,10 @@ public class JVBoysSoccerRobot {
     public IMU imu2;
     public DcMotorEx backRight, backLeft, frontRight, frontLeft;
     public DistanceSensor dSensorLeft, dSensorRight;
-    public Servo launcherFireServo, launcherAdjustServo, launcherServo, testServo;
+    public Servo launcherFireServo, launcherAdjustServo, launcherServo;
+    public ServoImplEx testServo;
     public DcMotorEx armLeftMotor, armRightMotor;
-    public Servo rigLeftServo, rigRightServo; // These are flipped on the actual robot
+    public ServoImplEx rigLeftServo, rigRightServo; // These are flipped on the actual robot
     public DcMotorEx rigLeftMotor, rigRightMotor;
     public Servo clawRightServo, clawLeftServo;
     public Servo clawPivotLeftServo, clawPivotRightServo;
@@ -138,7 +140,7 @@ public class JVBoysSoccerRobot {
     }
     
     public void initDrivetrainHardware() {
-        testServo = hwMap.get(Servo.class, "TestServo");
+        testServo = hwMap.get(ServoImplEx.class, "TestServo");
 
         backLeft = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKLEFT_MOTOR_NAME);
         backRight = hwMap.get(DcMotorEx.class, RobotSettings.DRIVETRAIN_BACKRIGHT_MOTOR_NAME);
@@ -199,8 +201,8 @@ public class JVBoysSoccerRobot {
     }
     
     public void initRiggingHardware() {
-        rigLeftServo = hwMap.servo.get(RobotSettings.RIGGING_LEFT_SERVO_NAME);
-        rigRightServo = hwMap.servo.get(RobotSettings.RIGGING_RIGHT_SERVO_NAME);
+        rigLeftServo = hwMap.get(ServoImplEx.class, RobotSettings.RIGGING_LEFT_SERVO_NAME);
+        rigRightServo = hwMap.get(ServoImplEx.class, RobotSettings.RIGGING_RIGHT_SERVO_NAME);
         rigLeftServo.setDirection(RobotSettings.RIGGING_LEFT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
         rigRightServo.setDirection(RobotSettings.RIGGING_RIGHT_SERVO_REVERSED ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
 

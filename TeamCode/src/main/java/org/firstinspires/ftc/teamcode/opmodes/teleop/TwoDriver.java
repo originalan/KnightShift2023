@@ -225,38 +225,38 @@ public class TwoDriver extends LinearOpMode {
     public void rigControls() {
         switch (hangState) {
             case UP:
-                robot.riggingSubsystem.riggingState = Rigging.RiggingState.RIG;
                 if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
                     hangState = RiggingControlsState.HANGING;
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     rigWaitTime = runtime.seconds();
-                    robot.rigRightServo.getController().pwmEnable();
-                    robot.rigLeftServo.getController().pwmEnable();
+                    robot.rigRightServo.setPwmEnable();
+                    robot.rigLeftServo.setPwmEnable();
                     hangState = RiggingControlsState.DOWN_WAIT;
                 }
                 break;
             case DOWN:
-                robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
-                robot.rigRightServo.getController().pwmDisable();
-                robot.rigLeftServo.getController().pwmDisable();
                 if (currentGamepad1.x && !previousGamepad1.x) {
-                    robot.rigRightServo.getController().pwmEnable();
-                    robot.rigLeftServo.getController().pwmEnable();
+                    robot.rigRightServo.setPwmEnable();
+                    robot.rigLeftServo.setPwmEnable();
                     hangState = RiggingControlsState.UP;
+                    robot.riggingSubsystem.riggingState = Rigging.RiggingState.RIG;
                 }
                 break;
             case DOWN_WAIT:
                 robot.riggingSubsystem.riggingState = Rigging.RiggingState.NO_RIG;
                 if (runtime.seconds() - rigWaitTime > 1.0) {
+                    robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
                     hangState = RiggingControlsState.DOWN;
+                    robot.rigRightServo.setPwmDisable();
+                    robot.rigLeftServo.setPwmDisable();
                 }
                 break;
             case HANGING:
                 robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
                 intakeState = IntakeControlsState.CLOSED;
-                robot.rigRightServo.getController().pwmDisable();
-                robot.rigLeftServo.getController().pwmDisable();
+                robot.rigRightServo.setPwmDisable();
+                robot.rigLeftServo.setPwmDisable();
                 if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
                     robot.riggingSubsystem.setRiggingMotors(RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
@@ -264,8 +264,8 @@ public class TwoDriver extends LinearOpMode {
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     rigWaitTime = runtime.seconds();
-                    robot.rigRightServo.getController().pwmEnable();
-                    robot.rigLeftServo.getController().pwmEnable();
+                    robot.rigRightServo.setPwmEnable();
+                    robot.rigLeftServo.setPwmEnable();
                     hangState = RiggingControlsState.DOWN_WAIT;
                 }
                 break;
@@ -277,7 +277,7 @@ public class TwoDriver extends LinearOpMode {
     public void launcherControls() {
         switch (launchState) {
             case REST:
-                robot.testServo.getController().pwmDisable();
+                robot.testServo.setPwmDisable();
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
                     launchState = LauncherControlsState.READY;
                     launchTime = runtime.seconds();
@@ -302,10 +302,10 @@ public class TwoDriver extends LinearOpMode {
                 }
                 break;
             case OFF:
-                robot.testServo.getController().pwmDisable();
+                robot.testServo.setPwmDisable();
                 break;
             case FIRE:
-                robot.testServo.getController().pwmEnable();
+                robot.testServo.setPwmEnable();
                 robot.testServo.setPosition(0.7);
                 if (runtime.seconds() - launchTime > 1.0) {
                     launchState = LauncherControlsState.OFF;
