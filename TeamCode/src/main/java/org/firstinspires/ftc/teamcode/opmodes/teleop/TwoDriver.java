@@ -279,7 +279,7 @@ public class TwoDriver extends LinearOpMode {
             case REST:
                 robot.testServo.setPwmDisable();
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    launchState = LauncherControlsState.READY;
+//                    launchState = LauncherControlsState.READY;
 //                    launchTime = runtime.seconds();
 //                    double angle = robot.drivetrainSubsystem.initYaw - robot.drivetrainSubsystem.lastAngle.firstAngle;
 //                    angle %= 360;
@@ -293,6 +293,7 @@ public class TwoDriver extends LinearOpMode {
 //                            .turn( Math.toRadians(a) )
 //                            .build();
 //                    drive.followTrajectorySequenceAsync(traj);
+                    launchState = LauncherControlsState.FIRE;
                 }
                 break;
             case READY:

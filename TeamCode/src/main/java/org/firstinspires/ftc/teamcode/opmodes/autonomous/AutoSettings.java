@@ -10,7 +10,7 @@ public class AutoSettings {
     // everything is from the perspective of red
     public static double parkingOuterY = -53;
     public static double parkingInnerY = -3;
-    public static double moveBack = 5;
+    public static double moveBack = 4;
     public static double rightYellow = 0;
     public static double leftYellow = 3;
 
