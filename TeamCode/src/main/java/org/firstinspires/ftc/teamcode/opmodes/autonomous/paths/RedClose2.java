@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -196,7 +197,7 @@ public class RedClose2 extends AutoBase {
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(moveBackLittle.end().getX(), -54))
+                .lineTo(new Vector2d(moveBackLittle.end().getX(), AutoSettings.parkingOuterY))
                 .turn(Math.toRadians(90))
 //                .strafeTo(new Vector2d(backdropTraj.end().getX(), -46))
                 .back(15)
@@ -207,34 +208,33 @@ public class RedClose2 extends AutoBase {
         switch (detectedSide) {
             case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .lineTo(new Vector2d(startingPose.getX(), -36.0 - 1.725 + 0.5 + 8))
+                        .splineTo(new Vector2d(AutoSettings.leftDetectionX, AutoSettings.leftDetectionY), startingPose.getHeading())
                         .turn(Math.toRadians(90))
-//                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(50, -60), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoSettings.closeParkX, AutoSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case MIDDLE:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(15 - 1.725, -24.5 - 2.25), Math.toRadians(90))
+                        .splineTo(new Vector2d(AutoSettings.middleDetectionX, AutoSettings.middleDetectionY), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(50, -60), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoSettings.closeParkX, AutoSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case RIGHT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(23 - 1.725, -36.0 - 2.25 + 1), Math.toRadians(90))
+                        .splineTo(new Vector2d(AutoSettings.rightDetectionX, AutoSettings.rightDetectionY), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .turn(Math.toRadians(90))
                         .setReversed(true)
-                        .splineTo(new Vector2d(50, -60), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoSettings.closeParkX, AutoSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

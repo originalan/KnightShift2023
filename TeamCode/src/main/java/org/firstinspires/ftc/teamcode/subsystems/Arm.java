@@ -46,6 +46,7 @@ public class Arm extends Subsystem {
         NOTHING,
         REST,
         GROUND,
+        PURPLE,
         AUTO_CALIBRATE
     }
 
@@ -162,6 +163,9 @@ public class Arm extends Subsystem {
                 break;
             case GROUND:
                 setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_GROUND);
+                break;
+            case PURPLE:
+                setPivotServoPosition(ArmSettings.ARM_PIVOT_SERVO_PURPLE);
                 break;
             case AUTO_CALIBRATE:
                 if (BulkReading.pArmLeftMotor > 375) {

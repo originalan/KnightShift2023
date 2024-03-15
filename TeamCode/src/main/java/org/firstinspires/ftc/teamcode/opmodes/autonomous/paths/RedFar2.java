@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -176,9 +177,7 @@ public class RedFar2 extends AutoBase {
         switch (detectedSide) {
             case LEFT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-//                        .splineTo(new Vector2d(-48 + 0.5 - 1.725, -36.0 - 2.25 + 1), Math.toRadians(90))
-//                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
-                        .lineTo(new Vector2d(startingPose.getX(), -36.0 - 1.725 + 0.5 + 10))
+                        .splineTo(new Vector2d(AutoSettings.fleftDetectionX, AutoSettings.fleftDetectionY), startingPose.getHeading())
                         .turn(Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
@@ -188,7 +187,7 @@ public class RedFar2 extends AutoBase {
                 break;
             case MIDDLE:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(-39 - 1.725, -24 - 0.5 - 2.25), Math.toRadians(90))
+                        .splineTo(new Vector2d(AutoSettings.fmiddleDetectionX, AutoSettings.fmiddleDetectionY), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .back(10)
@@ -196,7 +195,7 @@ public class RedFar2 extends AutoBase {
                 break;
             case RIGHT:
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .lineTo(new Vector2d(startingPose.getX(), -36.0 - 1.725 + 0.5 + 12))
+                        .splineTo(new Vector2d(AutoSettings.frightDetectionX, AutoSettings.frightDetectionY), startingPose.getHeading())
                         .turn(-1 * Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())

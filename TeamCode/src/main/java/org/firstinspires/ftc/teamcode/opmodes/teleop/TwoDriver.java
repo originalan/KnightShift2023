@@ -280,20 +280,19 @@ public class TwoDriver extends LinearOpMode {
                 robot.testServo.setPwmDisable();
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
                     launchState = LauncherControlsState.READY;
-                    launchTime = runtime.seconds();
-                    double angle = robot.drivetrainSubsystem.initYaw - robot.drivetrainSubsystem.lastAngle.firstAngle;
-                    angle %= 360;
-                    double a;
-                    if (isRed) {
-                        a = 90 - angle - 5;
-                    }else {
-                        a = -1 * (90 - angle - 5);
-                    }
-                    TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(angle)))
-                            .turn( Math.toRadians(a) )
-                            .build();
-                    drive.followTrajectorySequenceAsync(traj);
-                    launchState = LauncherControlsState.READY;
+//                    launchTime = runtime.seconds();
+//                    double angle = robot.drivetrainSubsystem.initYaw - robot.drivetrainSubsystem.lastAngle.firstAngle;
+//                    angle %= 360;
+//                    double a;
+//                    if (isRed) {
+//                        a = 90 - angle - 5;
+//                    }else {
+//                        a = -1 * (90 - angle - 5);
+//                    }
+//                    TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(angle)))
+//                            .turn( Math.toRadians(a) )
+//                            .build();
+//                    drive.followTrajectorySequenceAsync(traj);
                 }
                 break;
             case READY:
