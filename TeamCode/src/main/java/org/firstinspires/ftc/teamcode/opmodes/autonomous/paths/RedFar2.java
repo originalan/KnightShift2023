@@ -5,12 +5,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoSettings;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoRedSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
-import org.firstinspires.ftc.teamcode.settings.ArmSettings;
 
 @Autonomous (name = "RedFar 1+0", group = "Testing")
 public class RedFar2 extends AutoBase {
@@ -180,7 +179,7 @@ public class RedFar2 extends AutoBase {
             case LEFT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.fleftDetectionX, AutoSettings.fleftDetectionY), startingPose.getHeading())
+                        .splineTo(new Vector2d(AutoRedSettings.fleftDetectionX, AutoRedSettings.fleftDetectionY), startingPose.getHeading())
                         .turn(Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
@@ -191,7 +190,7 @@ public class RedFar2 extends AutoBase {
             case MIDDLE:
                 isMiddle = true;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.fmiddleDetectionX, AutoSettings.fmiddleDetectionY), Math.toRadians(90))
+                        .splineTo(new Vector2d(AutoRedSettings.fmiddleDetectionX, AutoRedSettings.fmiddleDetectionY), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .back(10)
@@ -200,7 +199,7 @@ public class RedFar2 extends AutoBase {
             case RIGHT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.frightDetectionX, AutoSettings.frightDetectionY), startingPose.getHeading())
+                        .splineTo(new Vector2d(AutoRedSettings.frightDetectionX, AutoRedSettings.frightDetectionY), startingPose.getHeading())
                         .turn(-1 * Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())

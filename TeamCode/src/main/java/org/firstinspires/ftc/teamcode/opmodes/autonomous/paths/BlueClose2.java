@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoSettings;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBlueSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -204,7 +204,7 @@ public class BlueClose2 extends AutoBase {
                 .build();
         parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoSettings.parkingOuterY))
+                .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoBlueSettings.parkingOuterY))
                 .turn(Math.toRadians(-90))
 //                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
                 .back(15)
@@ -216,36 +216,36 @@ public class BlueClose2 extends AutoBase {
             case LEFT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.rightDetectionX, -AutoSettings.rightDetectionY), Math.toRadians(270))
+                        .splineTo(new Vector2d(AutoBlueSettings.rightDetectionX, -AutoBlueSettings.rightDetectionY), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .turn(Math.toRadians(-90))
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.closeParkX, -AutoSettings.closeParkY), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.closeParkX, -AutoBlueSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case MIDDLE:
                 isMiddle = true;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.middleDetectionX, -AutoSettings.middleDetectionY), Math.toRadians(270))
+                        .splineTo(new Vector2d(AutoBlueSettings.middleDetectionX, -AutoBlueSettings.middleDetectionY), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.closeParkX, -AutoSettings.closeParkY), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.closeParkX, -AutoBlueSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case RIGHT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .lineTo(new Vector2d(AutoSettings.leftDetectionX, -AutoSettings.leftDetectionY))
+                        .lineTo(new Vector2d(AutoBlueSettings.leftDetectionX, -AutoBlueSettings.leftDetectionY))
                         .turn(-1 * Math.toRadians(90))
 //                        .splineTo(new Vector2d(2.25 + 0.5, -36.0 - 1.725 + 0.5), Math.toRadians(180))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.closeParkX, AutoSettings.closeParkY), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.closeParkX, AutoBlueSettings.closeParkY), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;

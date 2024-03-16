@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public class AutoSettings {
+public class AutoRedSettings {
 
     // lowkey needed to make this class several weeks ago but whatever
 

@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBase;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoSettings;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.AutoBlueSettings;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -19,7 +19,7 @@ public class BlueClose1 extends AutoBase {
     private TrajectorySequence waitingOneHalfSeconds, waitingThreeSeconds, waitingHalfSeconds, waitingQuarterSecond;
     private TrajectorySequence waitingTime;
     private double waitTime = 0;
-    private double shift = AutoSettings.leftYellow;
+    private double shift = AutoBlueSettings.leftYellow;
     private boolean leftSide = false;
     private boolean parkOutside = true;
     private boolean armMoving = false;
@@ -79,9 +79,9 @@ public class BlueClose1 extends AutoBase {
             if (currentGamepad.dpad_up && !previousGamepad.dpad_up) {
                 leftSide = !leftSide;
                 if (leftSide) {
-                    shift = AutoSettings.rightYellow;
+                    shift = AutoBlueSettings.rightYellow;
                 }else {
-                    shift = AutoSettings.leftYellow;
+                    shift = AutoBlueSettings.leftYellow;
                 }
                 buildTrajectories();
             }
@@ -262,7 +262,7 @@ public class BlueClose1 extends AutoBase {
                 .waitSeconds(0.25)
                 .build();
         moveBackLittle = drive.trajectorySequenceBuilder(backdropTraj.end())
-                .back(AutoSettings.moveBack)
+                .back(AutoBlueSettings.moveBack)
                 .build();
         buildParkTrajectory();
     }
@@ -271,7 +271,7 @@ public class BlueClose1 extends AutoBase {
         if (parkOutside) {
             parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
                     .turn(Math.toRadians(90))
-                    .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoSettings.parkingOuterY))
+                    .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoBlueSettings.parkingOuterY))
                     .turn(Math.toRadians(-90))
 //                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
                     .back(15)
@@ -279,7 +279,7 @@ public class BlueClose1 extends AutoBase {
         }else {
             parkingTraj = drive.trajectorySequenceBuilder(moveBackLittle.end())
                     .turn(Math.toRadians(90))
-                    .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoSettings.parkingInnerY))
+                    .lineTo(new Vector2d(moveBackLittle.end().getX(), -AutoBlueSettings.parkingInnerY))
                     .turn(Math.toRadians(-90))
 //                .strafeTo(new Vector2d(moveBackLittle.end().getX(), 46))
                     .back(15)
@@ -292,35 +292,35 @@ public class BlueClose1 extends AutoBase {
             case LEFT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.rightDetectionX, -AutoSettings.rightDetectionY), Math.toRadians(270))
+                        .splineTo(new Vector2d(AutoBlueSettings.rightDetectionX, -AutoBlueSettings.rightDetectionY), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .turn(Math.toRadians(-90))
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.rightBackdropX, -AutoSettings.rightBackdropY - shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.rightBackdropX, -AutoBlueSettings.rightBackdropY - shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case MIDDLE:
                 isMiddle = true;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.middleDetectionX, -AutoSettings.middleDetectionY), Math.toRadians(270))
+                        .splineTo(new Vector2d(AutoBlueSettings.middleDetectionX, -AutoBlueSettings.middleDetectionY), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.middleBackdropX, -AutoSettings.middleBackdropY - shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.middleBackdropX, -AutoBlueSettings.middleBackdropY - shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case RIGHT:
                 isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
-                        .splineTo(new Vector2d(AutoSettings.leftDetectionX, -AutoSettings.leftDetectionY), startingPose.getHeading())
+                        .splineTo(new Vector2d(AutoBlueSettings.leftDetectionX, -AutoBlueSettings.leftDetectionY), startingPose.getHeading())
                         .turn(-1 * Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
                         .setReversed(true)
-                        .splineTo(new Vector2d(AutoSettings.leftBackdropX, -AutoSettings.leftBackdropY - shift), Math.toRadians(0))
+                        .splineTo(new Vector2d(AutoBlueSettings.leftBackdropX, -AutoBlueSettings.leftBackdropY - shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
