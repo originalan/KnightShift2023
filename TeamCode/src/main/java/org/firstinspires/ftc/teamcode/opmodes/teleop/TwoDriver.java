@@ -142,6 +142,8 @@ public class TwoDriver extends LinearOpMode {
                 previousGamepad2.copy(currentGamepad2);
                 currentGamepad2.copy(gamepad2);
 
+                telemetry.addData("launcher state", launchState);
+
                 // Failsafe field-oriented view
                 if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
                     robot.drivetrainSubsystem.resetInitYaw();
@@ -185,9 +187,9 @@ public class TwoDriver extends LinearOpMode {
         double y = gamepad1.left_stick_y * -1;
         double r = gamepad1.right_stick_x;
 
-        if (currentGamepad1.b && !previousGamepad1.b) {
-            switchDriveControls = !switchDriveControls;
-        }
+//        if (currentGamepad1.b && !previousGamepad1.b) {
+//            switchDriveControls = !switchDriveControls;
+//        }
 
         if (currentGamepad1.a && !previousGamepad1.a) {
             orientHelp = !orientHelp;
@@ -230,15 +232,15 @@ public class TwoDriver extends LinearOpMode {
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     rigWaitTime = runtime.seconds();
-                    robot.rigRightServo.setPwmEnable();
-                    robot.rigLeftServo.setPwmEnable();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
                     hangState = RiggingControlsState.DOWN_WAIT;
                 }
                 break;
             case DOWN:
                 if (currentGamepad1.x && !previousGamepad1.x) {
-                    robot.rigRightServo.setPwmEnable();
-                    robot.rigLeftServo.setPwmEnable();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
                     hangState = RiggingControlsState.UP;
                     robot.riggingSubsystem.riggingState = Rigging.RiggingState.RIG;
                 }
@@ -248,15 +250,16 @@ public class TwoDriver extends LinearOpMode {
                 if (runtime.seconds() - rigWaitTime > 1.0) {
                     robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
                     hangState = RiggingControlsState.DOWN;
-                    robot.rigRightServo.setPwmDisable();
-                    robot.rigLeftServo.setPwmDisable();
+                    robot.rigRightServo.getController().pwmDisable();
+                    robot.rigLeftServo.getController().pwmDisable();
                 }
                 break;
             case HANGING:
                 robot.riggingSubsystem.riggingState = Rigging.RiggingState.NOTHING;
+                launchState = LauncherControlsState.OFF;
                 intakeState = IntakeControlsState.CLOSED;
-                robot.rigRightServo.setPwmDisable();
-                robot.rigLeftServo.setPwmDisable();
+                robot.rigRightServo.getController().pwmDisable();
+                robot.rigLeftServo.getController().pwmDisable();
                 if (currentGamepad1.left_bumper || currentGamepad1.right_bumper) {
                     robot.riggingSubsystem.setRiggingMotors(RobotSettings.RIGGING_MOTOR_SPEED);
                 }else {
@@ -264,8 +267,8 @@ public class TwoDriver extends LinearOpMode {
                 }
                 if (currentGamepad1.x && !previousGamepad1.x) {
                     rigWaitTime = runtime.seconds();
-                    robot.rigRightServo.setPwmEnable();
-                    robot.rigLeftServo.setPwmEnable();
+                    robot.rigRightServo.getController().pwmEnable();
+                    robot.rigLeftServo.getController().pwmEnable();
                     hangState = RiggingControlsState.DOWN_WAIT;
                 }
                 break;
@@ -277,7 +280,8 @@ public class TwoDriver extends LinearOpMode {
     public void launcherControls() {
         switch (launchState) {
             case REST:
-                robot.testServo.setPwmDisable();
+//                robot.testServo.setPwmDisable();
+                robot.testServo.getController().pwmDisable();
                 if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
 //                    launchState = LauncherControlsState.READY;
 //                    launchTime = runtime.seconds();
@@ -293,6 +297,7 @@ public class TwoDriver extends LinearOpMode {
 //                            .turn( Math.toRadians(a) )
 //                            .build();
 //                    drive.followTrajectorySequenceAsync(traj);
+                    robot.testServo.getController().pwmEnable();
                     launchState = LauncherControlsState.FIRE;
                 }
                 break;
@@ -302,14 +307,10 @@ public class TwoDriver extends LinearOpMode {
                 }
                 break;
             case OFF:
-                robot.testServo.setPwmDisable();
                 break;
             case FIRE:
-                robot.testServo.setPwmEnable();
-                robot.testServo.setPosition(0.7);
-                if (runtime.seconds() - launchTime > 1.0) {
-                    launchState = LauncherControlsState.OFF;
-                }
+                robot.testServo.getController().pwmEnable();
+                robot.testServo.setPosition(RobotSettings.LAUNCHER_FIRE_POSITION_FIRE);
                 break;
         }
     }
@@ -362,20 +363,23 @@ public class TwoDriver extends LinearOpMode {
                     rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position1);
-                    intakeState = IntakeControlsState.DROP_POS;
-                }
-                if (currentGamepad2.a && !previousGamepad2.a) {
-                    leftClosed = true;
-                    rightClosed = true;
-                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
                     intakeState = IntakeControlsState.DROP_POS;
                 }
                 if (currentGamepad2.b && !previousGamepad2.b) {
                     leftClosed = true;
                     rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                    intakeState = IntakeControlsState.DROP_POS;
+                }
+                if (currentGamepad2.a && !previousGamepad2.a) {
+                    leftClosed = true;
+                    rightClosed = true;
+                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position3);
+                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                     intakeState = IntakeControlsState.DROP_POS;
                 }
                 if (currentGamepad2.x && !previousGamepad2.x) {
@@ -383,6 +387,7 @@ public class TwoDriver extends LinearOpMode {
                     rightClosed = true;
                     robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
                     robot.armSubsystem.setMotionProfile(ArmSettings.position4);
+                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                     intakeState = IntakeControlsState.DROP_POS;
                 }
 
@@ -449,11 +454,11 @@ public class TwoDriver extends LinearOpMode {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position1);
                     robot.armSubsystem.pivotState = Arm.PivotState.REST;
                 }
-                if (currentGamepad2.a && !previousGamepad2.a) {
-                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
-                    robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
-                }
                 if (currentGamepad2.b && !previousGamepad2.b) {
+                    robot.armSubsystem.setMotionProfile(ArmSettings.position2);
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                }
+                if (currentGamepad2.a && !previousGamepad2.a) {
                     robot.armSubsystem.setMotionProfile(ArmSettings.position3);
                     robot.armSubsystem.pivotState = Arm.PivotState.AUTO_CALIBRATE;
                 }
