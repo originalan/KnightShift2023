@@ -8,6 +8,7 @@ public class AutoSettings {
     // lowkey needed to make this class several weeks ago but whatever
 
     // everything is from the perspective of red
+    public static double TIME_WAIT = 0.75;
     public static double parkingOuterY = -53;
     public static double parkingInnerY = -3;
     public static double moveBack = 4.5;
@@ -20,7 +21,7 @@ public class AutoSettings {
 
     public static double leftBackdropX = 39, leftBackdropY = -22;
     public static double middleBackdropX = 39, middleBackdropY = -28;
-    public static double rightBackdropX = 40.5, rightBackdropY = -34;
+    public static double rightBackdropX = 39, rightBackdropY = -34;
 
     public static double fparkingOuterY = -53;
     public static double fparkingInnerY = -3;

@@ -36,10 +36,10 @@ public class RobotSettings {
     public static boolean CLAW_LEFT_REVERSED = true;
     public static final String CLAW_DSENSOR_LEFT = "ClawDLeft";
     public static final String CLAW_DSENSOR_RIGHT = "ClawDRight";
-    public static double CLAW_LEFT_OFFSET = 0.3;
+    public static double CLAW_LEFT_OFFSET = 0.3; // for distance sensors
     public static double CLAW_RIGHT_OFFSET = 0.23;
-    public static double CLAW_LEFT_THRESHOLD = 1.2;
-    public static double CLAW_RIGHT_THRESHOLD = 1.2;
+    public static double CLAW_LEFT_THRESHOLD = 1.7;
+    public static double CLAW_RIGHT_THRESHOLD = 1.7;
 
     /*
     ================= ARM SETTINGS==============

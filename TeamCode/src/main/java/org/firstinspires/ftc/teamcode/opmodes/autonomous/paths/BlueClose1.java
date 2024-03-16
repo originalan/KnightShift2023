@@ -23,6 +23,7 @@ public class BlueClose1 extends AutoBase {
     private boolean leftSide = false;
     private boolean parkOutside = true;
     private boolean armMoving = false;
+    private boolean isMiddle = false;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
@@ -88,6 +89,8 @@ public class BlueClose1 extends AutoBase {
                 parkOutside = !parkOutside;
                 buildParkTrajectory();
             }
+
+            robot.clawSubsystem.update();
         }
 
         waitForStart();
@@ -136,7 +139,11 @@ public class BlueClose1 extends AutoBase {
                 break;
             case GO_TO_SPIKE_MARK:
                 // robot is moving to the purple pixel location
-                robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                if (isMiddle) {
+                    robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
+                }else {
+                    robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                }
                 if (!drive.isBusy()) {
                     state = AutoState.PLACING_PURPLE_PIXEL;
                     drive.followTrajectorySequenceAsync(waitingQuarterSecond);
@@ -283,16 +290,19 @@ public class BlueClose1 extends AutoBase {
     public void setGoalPose() {
         switch (detectedSide) {
             case LEFT:
+                isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.rightDetectionX, -AutoSettings.rightDetectionY), Math.toRadians(270))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
+                        .turn(Math.toRadians(-90))
                         .setReversed(true)
                         .splineTo(new Vector2d(AutoSettings.rightBackdropX, -AutoSettings.rightBackdropY - shift), Math.toRadians(0))
                         .setReversed(false)
                         .build();
                 break;
             case MIDDLE:
+                isMiddle = true;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.middleDetectionX, -AutoSettings.middleDetectionY), Math.toRadians(270))
                         .build();
@@ -303,6 +313,7 @@ public class BlueClose1 extends AutoBase {
                         .build();
                 break;
             case RIGHT:
+                isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.leftDetectionX, -AutoSettings.leftDetectionY), startingPose.getHeading())
                         .turn(-1 * Math.toRadians(90))

@@ -22,11 +22,11 @@ public class SuperController {
     public static double Kp_withGravity = 0; // 0.07
     public static double Ki_withGravity = 0; // 0.00065
     public static double Kd_withGravity = 0; // 0.0004
-    public static double Kp = 0.025, Ki = 0, Kd = 0;
+    public static double Kp = 0.03, Ki = 0, Kd = 0;
     public static double Kg = 0.105;
     private double K_v = 0; // estimate is 1 / 2800, 0.00035714 -> 0.357143
     private double K_a = 0;
-    public static double FS_Kp = 0.025, FS_Kv = 0, FS_Ka = 0;
+    public static double FS_Kp = 0.03, FS_Kv = 0, FS_Ka = 0;
     public static double FS_Kp_g = 0;
 
     public SuperController(Telemetry telemetry) {

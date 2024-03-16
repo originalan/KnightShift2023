@@ -19,6 +19,7 @@ public class RedFar2 extends AutoBase {
     private TrajectorySequence waitingOneAndHalfSeconds, waitingThreeSeconds, waitingHalfSecond;
     private TrajectorySequence waitingTime;
     private double waitTime = 0;
+    private boolean isMiddle = false;
     private enum AutoState {
         WAITING_TIME,
         GO_TO_SPIKE_MARK,
@@ -66,10 +67,7 @@ public class RedFar2 extends AutoBase {
                 waitTime = 0;
             }
 
-//            if (runtime.seconds() > 1.0 && checkAgain) {
-//                checkAgain = false;
-//                buildTrajectories();
-//            }
+            robot.clawSubsystem.update();
         }
 
         waitForStart();
@@ -96,7 +94,11 @@ public class RedFar2 extends AutoBase {
                         break;
                     case GO_TO_SPIKE_MARK:
                         // robot is moving to the purple pixel location
-                        robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                        if (isMiddle) {
+                            robot.armSubsystem.pivotState = Arm.PivotState.PURPLE;
+                        }else {
+                            robot.armSubsystem.pivotState = Arm.PivotState.REST;
+                        }
                         if (!drive.isBusy()) {
                             state = AutoState.PLACING_PURPLE_PIXEL;
                             drive.followTrajectorySequenceAsync(waitingHalfSecond);
@@ -176,6 +178,7 @@ public class RedFar2 extends AutoBase {
     public void setGoalPose() {
         switch (detectedSide) {
             case LEFT:
+                isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.fleftDetectionX, AutoSettings.fleftDetectionY), startingPose.getHeading())
                         .turn(Math.toRadians(90))
@@ -186,6 +189,7 @@ public class RedFar2 extends AutoBase {
                         .build();
                 break;
             case MIDDLE:
+                isMiddle = true;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.fmiddleDetectionX, AutoSettings.fmiddleDetectionY), Math.toRadians(90))
                         .build();
@@ -194,6 +198,7 @@ public class RedFar2 extends AutoBase {
                         .build();
                 break;
             case RIGHT:
+                isMiddle = false;
                 detectionTraj = drive.trajectorySequenceBuilder(startingPose)
                         .splineTo(new Vector2d(AutoSettings.frightDetectionX, AutoSettings.frightDetectionY), startingPose.getHeading())
                         .turn(-1 * Math.toRadians(90))
