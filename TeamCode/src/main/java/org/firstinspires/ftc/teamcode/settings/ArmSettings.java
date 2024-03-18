@@ -23,7 +23,7 @@ public class ArmSettings {
     public static int position2 = 520;
     public static int position3 = 540;
     public static int position4 = 520;
-    public static int positionYellowPixel = 520;
+    public static int positionYellowPixel = 560;
     public static double servoOffset = 0.1;
     public static int positionPixelStack1 = (int)(5.0 / 360.0 * 1120) + positionBottom; // redclose1, redclose2
     public static int positionPixelStack2 = (int) (6.5 / 360.0 * 1120) + positionBottom; // redfar1

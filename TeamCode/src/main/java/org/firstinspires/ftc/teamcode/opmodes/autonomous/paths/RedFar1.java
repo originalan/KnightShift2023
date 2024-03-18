@@ -169,9 +169,9 @@ public class RedFar1 extends AutoBase {
                     state = AutoState.MOVING_TO_BACKBOARD;
                     drive.followTrajectorySequenceAsync(backdropTraj);
 
-                    robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
-                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-                    armMoving = true;
+//                    robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
+//                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+//                    armMoving = true;
                 }
                 break;
             case MOVING_TO_BACKBOARD:
@@ -181,23 +181,23 @@ public class RedFar1 extends AutoBase {
 
                     robot.clawSubsystem.clawState = Claw.ClawState.BOTH_CLOSED;
 
-//                    robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
-//                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
-//                    armMoving = true;
+                    robot.armSubsystem.setMotionProfile(ArmSettings.positionYellowPixel);
+                    robot.armSubsystem.armState = Arm.ArmState.MOTION_PROFILE;
+                    armMoving = true;
 
-                    drive.followTrajectorySequenceAsync(waitingThreeSeconds);
+//                    drive.followTrajectorySequenceAsync(waitingThreeSeconds);
                 }
                 break;
             case LIFT_ARM:
                 // give about 3.0 seconds for arm and servo to move in place
-                if (!drive.isBusy()) {
-                    state = AutoState.MOVE_FORWARD;
-                    drive.followTrajectorySequenceAsync(moveBackLittle);
-                }
-//                if (!robot.armSubsystem.getMP().isBusy()) {
+//                if (!drive.isBusy()) {
 //                    state = AutoState.MOVE_FORWARD;
 //                    drive.followTrajectorySequenceAsync(moveBackLittle);
 //                }
+                if (!robot.armSubsystem.getMP().isBusy()) {
+                    state = AutoState.MOVE_FORWARD;
+                    drive.followTrajectorySequenceAsync(moveBackLittle);
+                }
                 break;
             case MOVE_FORWARD:
                 // robot is moving back into the backdrop a little bit
@@ -307,7 +307,7 @@ public class RedFar1 extends AutoBase {
                         .splineTo(new Vector2d(AutoRedSettings.fmiddleDetectionX, AutoRedSettings.fmiddleDetectionY), Math.toRadians(90))
                         .build();
                 backdropTraj = drive.trajectorySequenceBuilder(detectionTraj.end())
-                        .back(1)
+                        .back(0.5)
                         .turn(Math.toRadians(90))
                         .forward(-48)
                         .setReversed(true)
