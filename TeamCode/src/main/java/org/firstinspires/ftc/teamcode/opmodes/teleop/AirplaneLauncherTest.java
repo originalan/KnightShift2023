@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.settings.RobotSettings;
 /**
  * AirplaneLauncherTest is a test Teleop mode that is used purely to test the airplane launcher.
  */
+@Disabled
 @TeleOp (name = "Airplane Launcher Test", group = "Testing")
 public class AirplaneLauncherTest extends LinearOpMode {
 

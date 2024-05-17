@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.subsystems.JVBoysSoccerRobot;
  * It is used for outreach events where others can control the robot themselves.
  * Functionality is limited only to drivetrain movement
  */
-@Disabled
 @TeleOp (name = "4 Kidz", group = "Testing")
 public class ForKids extends LinearOpMode {
 

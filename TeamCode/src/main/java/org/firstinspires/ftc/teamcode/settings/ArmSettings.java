@@ -14,7 +14,7 @@ public class ArmSettings {
     public static double ARM_PIVOT_SERVO_PURPLE = 0.4;
     public static double ARM_PIVOT_SERVO_PIXELSTACK1 = 0.45; // redclose1, redclose2
     public static double ARM_PIVOT_SERVO_PIXELSTACK2 = 0.44; // redfar1
-    public static double ARM_PIVOT_SERVO_GROUND = 0.52;
+    public static double ARM_PIVOT_SERVO_GROUND = 0.50;
     public static double ARM_PIVOT_SERVO_YELLOW = 0;
     public static double ARM_PIVOT_TEST_POS = 0.52;
 
